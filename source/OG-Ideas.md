@@ -1013,8 +1013,174 @@ Best implementation bridge:
 
 Best OG-IV idea:
 
-> Dishonesty is not merely false assertion; it is misrepresentation of one's support relation to a claim.
+> Dishonesty is misrepresentation of one's support relation to a claim.
 
 Best OG-V-or-later idea:
 
 > Institutions are observers over observer-support relations.
+
+---
+
+## Post-Lift Additions
+
+These are ideas surfaced after moving the strongest outline material into the actual OG-III paper. They should stay out of the main paper unless a later draft needs a small forward pointer.
+
+## 23. No Silent Upgrade Law
+
+Status: **Core candidate**, OG-III appendix or OG-IV bridge.
+
+Idea:
+
+A path may legitimately downgrade support by declaring loss, blockage, staleness, redaction, or withheld authority. It should not upgrade a report status without newly carried or newly admitted support.
+
+Possible statement:
+
+```text
+If Carry_gamma(phi, ctx) gains no new admissible support
+and DeclaredLoss_gamma(phi, ctx) increases,
+then Report(phi) must not become stronger under <=_P.
+```
+
+Good line:
+
+> Support may be downgraded by declared loss; it may be upgraded only by discharged obligation.
+
+Why it matters:
+
+- catches laundering through summaries;
+- gives PathCert validators a simple monotonicity check;
+- separates legitimate redaction from false confidence;
+- gives OG-IV a clean place to discuss blame when status was upgraded after support was removed.
+
+## 24. Support Diff / Status Diff
+
+Status: **Engineering candidate**, also useful for examples.
+
+Idea:
+
+When two paths produce the same endpoint state but different claim status, compute the support difference that explains the split.
+
+Possible notation:
+
+```text
+DiffCarry(phi, ctx; gamma_1, gamma_2)
+DiffStatus(phi, ctx; gamma_1, gamma_2)
+```
+
+Example:
+
+```text
+gamma_1 carries signature + policy epoch + freshness frontier
+gamma_2 carries final text only
+DiffCarry = {signature, policy_epoch, freshness_frontier}
+DiffStatus(authorised(edit e)) = supported vs underdetermined
+```
+
+Good line:
+
+> The useful audit question asks which support coordinates make matching endpoints diverge in report status.
+
+Why it matters:
+
+- claim passport diagnostics;
+- explainable audit failures;
+- test cases for PathCert validators;
+- better examples for readers who want operational hooks.
+
+## 25. Iterated Testimony Chains
+
+Status: **Bridge idea**, OG-III small example or OG-IV.
+
+Idea:
+
+The testimony/object split iterates. A claim such as "A reported that B reported phi" can be fully supported as a testimony chain while phi itself remains unsupported, stale, blocked, or refuted.
+
+Possible notation:
+
+```text
+psi_A(psi_B(phi))
+```
+
+Key separation:
+
+```text
+Just_S^P(psi_A(psi_B(phi)), ctx) = supported
+Just_S^P(phi, ctx) != supported
+```
+
+Good line:
+
+> A transcript chain can be intact while the object claim at the end has no admissible support.
+
+Why it matters:
+
+- journalism and citation chains;
+- AI source attribution;
+- legal declarations and hearsay;
+- upstream deception without downstream fabrication.
+
+## 26. Downgrade Semantics
+
+Status: **Core candidate**, probably OG-IV or an engineering appendix.
+
+Idea:
+
+Declared loss should have a policy-governed status effect. Redaction, staleness, authority blockage, and missing support should not all degrade to the same status.
+
+Possible notation:
+
+```text
+Downgrade_P(Just, DeclaredLoss, ctx) -> Status
+```
+
+Examples:
+
+```text
+fresh -> stale
+supported -> authority_blocked
+supported -> underdetermined
+supported -> unverifiable
+```
+
+Good line:
+
+> Declared loss is useful only if the policy says how the report must change.
+
+Why it matters:
+
+- prevents "declared loss" from becoming decorative;
+- connects support accounting to user-facing status;
+- gives claim passport systems a deterministic downgrade rule;
+- keeps authority blockage distinct from missing evidence.
+
+## 27. Support Budget Profiles
+
+Status: **Engineering candidate**, later OG-I/OG-III bridge.
+
+Idea:
+
+Because observers are resource-bounded, a support report should sometimes disclose the budget profile under which it was produced.
+
+Possible notation:
+
+```text
+BudgetProfile_S(phi, ctx)
+```
+
+Examples:
+
+- support omitted due to storage limit;
+- proof checked under time budget;
+- path certificate truncated by retention policy;
+- freshness check skipped because frontier source was unavailable.
+
+Good line:
+
+> A bounded observer should report the budget under which its support status was computed.
+
+Why it matters:
+
+- explains partial support without treating it as negligence;
+- connects OG-I resource bounds to OG-III support reporting;
+- gives audit systems a way to distinguish "not checked" from "checked and failed";
+- helps avoid silent confidence from budget exhaustion.
