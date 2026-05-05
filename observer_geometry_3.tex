@@ -801,7 +801,10 @@ This is the paper's poster result. It turns snapshot equality into an audit ques
 \section{Cryptographic Witness Surfaces}
 \label{sec:crypto}
 
-Cryptography belongs in OG-III as a witness laboratory. Cryptographic objects separate commitment, verification, revelation, authority, freshness, and admission. The central distinction is:
+Cryptography belongs in OG-III as a witness laboratory. Cryptographic objects
+separate commitment, verification, revelation, authority, freshness, and
+admission. The finite witnesses in this section and \cref{app:witness-library}
+make those separations explicit. The central distinction is:
 \[
   \Verify(\CryptSupp,\ctx)=\mathrm{accept}
   \quad\not\Rightarrow\quad
@@ -854,6 +857,59 @@ policy also requires the statement encoding and authority domain to match the
 purpose/context pair. Choosing a proof with a valid transcript but a missing or
 wrong admission binding gives verification acceptance and observer admission
 rejection or underdetermination. The finite admission table is checked in
+\cref{app:proofs}.
+\end{proof}
+
+\begin{proposition}[Cryptographic Freshness Separation]
+\label{prop:cryptographic-freshness-separation}
+There exist cryptographic witness surfaces
+$\CryptSupp_F,\CryptSupp_{F_0}$ with the same committed payload and accepted
+verification such that freshness support differs:
+\[
+  \Verify(\CryptSupp_F,\ctx_{\mathrm{ver}})=
+  \Verify(\CryptSupp_{F_0},\ctx_{\mathrm{ver}})=\mathrm{accept},
+\]
+while
+\[
+  \Sat_S^{P_{\fresh},\ctx_F}(L_F,\Obl_{P_{\fresh}}(\phi_{\fresh},\ctx_F))
+  =
+  \mathrm{yes},
+  \qquad
+  \Sat_S^{P_{\fresh},\ctx_F}(L_{F_0},\Obl_{P_{\fresh}}(\phi_{\fresh},\ctx_F))
+  =
+  \mathrm{partial}.
+\]
+\end{proposition}
+
+\begin{proof}[Finite witness]
+Use the signed-frontier witness in \cref{app:witness-library}. Both objects
+verify their proof transcript and commitment. The first object also carries the
+required frontier atom $f_F$. The second carries a stale frontier declaration
+for $F_0<F$ and no admitted consistency proof to $F$. The freshness obligation is
+therefore discharged by the first object and only partially accounted for by the
+second. The finite ledger check is in \cref{app:proofs}.
+\end{proof}
+
+\begin{proposition}[Cryptographic Authority Separation]
+\label{prop:cryptographic-authority-separation}
+There exist cryptographic witness surfaces with accepted signature verification
+and blocked authority admission:
+\[
+  \Verify(\CryptSupp_{\mathrm{auth}},\ctx)=\mathrm{accept},
+  \qquad
+  \Admit_S(L_{\mathrm{blocked}},\phi_{\mathrm{auth}},P_{\mathrm{auth}},\ctx)
+  =
+  \authorityblocked.
+\]
+\end{proposition}
+
+\begin{proof}[Finite witness]
+Use the signed-authority witness in \cref{app:witness-library}. The signature
+atom verifies under key $k$, so cryptographic verification accepts. The observer
+also requires an authority atom showing that $k$ is admitted by policy
+$\alpha$ at frontier $F$. Put that authority atom in the blocked component of
+the support ledger. The satisfaction rule returns $\authorityblocked$, and
+observer admission follows that status. The finite ledger check is in
 \cref{app:proofs}.
 \end{proof}
 
@@ -1323,6 +1379,61 @@ For verification/revelation separation, take the same object with no opening
 for the committed payload. The verification aperture is positive because the
 proof can be checked; the revelation aperture is zero for the hidden payload.
 
+For freshness separation, let $F_0<F$ be two finite log frontiers. Let
+$\rho_F$ be a signed frontier root, let $m_F$ be a membership proof for
+commitment $C$ at $\rho_F$, and let $q_{F_0,F}$ be a consistency proof from
+the old root to $\rho_F$. Treat
+\[
+  f_F=(\rho_F,m_F,q_{F_0,F})
+\]
+as the freshness atom for context $\ctx_F$. Let $\ctx_{\mathrm{ver}}$ be the
+cryptographic verification context that checks proof syntax, commitments, and
+frontier proof well-formedness without imposing current-frontier admission.
+Let
+\[
+  \CryptSupp_F=(C,I,\pi_{\mathrm{zk}},\mathrm{stmt},(P_{\fresh},\ctx_F,\alpha,F),f_F)
+\]
+and let $\CryptSupp_{F_0}$ be identical except that it carries only the older
+frontier declaration $f_{F_0}$ and no admitted consistency proof to $F$. Both
+objects verify as cryptographic objects because the transcript, commitment, and
+frontier material they carry are locally well-formed. Their ledgers are
+\[
+  L_F=(\{C,\pi_{\mathrm{zk}},f_F\},\varnothing,\varnothing,\varnothing),
+  \qquad
+  L_{F_0}=(\{C,\pi_{\mathrm{zk}},f_{F_0}\},\{f_F\},\varnothing,\varnothing).
+\]
+For the freshness claim $\phi_{\fresh}=$ ``the committed payload is current at
+frontier $F$,'' set
+\[
+  \Obl_{P_{\fresh}}(\phi_{\fresh},\ctx_F)=(\{f_F\},\{\{f_F\}\}).
+\]
+
+For authority separation, let $u$ be an update, let $k$ be a signing key, and
+let
+\[
+  \sigma_k=\mathsf{Ed25519.Sign}(sk_k,\mathsf{H}(u,F)).
+\]
+Define
+\[
+  \CryptSupp_{\mathrm{auth}}=(u,k,\sigma_k,i_k,\alpha,F).
+\]
+The signature verifies under $k$. Let $i_k$ bind the verification key to the
+principal and let $a_{\alpha,k}$ be the authority atom saying that $k$ is
+admitted by policy $\alpha$ at frontier $F$. Define
+\[
+  L_{\mathrm{auth}}=(\{\sigma_k,i_k,a_{\alpha,k}\},\varnothing,\varnothing,\varnothing),
+  \qquad
+  L_{\mathrm{blocked}}=(\{\sigma_k,i_k\},\varnothing,\{a_{\alpha,k}\},\varnothing).
+\]
+For the authority claim $\phi_{\mathrm{auth}}=$ ``update $u$ was authorised by
+policy $\alpha$ at frontier $F$,'' set
+\[
+  \Obl_{P_{\mathrm{auth}}}(\phi_{\mathrm{auth}},\ctx)
+  =
+  (\{\sigma_k,i_k,a_{\alpha,k}\},
+   \{\{\sigma_k,i_k,a_{\alpha,k}\}\}).
+\]
+
 \paragraph{A.7 Closed witness-holonomy loop.}
 Use four observers $S,A,B,C$ and the closed path
 \[
@@ -1532,7 +1643,61 @@ $\tau=(P,\ctx,\alpha,F)$. The metadata has the wrong purpose binding, so
 \]
 This finite table separates cryptographic validity from observer admission.
 
-\paragraph{D.7 Nonzero Witness Holonomy (\cref{thm:nonzero-witness-holonomy}).}
+\paragraph{D.7 Cryptographic Freshness Separation (\cref{prop:cryptographic-freshness-separation}).}
+Use the freshness pair from A.6. Both $\CryptSupp_F$ and
+$\CryptSupp_{F_0}$ verify in $\ctx_{\mathrm{ver}}$ by construction. The
+freshness obligation is
+\[
+  O_F=(\{f_F\},\{\{f_F\}\}).
+\]
+For $L_F$,
+\[
+  \Disch_S^{P_{\fresh},\ctx_F}(L_F)=\{C,\pi_{\mathrm{zk}},f_F\},
+\]
+so $\{f_F\}\subseteq\Disch_S^{P_{\fresh},\ctx_F}(L_F)$ and
+$\Sat_S^{P_{\fresh},\ctx_F}(L_F,O_F)=\mathrm{yes}$. For $L_{F_0}$,
+\[
+  \Disch_S^{P_{\fresh},\ctx_F}(L_{F_0})=\{C,\pi_{\mathrm{zk}},f_{F_0}\},
+  \qquad
+  \text{the declared component of }L_{F_0}\text{ is }\{f_F\}.
+\]
+The required freshness atom is declared stale or unavailable at the required
+frontier and is not discharged, so
+$\Sat_S^{P_{\fresh},\ctx_F}(L_{F_0},O_F)=\mathrm{partial}$. This separates
+cryptographic verification from freshness support.
+
+\paragraph{D.8 Cryptographic Authority Separation (\cref{prop:cryptographic-authority-separation}).}
+Use the authority pair from A.6. The signature $\sigma_k$ verifies under key
+$k$, so $\Verify(\CryptSupp_{\mathrm{auth}},\ctx)=\mathrm{accept}$. The authority
+obligation is
+\[
+  O_{\mathrm{auth}}
+  =
+  (\{\sigma_k,i_k,a_{\alpha,k}\},
+   \{\{\sigma_k,i_k,a_{\alpha,k}\}\}).
+\]
+For $L_{\mathrm{blocked}}$, the carried component discharges signature and
+identity atoms, while the required authority atom is in the blocked component:
+\[
+  \{\sigma_k,i_k,a_{\alpha,k}\}\cap B_{\mathrm{blocked}}
+  =
+  \{a_{\alpha,k}\}.
+\]
+By the satisfaction rule,
+\[
+  \Sat_S^{P_{\mathrm{auth}},\ctx}(L_{\mathrm{blocked}},O_{\mathrm{auth}})
+  =
+  \authorityblocked.
+\]
+Observer admission follows:
+\[
+  \Admit_S(L_{\mathrm{blocked}},\phi_{\mathrm{auth}},P_{\mathrm{auth}},\ctx)
+  =
+  \authorityblocked.
+\]
+This separates signature verification from authority admission.
+
+\paragraph{D.9 Nonzero Witness Holonomy (\cref{thm:nonzero-witness-holonomy}).}
 Use $\gamma_{\circlearrowleft}$ from A.7. Each edge preserves $s_X$, so after
 the loop the state coordinate remains $X$ and
 \[
@@ -1551,7 +1716,7 @@ The loop is closed at the observer endpoint and open in the support coordinate;
 the redaction declaration explains the downgrade but does not discharge the
 authorship obligation.
 
-\paragraph{D.8 Support-Soundness Failure / Witness Debt (\cref{thm:support-soundness-failure}).}
+\paragraph{D.10 Support-Soundness Failure / Witness Debt (\cref{thm:support-soundness-failure}).}
 Use A.8. The raw path carries $L_{\mathrm{raw}}$ and the authorship obligation
 requires $\{\sigma_A,i_A,p_\alpha,f_F\}$. Therefore
 \[
@@ -1572,7 +1737,7 @@ fails. The debt set is the unmet obligation treated as discharged:
 If the endpoint instead declares the loss and downgrades the status, the same
 missing atoms remain unmet support and do not become debt.
 
-\paragraph{D.9 Typed false report.}
+\paragraph{D.11 Typed false report.}
 Use A.9. The support for the endpoint state and the support for admission under
 policy are different typed coordinates. A report that says the update is
 present may be supported by $s_X$ or by an update-state atom. A report that says
