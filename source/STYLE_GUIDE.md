@@ -12,7 +12,7 @@ general academic-writing manual.
 ## High-Level Voice
 
 The Observer Geometry voice is technical, direct, and scoped. It does not sell
-the framework by hype; it earns force by naming a concrete failure mode, giving
+the model by hype; it earns force by naming a concrete failure mode, giving
 finite structure for it, and then stating exactly what the theorem does and does
 not prove.
 
@@ -165,18 +165,64 @@ For OG-III, prefer proofs that construct:
 The prose uses clear declarative sentences and then formalizes them. Common
 sentence forms:
 
-- "The question is therefore not only whether..., but what..."
-- "The central object is..."
-- "The contribution is not..., but..."
+- "The question is therefore whether..., and what..."
+- "The main object is..."
+- "The contribution replaces X with Y."
 - "This theorem is the precise observer-geometric version of..."
 - "This is not a pathology. It is a structural feature..."
-- "The point is not merely that... The point is that..."
+- "The point is X. The consequence is Y."
 
 This rhythm is worth preserving. It lets the paper state conceptual stakes
 without losing mathematical control.
 
 Avoid casual jokes, slang, and winking phrases in the manuscript. The working
 notes can be wild; the paper voice is sober.
+
+## Anti-Pattern Scan Policy
+
+Use the user's banned-style list as a drafting scanner for canonical prose.
+The transferable targets for Observer Geometry are:
+
+- negative-depth formulas: `not X, but Y`, `not only... but`, `not merely`;
+- fake range language: abstract `from X to Y` spans with no shared scale;
+- narrator-as-analyst participles: `highlighting`, `underscoring`,
+  `showcasing`, `reflecting`, `emphasizing` as editorial explanation;
+- AI-default importance words: `pivotal`, `crucial`, `vital`, `profound`,
+  `compelling`, `notably`, `ultimately`, `fundamentally`, `inherently`;
+- AI-default verbs: `delve`, `unpack`, `navigate`, `foster`, `garner`,
+  `enhance`, `underscore`, `showcase`, `highlight`;
+- decorative abstractions: figurative `tapestry`, `landscape`, `interplay`,
+  `intricacies`, `multifaceted`, and generic `nuanced`;
+- promotional puffery: `stands as a testament`, `serves as a reminder`,
+  `lasting legacy`, `indelible mark`, `cannot be overstated`, `boasts`;
+- decorative metaphor clusters: gravity, magnetism, anchors, tethers, roots,
+  blows, ripples, silence hanging, and temperature-as-emotion language;
+- mechanical rhythm: repeated trailing participles, triple-beat fragments,
+  staccato verb triplets, `, then` action pairs, and standalone `Because`
+  fragments.
+
+For OG papers, a few words are formal terms and should be preserved when they
+are doing real work: `Observer Geometry`, `support-obligation calculus`,
+`framework` in cited titles, and mathematical uses of `from X to Y`. The scan
+should still flag them. Keep only the instances that are technical terms or
+necessary quotations.
+
+Run this scan on the manuscript before release:
+
+```sh
+rg -n -i 'not merely|not only|not just|not simply|not .* but|, then\b|\
+delv(e|es|ing)|tapestry|landscape|interplay|intricacies|multifaceted|\
+pivotal|crucial|vital|profound|compelling|notably|ultimately|fundamentally|\
+inherently|underscore|underscoring|highlight|highlighting|showcase|\
+showcasing|enhance|navigate|unpack|stands as a testament|serves as a reminder|\
+lasting legacy|indelible mark|cannot be overstated|boasts|gravity|magnetic|\
+anchor(ed)?|tether(ed)?|rooted|hangs? in the air|like a blow|like a punch|\
+like a stone|the world held its breath|changed everything|broke forever' \
+--glob '!source/STYLE_GUIDE.md' observer_geometry_3.tex source
+```
+
+The rule is density plus function. A formal term can stay. A decorative default
+gets rewritten.
 
 ## Structural Pattern
 
@@ -312,7 +358,7 @@ from empirical performance claims.
 
 For OG-III, engineering interpretation should say:
 
-- systems should transport claim-support ledgers, not only state;
+- systems should transport claim-support ledgers alongside state;
 - `PathCert` can be a receipt, header, manifest, or proof-carrying path object;
 - witness debt can become an audit metric;
 - support type systems can make overreporting a check failure;
@@ -358,7 +404,7 @@ For OG-III, avoid saying "truth is relative" without qualification. Prefer:
 - "the underlying event may be invariant; the justified claim-status need not
   be."
 
-This keeps the paper grounded in support accounting rather than metaphysical
+This keeps the paper tied to support accounting rather than metaphysical
 relativism.
 
 ## Related Work Style
@@ -366,8 +412,7 @@ relativism.
 Related work is selective and evaluative, not exhaustive. OG-I explicitly says
 related work is placed after the formal core to preserve mathematical
 continuity. OG-II uses related work to explain that OT, CRDTs, CALM, Bayou, and
-Dynamo are not competitors to the theorem but local laws or engineering
-neighbors.
+Dynamo act as local laws or engineering neighbors around the theorem.
 
 For OG-III, related work should be similarly scoped:
 
