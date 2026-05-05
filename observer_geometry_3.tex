@@ -1120,22 +1120,25 @@ work remain outside this manuscript.
 No empirical datasets are used in this manuscript. The finite models are the
 ledger tuples, obligation objects, path certificates, cryptographic witness
 surfaces, and transition tables written explicitly in \cref{app:witness-library}
-and checked in \cref{app:proofs}. They were evaluated analytically by finite
-case inspection and algebraic calculation against the definitions in
-\cref{sec:claims-obligations,sec:paths}. A compact Coq/Rocq reference
-formalization in \texttt{formal/coq/OG3.v} mechanizes the finite support atoms,
-support ledgers, obligation objects, satisfaction and admission maps, unmet
-support calculation, witness-debt counter, and finite separation witnesses used
-by the manuscript. It can be checked with \texttt{make verify} when
-\texttt{coqc} is available.
+and checked in \cref{app:proofs}. The theorem arguments in the manuscript text
+were evaluated analytically by finite case inspection and algebraic calculation
+against the definitions in \cref{sec:claims-obligations,sec:paths}. The
+corresponding finite witness calculations are also computationally checked by a
+compact Coq/Rocq reference formalization included in this repository at
+\texttt{formal/coq/OG3.v}. It can be checked with \texttt{make verify} when
+\texttt{coqc} is available. The formalization mechanizes the finite support
+atoms, support ledgers, obligation objects, satisfaction and admission maps,
+unmet support calculation, witness-debt counter, and finite separation
+witnesses used by the manuscript.
 
 The mechanized file is a finite reference semantics for the manuscript's
-support-accounting examples. Cryptographic primitives are represented as
-abstract verifier facts; the Coq/Rocq development does not implement or verify
-Ed25519, zero-knowledge proof systems, Merkle proofs, transparency logs, or the
-engineering schemas in \cref{app:engineering-artifacts}. The repository's PDF
-and text build tooling renders the manuscript and is separate from this
-formalization.
+support-accounting examples. No separate model checker, external reference
+script, or executable cryptographic verifier was used. Cryptographic primitives
+are represented as abstract verifier facts; the Coq/Rocq development does not
+implement or verify Ed25519, zero-knowledge proof systems, Merkle proofs,
+transparency logs, or the engineering schemas in
+\cref{app:engineering-artifacts}. The repository's PDF and text build tooling
+renders the manuscript and is separate from this formalization.
 
 \section{Related Work}
 \label{sec:related-work}
