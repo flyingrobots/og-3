@@ -15,16 +15,22 @@ DEHYPHEN_TXT := $(BUILD_DIR)/$(TEX_MAIN).dehyphen.txt
 LATEX := pdflatex
 BIBER := biber
 PANDOC := pandoc
+COQC := coqc
 PANDOC_FLAGS := --quiet --wrap=none -f latex -t plain
 LATEX_FLAGS := -interaction=nonstopmode -file-line-error -output-directory=$(BUILD_DIR)
+COQ_SOURCES := formal/coq/OG3.v
 
-.PHONY: all pdf txt clean
+.PHONY: all pdf txt verify clean
 
 all: pdf
 
 pdf: $(DIST_PDF)
 
 txt: $(TXT_OUTPUT)
+
+verify:
+	@command -v $(COQC) >/dev/null 2>&1 || { echo "Error: $(COQC) is required for 'make verify'."; exit 1; }
+	$(COQC) $(COQ_SOURCES)
 
 $(DIST_PDF): $(TEX_SOURCE) $(BIB_SOURCE) | $(BUILD_DIR) $(DIST_DIR)
 	$(LATEX) $(LATEX_FLAGS) $(TEX_SOURCE)
@@ -85,3 +91,4 @@ clean:
 	rm -rf $(BUILD_DIR)
 	rm -rf $(DIST_DIR)
 	rm -f $(TEX_MAIN).pdf $(TEX_MAIN).txt
+	rm -f formal/coq/*.vo formal/coq/*.vos formal/coq/*.vok formal/coq/*.glob formal/coq/.*.aux

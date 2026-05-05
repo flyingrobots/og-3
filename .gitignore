@@ -18,3 +18,8 @@ dist/
 *.synctex.gz
 *.toc
 *.xdv
+*.vo
+*.vo[sk]
+*.glob
+.lia.cache
+.coq-native/
