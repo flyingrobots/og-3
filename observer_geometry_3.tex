@@ -109,6 +109,7 @@
 \newcommand{\CWit}{\mathsf{CWit}}
 \newcommand{\PathCert}{\mathsf{PathCert}}
 \newcommand{\ValidCert}{\mathsf{ValidCert}}
+\newcommand{\CertReject}{\mathsf{CertReject}}
 \newcommand{\Bind}{\mathsf{Bind}}
 \newcommand{\Term}{\mathsf{Term}}
 \newcommand{\Extract}{\mathsf{Extract}}
@@ -559,6 +560,15 @@ and an extraction function
   \Extract_S^{P,\ctx}:
   \Phi\times\Mem_S\times(\mathsf{Cert}\cup\{\bot\})\to\Ledg.
 \]
+For a rejected certificate $\chi$, let
+\[
+  \CertReject_S^{P,\ctx}(\phi,M,\chi)
+  =
+  (\varnothing,\varnothing,\varnothing,
+    \{\rho_{\mathrm{cert}}(\chi,\phi,P,\ctx)\})
+\]
+where $\rho_{\mathrm{cert}}(\chi,\phi,P,\ctx)$ is a typed refutation atom
+targeting the path-support component asserted by $\chi$.
 Let $M_{S_1}^{\gamma}$ denote the endpoint observer's native accumulated memory
 after receiving object or update material along path $\gamma$. Then
 \[
@@ -572,17 +582,63 @@ When $\ValidCert_S(\chi,\phi,P,\ctx,M)=\mathrm{accept}$,
   =
   \Native_S^{P,\ctx}(\phi,M)\sqcup \Term(\chi).
 \]
-When $\chi=\bot$ or
+When $\chi=\bot$,
+\[
+  \Extract_S^{P,\ctx}(\phi,M,\bot)
+  =
+  \Native_S^{P,\ctx}(\phi,M).
+\]
+When
 $\ValidCert_S(\chi,\phi,P,\ctx,M)=\mathrm{reject}$,
 \[
   \Extract_S^{P,\ctx}(\phi,M,\chi)
   =
-  \Native_S^{P,\ctx}(\phi,M).
+  \Native_S^{P,\ctx}(\phi,M)
+  \sqcup
+  \CertReject_S^{P,\ctx}(\phi,M,\chi).
 \]
 Thus extraction is a claim-purpose-context support view over accumulated memory
 plus validated path declarations. Missing path support remains missing rather
-than inferred.
+than inferred, while rejected certificate material is retained as explicit
+typed refutation rather than collapsed into the same case as no certificate.
 \end{definition}
+
+\begin{proposition}[Invalid Certificate Observability]
+\label{prop:invalid-cert-observable}
+There are finite endpoint memories and certificate inputs for which absent
+path certification and rejected path certification have the same native memory
+view but different extracted ledgers. In particular, for the same
+$(S,\phi,P,\ctx,M)$ and a malformed certificate $\chi_{\mathrm{bad}}$ with
+$\ValidCert_S(\chi_{\mathrm{bad}},\phi,P,\ctx,M)=\mathrm{reject}$,
+\[
+  \Extract_S^{P,\ctx}(\phi,M,\bot)
+  =
+  \Native_S^{P,\ctx}(\phi,M)
+\]
+while
+\[
+  \Extract_S^{P,\ctx}(\phi,M,\chi_{\mathrm{bad}})
+  =
+  \Native_S^{P,\ctx}(\phi,M)
+  \sqcup
+  \CertReject_S^{P,\ctx}(\phi,M,\chi_{\mathrm{bad}}).
+\]
+The two ledgers differ in the typed-refutation component $R$. If the local
+admission policy admits $\rho_{\mathrm{cert}}$ as targeting the evaluated
+path-support component, the absent-certificate case may remain
+$\underdetermined$, whereas the rejected-certificate case returns
+$\refuted$.
+\end{proposition}
+
+\begin{proof}
+The absent-certificate equation is the $\bot$ branch of extraction. The
+rejected-certificate equation is the reject branch. Since
+$\rho_{\mathrm{cert}}(\chi_{\mathrm{bad}},\phi,P,\ctx)$ appears in $R$ only in
+the reject branch, the extracted ledgers are unequal even though the native
+memory argument is the same. Refutation-priority admission then gives the stated
+status separation whenever the local policy admits that certificate-failure atom
+for the evaluated path-support component.
+\end{proof}
 
 \begin{figure}[ht]
 \centering
@@ -620,7 +676,7 @@ than inferred.
   \draw[ogline] (cert) -- (extract);
   \draw[ogline] (extract) -- (carry);
 \end{tikzpicture}
-\caption{$M_S$ to $\Carry_\gamma$ extraction. $\Carry_\gamma$ is not $M_S$; it is extracted from endpoint accumulation plus checkable path declarations.}
+\caption{$M_S$ to $\Carry_\gamma$ extraction. $\Carry_\gamma$ is not $M_S$; it is extracted from endpoint accumulation plus checkable path declarations. Absent certificates add no path support; rejected certificates add a typed validation-failure refutation.}
 \label{fig:extract-carry}
 \end{figure}
 
@@ -674,7 +730,9 @@ holds. $\Bind_S(M,\chi)$ holds when the endpoint native memory $M$ contains the
 terminal artifact named by $h$ and that artifact decodes to $L_n$ under
 $S$'s native ledger view. A certificate may declare loss, redaction, blockage,
 or staleness; those declarations enter $D$ or $B$ and do not discharge required
-atoms.
+atoms. A rejected certificate never contributes $\Term(\chi)$; if extraction is
+attempted with rejected certificate material, the failure is recorded through
+the $\CertReject$ typed-refutation atom from \cref{prop:invalid-cert-observable}.
 \end{definition}
 
 \begin{definition}[Satisfaction and admission]
@@ -710,7 +768,8 @@ atoms in $R$ that $S$ admits as targeting the evaluated claim component. Admissi
 is evaluated with deterministic priority:
 \begin{enumerate}[leftmargin=*]
   \item If $\mathsf{Ref}_S^{P,\ctx}(L,\phi)\neq\varnothing$, return
-        $\mathrm{reject}$.
+        $\mathrm{reject}$. This includes admitted certificate-validation
+        failure atoms when they target the evaluated path-support component.
   \item If $\Sat_S^{P,\ctx}(L,O)=\mathrm{yes}$ and $S$ admits the atoms used for
         discharge, return $\mathrm{accept}$.
   \item If $\Sat_S^{P,\ctx}(L,O)=\authorityblocked$, return
@@ -1721,6 +1780,7 @@ The main operations have the following types:
   \Extract_S^{P,\ctx} &: \Phi\times\Mem_S\times(\mathsf{Cert}\cup\{\bot\})\to\Ledg,\\
   \ValidCert_S &: \mathsf{Cert}\times\Phi\times\mathcal P\times\mathsf{Ctx}\times\Mem_S
     \to\{\mathrm{accept},\mathrm{reject}\},\\
+  \CertReject_S^{P,\ctx} &: \Phi\times\Mem_S\times\mathsf{Cert}\to\Ledg,\\
   \Disch_S^{P,\ctx} &: \Ledg\to\mathcal P_{\mathrm{fin}}(\Atoms),\\
   \Sat_S^{P,\ctx} &: \Ledg\times\Obligation
     \to\{\mathrm{yes},\mathrm{no},\mathrm{partial},\authorityblocked\},\\
@@ -1741,7 +1801,8 @@ The field $h$ binds the terminal ledger to an endpoint artifact in native
 memory. Validation checks the header, each finite step relation
 $(L_{i-1},L_i,\delta_i)\in R_{T_i}$, and the binding predicate
 $\Bind_S(M,\chi)$. The terminal support view imported by extraction is
-$\Term(\chi)=L_n$.
+$\Term(\chi)=L_n$. When validation rejects, extraction imports no terminal
+ledger from $\chi$ and records a typed certificate-failure refutation instead.
 
 \paragraph{Imported terms.}
 Projection, basis, accumulation, aperture, degeneracy, insufficiency, bias gap,
@@ -1754,8 +1815,8 @@ finite support-ledger maps above.
 The base status tags are $\supported$, $\underdetermined$,
 $\unverifiable$, $\authorityblocked$, and $\refuted$. Modifiers include
 $\stale$, fresh-at-frontier, redacted, compressed, proof-valid, context-mismatch,
-and declared loss. They are finite tags interpreted by a local report-strength
-preorder $\leq_P$.
+certificate-validation failure, and declared loss. They are finite tags
+interpreted by a local report-strength preorder $\leq_P$.
 
 \section{Diagrammatic Summary}
 \label{app:diagrams}
@@ -2017,7 +2078,8 @@ mandatory atom kinds for this paper are
 \mathsf{receipt} & \text{compression or mediator receipt},\\
 \mathsf{proof} & \text{proof transcript and public inputs},\\
 \mathsf{commitment} & \text{commitment digest and scheme metadata},\\
-\mathsf{refutation} & \text{typed negative witness against a claim component}.
+\mathsf{refutation} & \text{typed negative witness against a claim component},\\
+\mathsf{certificate\_refutation} & \text{PathCert validation failure against path support}.
 \end{array}
 \]
 An implementation may add atom kinds by adding registry entries. Unknown atom
@@ -2045,6 +2107,10 @@ judgement. Its body has these fields:
         $\Obl_P(\phi,\ctx)$.
   \item[\texttt{path\_cert}] digest of the PathCert used for extraction, or
         $\bot$.
+  \item[\texttt{path\_cert\_status}] one of
+        \texttt{absent}, \texttt{accepted}, or \texttt{rejected}; rejected
+        certificates must name the failure code used to create the typed
+        certificate-refutation atom in $R$.
   \item[\texttt{terminal\_ledger}] digest of $\Carry_\gamma(\phi,\ctx)$ after
         extraction.
   \item[\texttt{status\_report}] digest of the support status report below.
@@ -2056,7 +2122,9 @@ The passport validator recomputes the claim digest, retrieves the obligation
 entry, validates the path certificate when present, recomputes the terminal
 ledger through $\Extract$, recomputes the status report, and checks the issuer
 signature. The passport is accepted exactly when every referenced validator
-returns accept.
+returns accept. A rejected PathCert may still be recorded in an audit report,
+but its extraction output must be the native ledger plus the explicit
+certificate-refutation atom, not the native ledger alone.
 
 \paragraph{PathCert schema.}
 A PathCert is the finite tuple from \cref{sec:paths} stored as fields:
@@ -2092,7 +2160,9 @@ Validation of a PathCert is deterministic:
         $(L_{i-1},L_i,\delta_i)\in R_{T_i}$ under the validator profile.
   \item Check $\Bind_S(M,\chi)$ by verifying that the endpoint memory contains
         or derives the terminal artifact digest $h$.
-  \item Return accept with $\Term(\chi)=L_n$; otherwise return reject.
+  \item Return accept with $\Term(\chi)=L_n$; otherwise return reject with a
+        deterministic failure code and the corresponding certificate-refutation
+        atom $\rho_{\mathrm{cert}}(\chi,\phi,P,\ctx)$.
 \end{enumerate}
 
 \paragraph{Obligation registry schema.}
@@ -2171,6 +2241,9 @@ The required dispatch rules are:
         binding.
   \item[\texttt{refutation}] verify the negative witness and the claim component
         it targets.
+  \item[\texttt{certificate\_refutation}] verify the rejected PathCert digest,
+        failure code, requested $(\phi,P,\ctx)$ tuple, and claim component
+        targeted by the validation failure.
 \end{description}
 
 \paragraph{Support status report schema.}
@@ -2188,6 +2261,8 @@ passport:
         unavailable, or redacted.
   \item[\texttt{blocked}] required atoms in the blocked component.
   \item[\texttt{refutations}] admitted typed refutations.
+  \item[\texttt{path\_cert\_status}] absent, accepted, or rejected; rejected
+        status identifies the certificate-refutation atom included in $R$.
   \item[\texttt{justified\_status}] value of $\Just_S^P(\phi,\ctx)$.
   \item[\texttt{emitted\_report}] value emitted by the observer or system.
   \item[\texttt{debt}] output of the witness-debt counter.
@@ -2250,7 +2325,9 @@ $R_{T_i}$ as an envelope checker:
         envelope digest.
 \end{enumerate}
 The result is a concrete PathCert validator with the same accept/reject behavior
-as the abstract validator in \cref{sec:paths}.
+as the abstract validator in \cref{sec:paths}. A reject result is not used as a
+silent fallback: the validator emits the failure code needed to construct the
+certificate-refutation atom consumed by extraction and admission.
 
 \nocite{ross_og_i_2026,ross_og_ii_2026}
 \printbibliography

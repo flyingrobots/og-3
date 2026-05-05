@@ -1,5 +1,14 @@
 [
   {
+    "id": "og3.invalid_certificate_observability",
+    "paper_label": "prop:invalid-cert-observable",
+    "paper_ref": "Proposition 3.10",
+    "coq_object": "og3_invalid_cert_observable",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "absent certificate separated from rejected certificate"
+  },
+  {
     "id": "og3.noncommutative_support_transport",
     "paper_label": "lem:noncommutative-support-transport",
     "paper_ref": "Lemma 4.3",

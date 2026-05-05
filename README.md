@@ -57,7 +57,9 @@ paper-to-Coq coverage artifact. `make formal-sync` regenerates the coverage
 artifact, checks the Coq file, and verifies that the generated artifact is
 current. These targets check a simplified finite reference model; they do not
 verify path-certificate validation, extraction from native observer memory, full
-policy admission, or real cryptographic implementations.
+policy admission, or real cryptographic implementations. The model does include
+the finite ledger-level check that rejected certificate material is observable
+as typed refutation rather than treated as absent support.
 
 ## License
 

@@ -21,6 +21,7 @@ Inductive atom : Set :=
 | IK
 | AAlphaK
 | RefNonMember
+| CertInvalid
 | NonMemberK.
 
 Definition atom_eq_dec : forall x y : atom, {x = y} + {x <> y}.
@@ -85,6 +86,10 @@ Definition partial_required (L : ledger) (O : obligation) : bool :=
 Definition refutes_atom (r a : atom) : bool :=
   match r, a with
   | RefNonMember, AAlphaK => true
+  | CertInvalid, SigmaA => true
+  | CertInvalid, IA => true
+  | CertInvalid, PAlpha => true
+  | CertInvalid, FF => true
   | _, _ => false
   end.
 
@@ -305,6 +310,20 @@ Qed.
 
 Definition O_state : obligation :=
   Obligation [SX] [[SX]].
+
+Definition L_invalid_cert : ledger :=
+  Ledger [SX] [] [] [CertInvalid].
+
+Example og3_invalid_cert_observable :
+  admit L_raw O_auth = Underdetermined /\
+  admit L_invalid_cert O_auth = Refuted /\
+  admit L_raw O_state = Supported /\
+  admit L_invalid_cert O_state = Supported /\
+  mem_atom CertInvalid (refuted L_raw) = false /\
+  mem_atom CertInvalid (refuted L_invalid_cert) = true.
+Proof.
+  repeat split; reflexivity.
+Qed.
 
 Definition O_absence : obligation :=
   Obligation [FF; NonMemberK] [[FF; NonMemberK]].

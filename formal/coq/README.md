@@ -11,14 +11,17 @@ The file `OG3.v` mechanizes:
 - obligation objects `(R_O, E_O)`
 - finite satisfaction and admission examples
 - unmet-support and witness-debt calculation
+- the finite distinction between absent certification and rejected
+  certificate material
 - executable finite witnesses for the manuscript's main separation examples
 - paper-to-Coq coverage through `formal/coverage.json`
 
-Cryptographic primitives are modeled abstractly as finite verifier facts. Path
-certificate validation, extraction from native observer memory, full policy
+Cryptographic primitives are modeled abstractly as finite verifier facts. Full
+path-certificate validation, extraction from native observer memory, full policy
 admission, Ed25519, zero-knowledge proof systems, Merkle proofs, and
 transparency logs are abstracted. The file checks the finite support-ledger
-calculations that the manuscript applies to those witness surfaces.
+calculations that the manuscript applies to those witness surfaces, including
+the ledger-level effect of a rejected certificate.
 
 Run:
 
