@@ -106,14 +106,26 @@
 \newcommand{\CryptSupp}{\mathsf{CryptSupp}}
 \newcommand{\CWit}{\mathsf{CWit}}
 \newcommand{\PathCert}{\mathsf{PathCert}}
+\newcommand{\ValidCert}{\mathsf{ValidCert}}
+\newcommand{\Bind}{\mathsf{Bind}}
+\newcommand{\Term}{\mathsf{Term}}
 \newcommand{\Extract}{\mathsf{Extract}}
 \newcommand{\Sat}{\mathsf{Sat}}
 \newcommand{\Admit}{\mathsf{Admit}}
+\newcommand{\Disch}{\mathsf{Disch}}
 \newcommand{\Just}{\mathsf{Just}}
 \newcommand{\Report}{\mathsf{Report}}
 \newcommand{\Val}{\mathsf{Val}}
 \newcommand{\Def}{\mathsf{Def}}
 \newcommand{\Verify}{\mathsf{Verify}}
+\newcommand{\Atoms}{\mathcal{A}}
+\newcommand{\Ledg}{\mathsf{Ledg}}
+\newcommand{\Mem}{\mathsf{Mem}}
+\newcommand{\Native}{\mathsf{Native}}
+\newcommand{\Packet}{\mathsf{Packet}}
+\newcommand{\Acc}{\mathsf{Acc}}
+\newcommand{\Status}{\mathsf{Status}}
+\newcommand{\Obligation}{\mathsf{Obligation}}
 \newcommand{\Refutes}{\mathsf{refutes}}
 \newcommand{\OverReport}{\mathsf{OverReport}}
 \newcommand{\Hallucinate}{\mathsf{Hallucinate}}
@@ -303,8 +315,9 @@ cryptographic witness surfaces and the verification/admission split.
 Section~\ref{sec:holonomy} develops witness holonomy, freshness, and negative
 witnesses. Section~\ref{sec:soundness} defines support soundness, overreporting,
 hallucination as supported-claim overreport, witness debt, and typed false
-reports. Sections~\ref{sec:robustness}--\ref{sec:ogiv} record purpose-indexed
-equivalence, engineering implications, and the bridge to OG-IV.
+reports. Sections~\ref{sec:robustness}--\ref{sec:related-work} record
+purpose-indexed equivalence, engineering implications, and related work.
+Section~\ref{sec:ogiv} gives the bridge to OG-IV.
 
 \paragraph{Imported interfaces.}
 OG-III imports OG-I and OG-II as fixed public interfaces rather than rederiving
@@ -357,8 +370,43 @@ State convergence & OG-II & Endpoint visible state agreement & Explicitly not su
 \section{Claims, Contexts, Statuses, and Support Obligations}
 \label{sec:claims-obligations}
 
+\begin{definition}[Finite support calculus base]
+Fix finite sets of claims $\Phi$, purposes $\mathcal P$, observers
+$\mathcal S$, support kinds $\mathcal K$, and support payloads
+$A_k$ for each $k\in\mathcal K$. The support-atom universe is the
+finite disjoint union
+\[
+  \Atoms=\coprod_{k\in\mathcal K}\{k\}\times A_k.
+\]
+An atom therefore carries its type as part of its value. A finite support ledger
+is a four-component tuple
+\[
+  L=(C,D,B,R)\in\Ledg
+  \quad\text{where}\quad
+  C,D,B,R\subseteq_{\mathrm{fin}}\Atoms.
+\]
+$C$ records carried, opened, verified, or admitted support atoms; $D$ records
+declared loss, staleness, redaction, or unavailability; $B$ records
+authority-blocked atoms; and $R$ records typed refutation atoms. Ledger union
+$L\sqcup L'$ is componentwise set union.
+\end{definition}
+
+\begin{definition}[Finite obligation object]
+An obligation object is a pair
+\[
+  O=(R_O,\mathcal E_O)\in\Obligation
+\]
+where $R_O\subseteq_{\mathrm{fin}}\Atoms$ is the required support set and
+$\mathcal E_O\subseteq_{\mathrm{fin}}\mathcal P_{\mathrm{fin}}(\Atoms)$ is a
+finite set of admitted discharge alternatives. The default case is
+$\mathcal E_O=\{R_O\}$. A compression receipt, proof object, or authenticated
+root is represented by placing the receipt/proof atom in an alternative
+$E\in\mathcal E_O$.
+\end{definition}
+
 \begin{definition}[Support context]
-A support context records the purpose and local admissibility frame under which a claim is evaluated:
+A support context records the purpose and local admissibility frame under which
+a claim is evaluated. The finite context set $\mathsf{Ctx}$ contains tuples
 \[
   \ctx_{\mathrm{base}}=(P,F,\alpha,\mathrm{disclosure},\mathrm{expiry}).
 \]
@@ -366,11 +414,19 @@ Once a transport path is fixed, OG-III writes $\ctx_\gamma=(\ctx_{\mathrm{base}}
 \end{definition}
 
 \begin{definition}[Support obligation]
+The support-obligation map has type
+\[
+  \Obl:\Phi\times\mathcal P\times\mathsf{Ctx}\to\Obligation.
+\]
 For a claim $\phi$, purpose $P$, and context $\ctx$, the support obligation
 \[
   \Obl_P(\phi,\ctx)
 \]
-is the finite set or typed structure of support coordinates required to responsibly report $\phi$ for $P$ in $\ctx$. Obligations may require state, provenance, intent, authority, negative witness, frontier/freshness, verification, revelation, or admission-policy support.
+is the finite obligation object required to responsibly report $\phi$ for $P$
+in $\ctx$. Obligations may require state, provenance, intent, authority,
+negative witness, frontier/freshness, verification, revelation, or
+admission-policy support, but every such requirement is encoded as typed atoms
+and finite discharge alternatives.
 \end{definition}
 
 \begin{definition}[Status discipline]
@@ -423,15 +479,21 @@ reporter $L$ overreported, laundered, or fabricated support.
 \begin{definition}[Carried support and witness debt]
 For path $\gamma$, the path-indexed support ledger is
 \[
-  \Carry_\gamma(\phi,\ctx).
+  \Carry_\gamma(\phi,\ctx)\in\Ledg.
 \]
-It records support that arrived, verified, compressed, opened, blocked, redacted, or declared loss. The associated accounting objects are
+It records support that arrived, verified, compressed, opened, blocked,
+redacted, or declared loss. If
+$\Obl_P(\phi,\ctx)=(R_O,\mathcal E_O)$ and
+$\Carry_\gamma(\phi,\ctx)=L=(C,D,B,R)$, the associated accounting objects are
 \[
   \Unmet_\gamma^P(\phi,\ctx),\qquad
   \DeclaredLoss_\gamma^P(\phi,\ctx),\qquad
   \Debt_\gamma^P(\phi,\ctx,\Report).
 \]
-$\Unmet$ is the part of the obligation not discharged by admissible carried support. $\DeclaredLoss$ is the part explicitly downgraded as lost, stale, blocked, unavailable, redacted, or withheld. $\Debt$ is the part of the unmet obligation that the endpoint report nevertheless treats as discharged.
+Here $\Unmet$ is computed from the required atoms not discharged by
+$\Disch_{S}^{P,\ctx}(L)$; $\DeclaredLoss$ is
+$R_O\cap(D\cup B)$; and $\Debt$ is the subset of unmet atoms that the endpoint
+report nevertheless treats as discharged.
 \end{definition}
 
 Thus unmet obligation is not yet witness debt. Missing support that is explicitly declared should downgrade the claim status; debt appears when a report behaves as if missing support had been carried or discharged.
@@ -440,13 +502,39 @@ obligation when the endpoint reports it as blocked. It becomes witness debt only
 if the endpoint erases the block and reports ordinary support.
 
 \begin{definition}[Extraction from OG-I accumulation]
-OG-III does not replace OG-I's accumulation state $M_S$. Let $M_{S_1}^{\gamma}$ denote the endpoint observer's native accumulated memory after receiving object or update material along path $\gamma$. Then
+OG-III does not replace OG-I's accumulation state $M_S$. For each observer
+$S$, fix a finite memory set $\Mem_S$, a native ledger view
+\[
+  \Native_S^{P,\ctx}:\Phi\times\Mem_S\to\Ledg,
+\]
+and an extraction function
+\[
+  \Extract_S^{P,\ctx}:
+  \Phi\times\Mem_S\times(\mathsf{Cert}\cup\{\bot\})\to\Ledg.
+\]
+Let $M_{S_1}^{\gamma}$ denote the endpoint observer's native accumulated memory
+after receiving object or update material along path $\gamma$. Then
 \[
   \Carry_\gamma(\phi,\ctx)
   =
   \Extract_{S_1}^{P,\ctx}\bigl(\phi,M_{S_1}^{\gamma},\PathCert(\gamma,\phi,P,\ctx)\bigr).
 \]
-The extraction returns a claim-purpose-context support view over accumulated memory plus admissible path declarations. Without a path certificate, extraction can use only what the endpoint natively retained and locally admits; missing path support remains missing rather than inferred.
+When $\ValidCert_S(\chi,\phi,P,\ctx,M)=\mathrm{accept}$,
+\[
+  \Extract_S^{P,\ctx}(\phi,M,\chi)
+  =
+  \Native_S^{P,\ctx}(\phi,M)\sqcup \Term(\chi).
+\]
+When $\chi=\bot$ or
+$\ValidCert_S(\chi,\phi,P,\ctx,M)=\mathrm{reject}$,
+\[
+  \Extract_S^{P,\ctx}(\phi,M,\chi)
+  =
+  \Native_S^{P,\ctx}(\phi,M).
+\]
+Thus extraction is a claim-purpose-context support view over accumulated memory
+plus validated path declarations. Missing path support remains missing rather
+than inferred.
 \end{definition}
 
 \begin{figure}[ht]
@@ -457,17 +545,20 @@ The extraction returns a claim-purpose-context support view over accumulated mem
   \node[ogbox, below=of obl] (carry) {$\Carry_\gamma(\phi,\ctx)$};
   \node[ogbox, below left=1.3cm and 0.2cm of carry] (unmet) {$\Unmet_\gamma$};
   \node[ogbox, below=1.3cm of carry] (loss) {$\DeclaredLoss_\gamma$};
-  \node[ogbox, below right=1.3cm and 0.2cm of carry] (debt) {$\Debt_\gamma$};
-  \node[ogbox, below=2.7cm of carry] (status) {justified status};
+  \node[ogbox, below right=1.3cm and 0.2cm of carry] (status) {justified\\status};
+  \node[ogwarnbox, text width=2.6cm, below=1.25cm of status] (report) {emitted\\$\Report_S^P$};
+  \node[ogwarnbox, text width=2.8cm, below=1.25cm of loss] (debt) {$\Debt_\gamma^P$\\from unmet\\and report};
   \draw[ogline] (claim) -- (obl);
   \draw[ogline] (obl) -- (carry);
   \draw[ogthin] (carry) -- (unmet);
   \draw[ogthin] (carry) -- (loss);
-  \draw[ogthin] (carry) -- (debt);
+  \draw[ogline] (unmet) -- (status);
   \draw[ogline] (loss) -- (status);
-  \draw[ogline] (debt) -- (status);
+  \draw[ogthin] (status) -- (report);
+  \draw[ogline] (unmet) -- (debt);
+  \draw[ogline] (report) -- (debt);
 \end{tikzpicture}
-\caption{Support accounting pipeline. Support status is produced by obligation accounting, not by endpoint state alone.}
+\caption{Support accounting pipeline. Justified status is produced by obligation accounting, while witness debt also depends on the emitted report.}
 \label{fig:support-pipeline}
 \end{figure}
 
@@ -489,7 +580,18 @@ The extraction returns a claim-purpose-context support view over accumulated mem
 \section{Observer Paths and Support Transport}
 \label{sec:paths}
 
-Let $G_{\mathrm{obs}}=(\mathrm{Obj},\mathrm{Trans})$ be an observer transport graph. Objects are observers; directed edges are admissible translators. A path is a composite
+Let
+\[
+  G_{\mathrm{obs}}=(\mathcal S,E,\mathrm{src},\mathrm{tgt})
+\]
+be a finite observer transport graph. Vertices are observers; directed edges are
+admissible translators. Each edge $e\in E$ has a finite check relation
+\[
+  R_e\subseteq \Ledg\times\Ledg\times\mathsf{StepCert}.
+\]
+The judgement $(L,L',\delta)\in R_e$ means that step certificate $\delta$
+checks that edge $e$ transforms incoming ledger $L$ into outgoing ledger $L'$.
+A path is a composite
 \[
   \gamma=T_n\circ \cdots \circ T_1.
 \]
@@ -497,22 +599,68 @@ Let $G_{\mathrm{obs}}=(\mathrm{Obj},\mathrm{Trans})$ be an observer transport gr
 \begin{definition}[Path certificate]
 A path certificate
 \[
-  \PathCert(\gamma,\phi,P,\ctx)
+  \chi=\PathCert(\gamma,\phi,P,\ctx)
 \]
-is a checkable certificate that the path carried, compressed, transformed, verified, opened, redacted, blocked, or lost the support required by $\Obl_P(\phi,\ctx)$. It may also be implemented as a receipt, header, manifest, or proof-carrying path object in an engineered system.
+is a finite tuple
+\[
+  \chi=(\gamma,\phi,P,\ctx,L_0,\ldots,L_n,\delta_1,\ldots,\delta_n,h)
+\]
+where each $L_i\in\Ledg$, each $\delta_i\in\mathsf{StepCert}$, and $h$ is a
+terminal artifact identifier or digest recorded in endpoint memory. Its terminal
+ledger is
+\[
+  \Term(\chi)=L_n.
+\]
+The endpoint validator has type
+\[
+  \ValidCert_S:
+  \mathsf{Cert}\times\Phi\times\mathcal P\times\mathsf{Ctx}\times\Mem_S
+  \to \{\mathrm{accept},\mathrm{reject}\}.
+\]
+It accepts exactly when the certificate header matches $(\gamma,\phi,P,\ctx)$,
+each edge step satisfies $(L_{i-1},L_i,\delta_i)\in R_{T_i}$, and the terminal
+binding predicate
+\[
+  \Bind_S(M,\chi)
+\]
+holds. $\Bind_S(M,\chi)$ holds when the endpoint native memory $M$ contains the
+terminal artifact named by $h$ and that artifact decodes to $L_n$ under
+$S$'s native ledger view. A certificate may declare loss, redaction, blockage,
+or staleness; those declarations enter $D$ or $B$ and do not discharge required
+atoms.
 \end{definition}
 
 \begin{definition}[Satisfaction and admission]
-Structural support satisfaction is written
+For observer $S$, purpose $P$, and context $\ctx$, admitted discharge has type
 \[
-  \Sat(\Carry_\gamma(\phi,\ctx),\Obl_P(\phi,\ctx))
-  \in\{\mathrm{yes},\mathrm{no},\mathrm{partial},\authorityblocked\}.
+  \Disch_S^{P,\ctx}:\Ledg\to\mathcal P_{\mathrm{fin}}(\Atoms).
 \]
-Observer admission is written
+It expands the carried component $C$ of a ledger by applying only the
+compression, proof, signature, and authority rules admitted by $S$ in
+$(P,\ctx)$. Structural support satisfaction has type
 \[
-  \Admit_S(\Supp,\phi,P,\ctx).
+  \Sat_S^{P,\ctx}:\Ledg\times\Obligation
+  \to\{\mathrm{yes},\mathrm{no},\mathrm{partial},\authorityblocked\}.
 \]
-$\Sat$ checks whether the carried support structurally satisfies the obligation. $\Admit$ checks whether observer $S$ accepts that support under its purpose, policy, authority domain, and aperture.
+For $L=(C,D,B,R)$ and $O=(R_O,\mathcal E_O)$, the evaluation rule is:
+\[
+  \Sat_S^{P,\ctx}(L,O)=
+  \begin{cases}
+    \mathrm{yes}, & \exists E\in\mathcal E_O.\ E\subseteq\Disch_S^{P,\ctx}(L),\\
+    \authorityblocked, & R_O\cap B\neq\varnothing,\\
+    \mathrm{partial}, & R_O\cap(\Disch_S^{P,\ctx}(L)\cup D)\neq\varnothing,\\
+    \mathrm{no}, & \text{otherwise}.
+  \end{cases}
+\]
+Observer admission has type
+\[
+  \Admit_S:\Ledg\times\Phi\times\mathcal P\times\mathsf{Ctx}
+  \to\{\mathrm{accept},\mathrm{reject},\underdetermined,\authorityblocked\}.
+\]
+$\Admit_S$ returns $\mathrm{accept}$ only when satisfaction is $\mathrm{yes}$
+and $S$'s local policy admits the atoms used for discharge. It returns
+$\authorityblocked$ when satisfaction is authority-blocked, $\mathrm{reject}$
+when admitted typed refutation is carried, and $\underdetermined$ otherwise.
 \end{definition}
 
 \begin{lemma}[Noncommutative Support Transport]
@@ -525,8 +673,28 @@ There exist translators $T_1,T_2$, a claim $\phi$, and a context $\ctx$ such tha
 \]
 \end{lemma}
 
-\begin{proof}[Finite witness sketch]
-Let $T_1$ compress a signed history into a receipt while retaining authority metadata. Let $T_2$ redact identity metadata under a disclosure policy. Compress-then-redact and redact-then-compress need not preserve the same authorship or authority support. Thus the path order changes the carried support ledger.
+\begin{proof}
+Use the atoms and translators from \cref{app:witness-library}. Let
+\[
+  L_0=(\{s_X,\sigma_A,i_A,p_\alpha,f_F\},\varnothing,\varnothing,\varnothing).
+\]
+The compressor $T_c$ maps $L_0$ to
+$L_c=(\{s_X,r_{\mathrm{auth}}\},\varnothing,\varnothing,\varnothing)$, and the
+redactor $T_r$ preserves already-issued receipts. Hence
+\[
+  \Term(\PathCert(T_r\circ T_c,\phi_{\mathrm{auth}},P_{\mathrm{auth}},\ctx))
+  =
+  L_c.
+\]
+In the opposite order, $T_r$ removes $\sigma_A$ and $i_A$ before compression,
+so the compressor relation cannot issue $r_{\mathrm{auth}}$ and the terminal
+ledger is
+\[
+  L_r=(\{s_X,p_\alpha,f_F\},\varnothing,\varnothing,\varnothing).
+\]
+Since $r_{\mathrm{auth}}$ is in the carried component of $L_c$ and is absent
+from the carried component of $L_r$, the terminal ledgers, and therefore the
+carried support ledgers, are unequal.
 \end{proof}
 
 \section{Witness Sensitivity and Path-Dependent Support Transport}
@@ -545,8 +713,31 @@ but
 \]
 \end{theorem}
 
-\begin{proof}[Proof sketch]
-Construct two histories with the same final text. One retains signed provenance; the other retains final text only. The state claim is projection-visible in both. The authorship claim is supported only when the signature and identity binding survive.
+\begin{proof}
+Use the finite ledgers
+\[
+  L_{\mathrm{cert}}=(\{s_X,\sigma_A,i_A,p_\alpha,f_F\},\varnothing,\varnothing,\varnothing)
+\]
+and
+\[
+  L_{\mathrm{raw}}=(\{s_X\},\varnothing,\varnothing,\varnothing)
+\]
+from \cref{app:witness-library}. Let endpoint projection ignore support
+coordinates and read only document text, so both endpoint objects project to
+$X$. For the authorship claim, write
+\[
+  O_{\mathrm{auth}}
+  =
+  \Obl_{P_{\mathrm{auth}}}(\phi_{\mathrm{auth}},\ctx)
+  =
+  (\{\sigma_A,i_A,p_\alpha,f_F\},\{\{\sigma_A,i_A,p_\alpha,f_F\}\}).
+\]
+The certified ledger discharges the unique obligation alternative, so
+$\Sat_{S_1}^{P_{\mathrm{auth}},\ctx}(L_{\mathrm{cert}},O_{\mathrm{auth}})=\mathrm{yes}$.
+The raw ledger carries none of the required atoms and no refutation, so
+$\Sat_{S_1}^{P_{\mathrm{auth}},\ctx}(L_{\mathrm{raw}},O_{\mathrm{auth}})=\mathrm{no}$ and
+the status rule returns $\underdetermined$. Equal projection therefore gives
+different support status.
 \end{proof}
 
 \begin{proposition}[Mediated Support Translation]
@@ -559,9 +750,25 @@ There exist observers $S_0,M,S_1$, a claim $\phi$, and a purpose $P$ such that a
 \]
 \end{proposition}
 
+\begin{definition}[Fixed endpoint accumulation comparison]
+Two paths $\gamma_a,\gamma_b:S_0\to S_1$ are compared under fixed endpoint
+accumulation when they use the same endpoint observer $S_1$, the same initial
+memory $M_1^0\in\Mem_{S_1}$, the same accumulation function
+\[
+  \Acc_{S_1}:\Mem_{S_1}\times\Packet\to\Mem_{S_1},
+\]
+and the same native projection $\pi_{S_1}$. The endpoint may receive different
+support and certificate fields in the packets delivered by the two paths, but
+the policy that accumulates and projects those packets is held fixed. A
+stateless endpoint is the special case
+$\Acc_{S_1}(M,p)=p$.
+\end{definition}
+
 \begin{theorem}[Path-Dependent Support Transport]
 \label{thm:path-dependent-support-transport}
-There exist two observer paths with the same source, same target, and same endpoint visible state, but different justified statuses for the same claim:
+There exist two observer paths compared under fixed endpoint accumulation with
+the same source, same target, and same endpoint visible state, but different
+justified statuses for the same claim:
 \[
   \gamma_a,\gamma_b:S_0\to S_1,
   \qquad
@@ -574,13 +781,19 @@ while
 \end{theorem}
 
 \begin{proof}[Finite witness]
-Use the signed-edit witness family of \cref{app:witness-library}. The certified
-path carries the signature, identity binding, policy epoch, and freshness
-frontier required by the authorship-audit obligation. The raw path carries only
-the final text. Both paths project to the same endpoint document text, while
-the certified path satisfies the authorship obligation and the raw path leaves
-that obligation unmet. The detailed ledger check is given in
-\cref{app:proofs}.
+Use the signed-edit witness family of \cref{app:witness-library} with the
+stateless endpoint accumulator
+$\Acc_{S_1}(M,p)=p$ and projection $\pi_{S_1}(X,L,\chi)=X$. The certified
+packet is $(X,L_{\mathrm{cert}},\chi_{\mathrm{cert}})$ and the raw packet is
+$(X,L_{\mathrm{raw}},\chi_{\mathrm{raw}})$, so the endpoint accumulation
+policy and projection are identical on both paths. The projections agree
+because both packets contain text $X$. The extracted ledgers differ because
+$\ValidCert_{S_1}$ accepts a terminal ledger containing
+$\{\sigma_A,i_A,p_\alpha,f_F\}$ on $\gamma_{\mathrm{cert}}$ and accepts only
+text support on $\gamma_{\mathrm{raw}}$. The satisfaction rule returns
+$\supported$ for the certified path and $\underdetermined$ for the raw path.
+The divergence is therefore due to transported support and certificate content,
+not a change in endpoint accumulation policy.
 \end{proof}
 
 This is the paper's poster result. It turns snapshot equality into an audit question rather than a support guarantee. Snapshot-only systems are context graveyards: they preserve visible state while burying the path that made stronger claims admissible.
@@ -676,6 +889,42 @@ the authorship claim. Hence the state defect is zero and the witness defect is
 one. The coordinate calculation is given in \cref{app:proofs}.
 \end{proof}
 
+\paragraph{Concrete loop.}
+Instantiate the loop with an Ed25519 signature verifier as specified by
+RFC~8032~\cite{rfc8032}. Let $X$ be canonical document text, let $e$ be the edit
+identifier, and let $F$ be the freshness frontier. Alice signs
+\[
+  d=\mathsf{H}(X,e,F),
+  \qquad
+  \sigma_A=\mathsf{Ed25519.Sign}(sk_A,d),
+\]
+with verification key $vk_A$. The initial authorship ledger contains
+\[
+  L_0=(\{s_X,\sigma_A,i_A,p_\alpha,f_F\},\varnothing,\varnothing,\varnothing),
+\]
+where $i_A$ binds $vk_A$ to Alice, $p_\alpha$ records the admitted policy epoch,
+and $f_F$ records freshness. The four transport steps are:
+\[
+\begin{array}{rcl}
+T_1(L_0)&=&L_0,\\
+T_2(L_0)&=&(\{s_X\},\{\sigma_A,i_A,p_\alpha,f_F\},\varnothing,\varnothing),\\
+T_3(T_2(L_0))&=&T_2(L_0),\\
+T_4(T_3(T_2(L_0)))&=&T_2(L_0).
+\end{array}
+\]
+The second step first checks
+\[
+  \mathsf{Ed25519.Verify}(vk_A,d,\sigma_A)=\mathrm{accept}
+\]
+and then applies a redaction policy that retains only the text atom $s_X$ in the
+carried component $C$ and moves the removed atoms into the declared-redaction
+component $D$. Each step preserves the terminal text digest
+$\mathsf{H}(X)$, so the endpoint-visible state is again $X$. The authorship
+obligation still requires the alternative
+$\{\sigma_A,i_A,p_\alpha,f_F\}$ or an admitted compression receipt. Neither is
+present at the end of the loop. The state coordinate closes, while the
+authorship witness coordinate has a finite defect.
+
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[node distance=2.0cm]
@@ -683,12 +932,12 @@ one. The coordinate calculation is given in \cref{app:proofs}.
   \node[ogbox, right=of s] (a) {$A$};
   \node[ogbox, below=of a] (b) {$B$};
   \node[ogbox, below=of s] (c) {$C$};
-  \draw[ogline] (s) -- node[above] {$T_1$} (a);
-  \draw[ogline] (a) -- node[right] {$T_2$} (b);
-  \draw[ogline] (b) -- node[below] {$T_3$} (c);
-  \draw[ogline] (c) -- node[left] {$T_4$} (s);
+  \draw[ogline] (s) -- node[above] {$T_1$ package} (a);
+  \draw[ogline] (a) -- node[right, align=center] {$T_2$\\verify\\redact} (b);
+  \draw[ogline] (b) -- node[below] {$T_3$ normalize} (c);
+  \draw[ogline] (c) -- node[left] {$T_4$ import} (s);
 \end{tikzpicture}
-\caption{Witness holonomy loop. The state loop closes while the witness loop does not: $\Def_{\mathrm{state}}(\gamma,\phi)=0$ and $\Def_{\mathrm{witness}}(\gamma,\phi)=1$.}
+\caption{Witness holonomy loop. $T_2$ verifies the signature and records redaction of the signature, identity, policy, and freshness atoms. The state loop closes while the witness loop does not: $\Def_{\mathrm{state}}(\gamma,\phi)=0$ and $\Def_{\mathrm{witness}}(\gamma,\phi)=1$.}
 \label{fig:witness-holonomy}
 \end{figure}
 
@@ -794,9 +1043,68 @@ Purpose-indexed equivalence is written $S\simeq_P S'$ when two observers agree o
 \section{Engineering Interpretation}
 \label{sec:engineering}
 
-Systems should transport claim-support ledgers alongside state. Engineering artifacts include obligation registries, context-bound receipts, path certificates, PathCert validators, claim passports, support compression registries, witness-debt counters, freshness/frontier checks, authority-blocked status, and laundering detectors.
+The calculus suggests engineering hypotheses rather than validated deployment
+guidelines. Candidate systems could transport claim-support ledgers alongside
+state and then test whether the added support surface improves audit outcomes,
+operator diagnosis, or downstream admission decisions. Artifacts to evaluate
+include obligation registries, context-bound receipts, path certificates,
+PathCert validators, claim passports, support compression registries,
+witness-debt counters, freshness/frontier checks, authority-blocked status, and
+laundering detectors.
 
-High witness debt is audit risk: the system has reports whose visible state survived farther than their admissible support.
+Within the theoretical model, high witness debt is an audit-risk indicator: the
+system has reports whose visible state survived farther than their admissible
+support. Empirical implementation, simulation, usability study, and performance
+work remain outside this manuscript.
+
+\section{Related Work}
+\label{sec:related-work}
+
+Authorization logics and trust-management systems give formal machinery for
+deciding whether credentials, principals, delegation, and local policies justify
+access. Abadi, Burrows, Lampson, and Plotkin give a logical calculus for access
+control in distributed systems; Blaze, Feigenbaum, and Lacy identify trust
+management as the joint treatment of policies, credentials, and trust
+relationships; Appel and Felten's proof-carrying authentication makes proof
+checking the operational interface for higher-order authorization
+logic~\cite{abadi_access_control_1993,blaze_trust_management_1996,appel_pca_1999}.
+OG-III uses compatible ingredients, but its judgement target is different: it
+classifies the support status of arbitrary claims after path transport, including
+declared loss, blockage, underdetermination, and overreporting.
+
+Proof-carrying data is the nearest cryptographic neighbor. Chiesa and Tromer
+attach proofs to data flowing through a distributed computation so downstream
+components can verify compliance with a prescribed property
+\cite{chiesa_tromer_pcd_2010}. OG-III treats such proof strings as one kind of
+support atom or compression receipt. The calculus also records cases where the
+proof is valid for one purpose while admission fails for the current observer,
+purpose, or context.
+
+Authenticated data structures and transparency logs supply concrete witness
+surfaces for membership, consistency, freshness, and tamper-evidence. Tamassia's
+authenticated-data-structure model separates source, responder, proof, and
+verification; Crosby and Wallach develop efficient tamper-evident logging data
+structures; Certificate Transparency specifies Merkle inclusion and consistency
+proofs for public certificate logs
+\cite{tamassia_authenticated_data_2003,crosby_wallach_tamper_logging_2009,rfc9162}.
+OG-III abstracts these mechanisms as finite support atoms and path certificates
+instead of choosing a single authenticated-data-structure protocol.
+
+Database provenance studies where data came from and why query results hold.
+Buneman, Khanna, and Tan distinguish why- and where-provenance, and Cheney,
+Chiticariu, and Tan survey why, how, and where provenance with applications to
+debugging, annotation propagation, and confidence
+\cite{buneman_why_where_2001,cheney_provenance_databases_2009}. OG-III is
+aligned with provenance in treating support as structured evidence, while its
+main distinction is path-indexed support obligation: two endpoint-equal objects
+may carry different support for the same purpose-indexed claim.
+
+Zero-knowledge proofs give the canonical separation between verification and
+revelation. Goldwasser, Micali, and Rackoff formalize knowledge complexity and
+zero knowledge for interactive proofs~\cite{goldwasser_knowledge_complexity_1989}.
+OG-III uses that separation conservatively: a proof can expand verification
+aperture while leaving payload revelation closed, and cryptographic verification
+still remains distinct from observer admission.
 
 \section{Bridge to OG-IV}
 \label{sec:ogiv}
@@ -855,7 +1163,9 @@ For the state-reading claim
 \]
 set
 \[
-  \Obl_{P_{\mathrm{read}}}(\phi_{\mathrm{text}},\ctx)=\{s_X\}.
+  \Obl_{P_{\mathrm{read}}}(\phi_{\mathrm{text}},\ctx)
+  =
+  (\{s_X\},\{\{s_X\}\}).
 \]
 For the authorship-audit claim
 \[
@@ -865,7 +1175,8 @@ set
 \[
   \Obl_{P_{\mathrm{auth}}}(\phi_{\mathrm{auth}},\ctx)
   =
-  \{\sigma_A,i_A,p_\alpha,f_F\}.
+  (\{\sigma_A,i_A,p_\alpha,f_F\},
+   \{\{\sigma_A,i_A,p_\alpha,f_F\},\{r_{\mathrm{auth}}\}\}).
 \]
 The receipt $r_{\mathrm{auth}}$ is admitted as a compression of this obligation
 only when the endpoint has a registry entry
@@ -881,18 +1192,27 @@ Let the endpoint projection be document text:
 \]
 The certified and raw endpoint objects are
 \[
-  x_{\mathrm{cert}}=(X,\{s_X,\sigma_A,i_A,p_\alpha,f_F\}),
+  x_{\mathrm{cert}}=(X,L_{\mathrm{cert}}),
   \qquad
-  x_{\mathrm{raw}}=(X,\{s_X\}).
+  x_{\mathrm{raw}}=(X,L_{\mathrm{raw}}),
+\]
+where
+\[
+  L_{\mathrm{cert}}=(\{s_X,\sigma_A,i_A,p_\alpha,f_F\},\varnothing,\varnothing,\varnothing),
+  \qquad
+  L_{\mathrm{raw}}=(\{s_X\},\varnothing,\varnothing,\varnothing).
 \]
 They have equal endpoint projection and different authorship support.
 
 \paragraph{A.2 Satisfaction and status rule for the finite witnesses.}
-For these examples, $\Sat(C,O)=\mathrm{yes}$ exactly when $O\subseteq C$ or
-when $C$ contains an admitted compression receipt for $O$. If $C$ carries some
-support relevant to $O$ without discharging all required atoms,
-$\Sat(C,O)=\mathrm{partial}$. If $C$ carries no required atom and no admitted
-compression receipt, $\Sat(C,O)=\mathrm{no}$.
+For these examples, $\Disch_{S_1}^{P,\ctx}(L)$ is the carried component of $L$
+plus any atoms obtained from an admitted compression registry. Thus
+$r_{\mathrm{auth}}$ discharges the authorship obligation exactly when
+$\kappa_{P_{\mathrm{auth}},\ctx}(r_{\mathrm{auth}})$ is admitted. The
+satisfaction function is the one in \cref{sec:paths}: it returns $\mathrm{yes}$
+when an obligation alternative is included in $\Disch$, $\mathrm{partial}$ when
+some required or declared-loss atom is present without full discharge, and
+$\mathrm{no}$ when no obligation component is present.
 
 The endpoint status rule is finite:
 \[
@@ -913,21 +1233,22 @@ The support-reporting preorder used in \cref{sec:soundness} satisfies
 \paragraph{A.3 Two paths with the same source and target.}
 Let the source object at $S_0$ be
 \[
-  x_0=(X,\{s_X,\sigma_A,i_A,p_\alpha,f_F\}).
+  x_0=(X,L_{\mathrm{cert}}).
 \]
 Define two paths $\gamma_{\mathrm{cert}},\gamma_{\mathrm{raw}}:S_0\to S_1$ by
 \[
   \Carry_{\gamma_{\mathrm{cert}}}(\phi_{\mathrm{auth}},\ctx)
   =
-  \{s_X,\sigma_A,i_A,p_\alpha,f_F\},
+  L_{\mathrm{cert}},
 \]
 and
 \[
   \Carry_{\gamma_{\mathrm{raw}}}(\phi_{\mathrm{auth}},\ctx)
   =
-  \{s_X\}.
+  L_{\mathrm{raw}}.
 \]
-Both paths deliver document text $X$ to $S_1$, so
+Both paths use the same stateless endpoint accumulator
+$\Acc_{S_1}(M,p)=p$ and deliver document text $X$ to $S_1$, so
 \[
   \pi_{S_1}(\gamma_{\mathrm{cert}}(x_0))
   =
@@ -939,10 +1260,10 @@ Both paths deliver document text $X$ to $S_1$, so
 \paragraph{A.4 Mediated support translation.}
 Let $M$ be a mediator with aperture large enough to inspect
 $\{\sigma_A,i_A,p_\alpha,f_F\}$ and issue $r_{\mathrm{auth}}$. The direct path
-$S_0\to S_1$ carries $\{s_X\}$ for the authorship claim. The mediated path
+$S_0\to S_1$ carries $L_{\mathrm{raw}}$ for the authorship claim. The mediated path
 $S_0\to M\to S_1$ carries
 \[
-  \{s_X,r_{\mathrm{auth}}\}.
+  L_{\mathrm{med}}=(\{s_X,r_{\mathrm{auth}}\},\varnothing,\varnothing,\varnothing).
 \]
 If $S_1$ admits the compression registry entry for $r_{\mathrm{auth}}$, the
 mediated path discharges the authorship obligation while the direct path does
@@ -951,30 +1272,30 @@ not.
 \paragraph{A.5 Noncommutative translators.}
 Let $T_c$ be a compressor that maps
 \[
-  \{s_X,\sigma_A,i_A,p_\alpha,f_F\}
+  L_{\mathrm{cert}}
   \mapsto
-  \{s_X,r_{\mathrm{auth}}\},
+  L_c=(\{s_X,r_{\mathrm{auth}}\},\varnothing,\varnothing,\varnothing),
 \]
 and let $T_r$ be a redactor that removes identity and signature atoms from raw
 support:
 \[
-  T_r(\{s_X,\sigma_A,i_A,p_\alpha,f_F\})=\{s_X,p_\alpha,f_F\}.
+  T_r(L_{\mathrm{cert}})=(\{s_X,p_\alpha,f_F\},\varnothing,\varnothing,\varnothing).
 \]
 Assume $T_r$ preserves already-issued receipts:
 \[
-  T_r(\{s_X,r_{\mathrm{auth}}\})=\{s_X,r_{\mathrm{auth}}\}.
+  T_r(L_c)=L_c.
 \]
 Then
 \[
   \Carry_{T_r\circ T_c}(\phi_{\mathrm{auth}},\ctx)
   =
-  \{s_X,r_{\mathrm{auth}}\},
+  L_c,
 \]
 while
 \[
   \Carry_{T_c\circ T_r}(\phi_{\mathrm{auth}},\ctx)
   =
-  \{s_X,p_\alpha,f_F\},
+  (\{s_X,p_\alpha,f_F\},\varnothing,\varnothing,\varnothing),
 \]
 because $T_c$ cannot issue the authorship receipt after the signature and
 identity atoms have been removed.
@@ -1007,18 +1328,24 @@ Use four observers $S,A,B,C$ and the closed path
 \[
   \gamma_{\circlearrowleft}=T_4\circ T_3\circ T_2\circ T_1:S\to S.
 \]
-Let each translator preserve $s_X$. Let $T_2$ replace the full authorship
-support with a text-only summary:
+Use the concrete signature instance from \cref{sec:holonomy}: $X$ is the
+canonical text, $d=\mathsf{H}(X,e,F)$, and
+$\mathsf{Ed25519.Verify}(vk_A,d,\sigma_A)=\mathrm{accept}$. Let each translator
+preserve $s_X$ and the terminal text digest. Let $T_2$ verify the signature and
+then replace the full authorship support with a text-only ledger plus declared
+redaction:
 \[
-  T_2(\{s_X,\sigma_A,i_A,p_\alpha,f_F\})=\{s_X\}.
+  T_2(L_0)=
+  (\{s_X\},
+   \{\sigma_A,i_A,p_\alpha,f_F\},
+   \varnothing,\varnothing).
 \]
-Let $T_3$ and $T_4$ preserve this text-only support. Then the path closes on
-the visible state coordinate and fails to close on the authorship witness
-coordinate.
+Let $T_3$ and $T_4$ preserve this ledger. Then the path closes on the visible
+state coordinate and fails to close on the authorship witness coordinate.
 
 \paragraph{A.8 Witness-debt path.}
 Use the raw path $\gamma_{\mathrm{raw}}$ and the authorship claim. The carried
-support is $\{s_X\}$ and the obligation is
+support is $L_{\mathrm{raw}}$ and the required obligation atoms are
 $\{\sigma_A,i_A,p_\alpha,f_F\}$. If the endpoint report is
 \[
   \Report_{S_1}^{P_{\mathrm{auth}}}(\phi_{\mathrm{auth}},\ctx)=\supported,
@@ -1051,7 +1378,76 @@ the endpoint state.
 \section{Glossary and Notation Concordance}
 \label{app:glossary}
 
-This appendix will collect OG-I imported terms, OG-II imported terms, OG-III new terms, the symbol table, statuses and modifiers, support atoms and caveats, and claim families with typical obligations.
+This appendix fixes the notation used by the calculus.
+
+\paragraph{Finite domains.}
+\begin{description}[leftmargin=*,style=nextline]
+  \item[$\Phi$] finite set of claims.
+  \item[$\mathcal P$] finite set of purposes or claim families.
+  \item[$\mathsf{Ctx}$] finite set of support contexts. A base context has form
+        $(P,F,\alpha,\mathrm{disclosure},\mathrm{expiry})$. A path-extended
+        context has form $(\ctx_{\mathrm{base}},\gamma)$.
+  \item[$\mathcal S$] finite set of observers.
+  \item[$\mathcal K$] finite set of support kinds, such as state, provenance,
+        authority, freshness, negative witness, proof, commitment, receipt,
+        declared loss, blockage, and typed refutation.
+  \item[$\Atoms$] finite typed support-atom universe
+        $\coprod_{k\in\mathcal K}\{k\}\times A_k$.
+  \item[$\Ledg$] finite support ledgers
+        $(C,D,B,R)$ with each component a finite subset of $\Atoms$.
+  \item[$\Mem_S$] finite native memory states for observer $S$.
+  \item[$\Packet$] finite transported packets received by an endpoint
+        accumulator.
+\end{description}
+
+\paragraph{Ledger components.}
+For $L=(C,D,B,R)$, $C$ is carried, opened, verified, or admitted support; $D$
+is declared loss, redaction, staleness, or unavailability; $B$ is authority
+blockage; and $R$ is typed refutation. Componentwise ledger union is written
+$L\sqcup L'$.
+
+\paragraph{Operational maps.}
+The main operations have the following types:
+\[
+\begin{aligned}
+  \Obl &: \Phi\times\mathcal P\times\mathsf{Ctx}\to\Obligation,\\
+  \Native_S^{P,\ctx} &: \Phi\times\Mem_S\to\Ledg,\\
+  \Extract_S^{P,\ctx} &: \Phi\times\Mem_S\times(\mathsf{Cert}\cup\{\bot\})\to\Ledg,\\
+  \ValidCert_S &: \mathsf{Cert}\times\Phi\times\mathcal P\times\mathsf{Ctx}\times\Mem_S
+    \to\{\mathrm{accept},\mathrm{reject}\},\\
+  \Disch_S^{P,\ctx} &: \Ledg\to\mathcal P_{\mathrm{fin}}(\Atoms),\\
+  \Sat_S^{P,\ctx} &: \Ledg\times\Obligation
+    \to\{\mathrm{yes},\mathrm{no},\mathrm{partial},\authorityblocked\},\\
+  \Admit_S &: \Ledg\times\Phi\times\mathcal P\times\mathsf{Ctx}
+    \to\{\mathrm{accept},\mathrm{reject},\underdetermined,\authorityblocked\},\\
+  \Acc_S &: \Mem_S\times\Packet\to\Mem_S.
+\end{aligned}
+\]
+
+\paragraph{Path certificate syntax.}
+A certificate for a path $\gamma=T_n\circ\cdots\circ T_1$ has the form
+\[
+  \chi=(\gamma,\phi,P,\ctx,L_0,\ldots,L_n,\delta_1,\ldots,\delta_n,h).
+\]
+The field $h$ binds the terminal ledger to an endpoint artifact in native
+memory. Validation checks the header, each finite step relation
+$(L_{i-1},L_i,\delta_i)\in R_{T_i}$, and the binding predicate
+$\Bind_S(M,\chi)$. The terminal support view imported by extraction is
+$\Term(\chi)=L_n$.
+
+\paragraph{Imported terms.}
+Projection, basis, accumulation, aperture, degeneracy, insufficiency, bias gap,
+and observer signature keep their OG-I meanings. Replica observer, witnessed
+update, frontier, policy-closed site, suffix transport, and state convergence
+keep their OG-II meanings. OG-III uses those terms only as interfaces for the
+finite support-ledger maps above.
+
+\paragraph{Status tags.}
+The base status tags are $\supported$, $\underdetermined$,
+$\unverifiable$, $\authorityblocked$, and typed refutation. Modifiers include
+$\stale$, fresh-at-frontier, redacted, compressed, proof-valid, context-mismatch,
+and declared loss. They are finite tags interpreted by a local report-strength
+preorder $\leq_P$.
 
 \section{Diagrammatic Summary}
 \label{app:diagrams}
@@ -1072,20 +1468,22 @@ Use $x_{\mathrm{cert}}$ and $x_{\mathrm{raw}}$ from A.1. Since
   \pi_{S_1}(x_{\mathrm{cert}})=X=\pi_{S_1}(x_{\mathrm{raw}}),
 \]
 the endpoint projection agrees. For the authorship claim, the certified support
-bundle contains every atom in
+ledger discharges an obligation alternative:
 \[
   \Obl_{P_{\mathrm{auth}}}(\phi_{\mathrm{auth}},\ctx)
   =
-  \{\sigma_A,i_A,p_\alpha,f_F\}.
+  (\{\sigma_A,i_A,p_\alpha,f_F\},
+   \{\{\sigma_A,i_A,p_\alpha,f_F\},\{r_{\mathrm{auth}}\}\}).
 \]
-Thus $\Sat=\mathrm{yes}$ and the status is $\supported$. The raw support bundle
-is $\{s_X\}$, which contains no authorship-obligation atom and no admitted
-compression receipt. Thus $\Sat=\mathrm{no}$. With no carried refutation, the
-status is $\underdetermined$. Equal projection therefore fails to determine
-equal support status.
+Thus $\Sat_{S_1}^{P_{\mathrm{auth}},\ctx}=\mathrm{yes}$ and the status is
+$\supported$. The raw ledger is $L_{\mathrm{raw}}$, whose carried component is
+$\{s_X\}$; it contains no authorship-obligation atom and no admitted
+compression receipt. Thus $\Sat_{S_1}^{P_{\mathrm{auth}},\ctx}=\mathrm{no}$.
+With no carried refutation, the status is $\underdetermined$. Equal projection
+therefore fails to determine equal support status.
 
 \paragraph{D.2 Mediated Support Translation (\cref{prop:mediated-support-translation}).}
-Use A.4. On the direct path, the endpoint carries $\{s_X\}$ for
+Use A.4. On the direct path, the endpoint carries $L_{\mathrm{raw}}$ for
 $\phi_{\mathrm{auth}}$, so the authorship obligation is unmet and the status is
 $\underdetermined$. On the mediated path, $M$ observes the full support bundle
 and emits $r_{\mathrm{auth}}$. The endpoint admits $r_{\mathrm{auth}}$ through
@@ -1096,20 +1494,21 @@ an underdetermined direct status and a supported mediated status.
 \paragraph{D.3 Noncommutative Support Transport (\cref{lem:noncommutative-support-transport}).}
 Use $T_c$ and $T_r$ from A.5. The composite $T_r\circ T_c$ first compresses the
 full authorship support into $r_{\mathrm{auth}}$ and then preserves the receipt.
-Its carried ledger is $\{s_X,r_{\mathrm{auth}}\}$. The composite $T_c\circ T_r$
+Its carried ledger is $L_c$. The composite $T_c\circ T_r$
 first removes the signature and identity atoms. Since the compressor's premise
 is no longer satisfied, it cannot issue the authorship receipt. Its carried
-ledger is $\{s_X,p_\alpha,f_F\}$. The ledgers differ as finite sets, so support
-transport is order-sensitive.
+ledger is $(\{s_X,p_\alpha,f_F\},\varnothing,\varnothing,\varnothing)$. The
+ledgers differ as finite tuples, so support transport is order-sensitive.
 
 \paragraph{D.4 Path-Dependent Support Transport (\cref{thm:path-dependent-support-transport}).}
 Use $\gamma_{\mathrm{cert}}$ and $\gamma_{\mathrm{raw}}$ from A.3. Both paths
-have source $S_0$, target $S_1$, and endpoint text $X$. Therefore the endpoint
-visible-state equality required by the theorem holds. The certified path
-carries the complete authorship obligation and is supported. The raw path
-carries endpoint text only and is underdetermined for the authorship claim.
-Hence the paths agree on endpoint visible state and disagree on justified
-claim-status.
+have source $S_0$, target $S_1$, endpoint text $X$, and the same stateless
+endpoint accumulator $\Acc_{S_1}(M,p)=p$. Therefore the endpoint visible-state
+equality required by the theorem holds under fixed endpoint accumulation. The
+certified path carries the complete authorship obligation and is supported. The
+raw path carries endpoint text only and is underdetermined for the authorship
+claim. Hence the paths agree on endpoint visible state and disagree on
+justified claim-status.
 
 \paragraph{D.5 Verification/Revelation Separation (\cref{prop:verification-revelation-separation}).}
 Use the sealed-predicate object from A.6 with no payload opening. The verifier
@@ -1140,17 +1539,21 @@ the loop the state coordinate remains $X$ and
   \Def_{\mathrm{state}}(\gamma_{\circlearrowleft},\phi_{\mathrm{auth}})=0.
 \]
 The authorship witness coordinate starts with
-$\{\sigma_A,i_A,p_\alpha,f_F\}$ and returns as the empty authorship component
-because $T_2$ replaced it with text-only support. Since the missing component
-is exactly the finite obligation for $\phi_{\mathrm{auth}}$,
+$\{\sigma_A,i_A,p_\alpha,f_F\}$. Step $T_2$ verifies the Ed25519 signature and
+moves the signature, identity, policy, and freshness atoms into the
+declared-redaction component. The terminal discharged set contains $s_X$ and no admitted
+authorship receipt. Since the missing discharged component is exactly the finite
+obligation for $\phi_{\mathrm{auth}}$,
 \[
   \Def_{\mathrm{witness}}(\gamma_{\circlearrowleft},\phi_{\mathrm{auth}})=1.
 \]
-The loop is closed at the observer endpoint and open in the support coordinate.
+The loop is closed at the observer endpoint and open in the support coordinate;
+the redaction declaration explains the downgrade but does not discharge the
+authorship obligation.
 
 \paragraph{D.8 Support-Soundness Failure / Witness Debt (\cref{thm:support-soundness-failure}).}
-Use A.8. The raw path carries $\{s_X\}$ and the authorship obligation is
-$\{\sigma_A,i_A,p_\alpha,f_F\}$. Therefore
+Use A.8. The raw path carries $L_{\mathrm{raw}}$ and the authorship obligation
+requires $\{\sigma_A,i_A,p_\alpha,f_F\}$. Therefore
 \[
   \Sat(\Carry_{\gamma_{\mathrm{raw}}}(\phi_{\mathrm{auth}},\ctx),
        \Obl_{P_{\mathrm{auth}}}(\phi_{\mathrm{auth}},\ctx))
