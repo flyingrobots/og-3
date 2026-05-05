@@ -1,0 +1,21 @@
+{
+  "title": "Observer Geometry III: Path Geometry and Support Obligations",
+  "creators": [
+    {
+      "name": "Ross, James",
+      "orcid": "0009-0006-0025-7801"
+    }
+  ],
+  "description": "Draft scaffold for Observer Geometry III, studying path-sensitive support obligations, proof-carrying paths, witness holonomy, and observer-relative claim status.",
+  "license": "cc-by-4.0",
+  "version": "0.1.0-draft",
+  "keywords": [
+    "observer geometry",
+    "support obligations",
+    "proof-carrying paths",
+    "witness holonomy",
+    "observer-relative truth",
+    "distributed systems",
+    "cryptographic witnesses"
+  ]
+}
