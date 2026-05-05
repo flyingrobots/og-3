@@ -20,7 +20,8 @@ Inductive atom : Set :=
 | SigmaK
 | IK
 | AAlphaK
-| RefNonMember.
+| RefNonMember
+| NonMemberK.
 
 Definition atom_eq_dec : forall x y : atom, {x = y} + {x <> y}.
 Proof.
@@ -53,11 +54,21 @@ Inductive sat : Set :=
 
 Inductive status : Set :=
 | Supported
+| Refuted
 | Underdetermined
-| AuthorityBlocked.
+| AuthorityBlocked
+| Unverifiable.
+
+Definition auth_atoms : list atom := [SigmaA; IA; PAlpha; FF].
+
+Definition discharge_closure (L : ledger) : list atom :=
+  carried L ++
+  if mem_atom RAuth (carried L)
+  then auth_atoms
+  else [].
 
 Definition discharged (L : ledger) (a : atom) : bool :=
-  mem_atom a (carried L).
+  mem_atom a (discharge_closure L).
 
 Definition all_discharged (L : ledger) (xs : list atom) : bool :=
   forallb (fun a => discharged L a) xs.
@@ -71,6 +82,17 @@ Definition blocked_required (L : ledger) (O : obligation) : bool :=
 Definition partial_required (L : ledger) (O : obligation) : bool :=
   existsb (fun a => discharged L a || mem_atom a (declared L)) (required O).
 
+Definition refutes_atom (r a : atom) : bool :=
+  match r, a with
+  | RefNonMember, AAlphaK => true
+  | _, _ => false
+  end.
+
+Definition has_refutation (L : ledger) (O : obligation) : bool :=
+  existsb
+    (fun r => existsb (fun a => refutes_atom r a) (required O))
+    (refuted L).
+
 Definition satisfy (L : ledger) (O : obligation) : sat :=
   if some_alternative_discharged L O then Yes
   else if blocked_required L O then AuthorityBlockedSat
@@ -78,12 +100,13 @@ Definition satisfy (L : ledger) (O : obligation) : sat :=
   else No.
 
 Definition admit (L : ledger) (O : obligation) : status :=
-  match satisfy L O with
-  | Yes => Supported
-  | AuthorityBlockedSat => AuthorityBlocked
-  | Partial => Underdetermined
-  | No => Underdetermined
-  end.
+  if has_refutation L O then Refuted
+  else match satisfy L O with
+       | Yes => Supported
+       | AuthorityBlockedSat => AuthorityBlocked
+       | Partial => Underdetermined
+       | No => Underdetermined
+       end.
 
 Definition unmet (L : ledger) (O : obligation) : list atom :=
   filter (fun a => negb (discharged L a)) (required O).
@@ -91,18 +114,19 @@ Definition unmet (L : ledger) (O : obligation) : list atom :=
 Definition debt (L : ledger) (O : obligation) (reported : status) : list atom :=
   match reported with
   | Supported => unmet L O
+  | Refuted => []
   | Underdetermined => []
   | AuthorityBlocked => []
+  | Unverifiable => []
   end.
 
 Definition overreport (reported justified : status) : bool :=
   match justified, reported with
   | Underdetermined, Supported => true
   | AuthorityBlocked, Supported => true
+  | Unverifiable, Supported => true
   | _, _ => false
   end.
-
-Definition auth_atoms : list atom := [SigmaA; IA; PAlpha; FF].
 
 Definition O_auth : obligation :=
   Obligation
@@ -147,7 +171,8 @@ Qed.
 
 Example og3_mediated_translation :
   admit L_raw O_auth = Underdetermined /\
-  admit L_mediated O_auth = Supported.
+  admit L_mediated O_auth = Supported /\
+  debt L_mediated O_auth Supported = [].
 Proof.
   repeat split; reflexivity.
 Qed.
@@ -281,11 +306,39 @@ Qed.
 Definition O_state : obligation :=
   Obligation [SX] [[SX]].
 
+Definition O_absence : obligation :=
+  Obligation [FF; NonMemberK] [[FF; NonMemberK]].
+
+Definition L_log_absence : ledger :=
+  Ledger [SX; FF; NonMemberK] [] [] [].
+
+Definition L_state_absence : ledger :=
+  Ledger [SX] [] [] [].
+
+Example og3_negative_witness_fragility :
+  admit L_log_absence O_state = Supported /\
+  admit L_state_absence O_state = Supported /\
+  admit L_log_absence O_absence = Supported /\
+  admit L_state_absence O_absence = Underdetermined.
+Proof.
+  repeat split; reflexivity.
+Qed.
+
+Example og3_purpose_equivalence :
+  admit L_cert O_state = Supported /\
+  admit L_raw O_state = Supported /\
+  admit L_cert O_auth = Supported /\
+  admit L_raw O_auth = Underdetermined.
+Proof.
+  repeat split; reflexivity.
+Qed.
+
 Definition L_refuted_authority : ledger :=
   Ledger [SX; SigmaK] [] [] [RefNonMember].
 
 Example og3_typed_false_report :
   admit L_refuted_authority O_state = Supported /\
+  admit L_refuted_authority O_authority = Refuted /\
   mem_atom RefNonMember (refuted L_refuted_authority) = true.
 Proof.
   repeat split; reflexivity.

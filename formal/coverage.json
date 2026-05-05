@@ -29,7 +29,7 @@
   {
     "id": "og3.path_dependent_support_transport",
     "paper_label": "thm:path-dependent-support-transport",
-    "paper_ref": "Theorem 5.3",
+    "paper_ref": "Theorem 5.4",
     "coq_object": "og3_path_transport",
     "kind": "finite_witness",
     "status": "mechanized",
@@ -81,6 +81,15 @@
     "scope": "closed state loop with witness defect"
   },
   {
+    "id": "og3.negative_witness_fragility",
+    "paper_label": "prop:negative-witness-fragility",
+    "paper_ref": "Proposition 7.3",
+    "coq_object": "og3_negative_witness_fragility",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "positive state agreement, absent negative witness"
+  },
+  {
     "id": "og3.support_soundness_failure",
     "paper_label": "thm:support-soundness-failure",
     "paper_ref": "Theorem 8.2",
@@ -97,5 +106,14 @@
     "kind": "finite_witness",
     "status": "mechanized",
     "scope": "state support separated from authority refutation"
+  },
+  {
+    "id": "og3.purpose_indexed_equivalence",
+    "paper_label": "prop:purpose-indexed-equivalence",
+    "paper_ref": "Proposition 9.1",
+    "coq_object": "og3_purpose_equivalence",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "state equivalence without authorship equivalence"
   }
 ]

@@ -19,7 +19,7 @@ Geometry paper template.
 
 - `observer_geometry_3.tex`: main manuscript source
 - `observer_geometry_3.refs.bib`: bibliography database
-- `formal/coq/OG3.v`: compact Coq/Rocq check of the finite witness calculus
+- `formal/coq/OG3.v`: compact Coq/Rocq finite reference model for the witness calculations
 - `formal/coverage.json`: paper-to-Coq finite witness coverage map
 - `.zenodo.json`: draft Zenodo deposition metadata
 - `CITATION.cff`: draft citation metadata
@@ -53,9 +53,11 @@ make formal-sync
 ```
 
 `make verify` checks the finite support-ledger witness calculations and the
-paper-to-Coq coverage table. `make formal-sync` regenerates the coverage table,
-checks the Coq file, and verifies that the generated table is current. These
-targets do not verify real cryptographic implementations.
+paper-to-Coq coverage artifact. `make formal-sync` regenerates the coverage
+artifact, checks the Coq file, and verifies that the generated artifact is
+current. These targets check a simplified finite reference model; they do not
+verify path-certificate validation, extraction from native observer memory, full
+policy admission, or real cryptographic implementations.
 
 ## License
 
