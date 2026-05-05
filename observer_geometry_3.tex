@@ -315,8 +315,9 @@ cryptographic witness surfaces and the verification/admission split.
 Section~\ref{sec:holonomy} develops witness holonomy, freshness, and negative
 witnesses. Section~\ref{sec:soundness} defines support soundness, overreporting,
 hallucination as supported-claim overreport, witness debt, and typed false
-reports. Sections~\ref{sec:robustness}--\ref{sec:related-work} record
-purpose-indexed equivalence, engineering implications, and related work.
+reports. Sections~\ref{sec:robustness}--\ref{sec:availability} record
+purpose-indexed equivalence, engineering implications, and the data/code
+availability statement. Section~\ref{sec:related-work} situates the framework.
 Section~\ref{sec:ogiv} gives the bridge to OG-IV.
 
 \paragraph{Imported interfaces.}
@@ -1112,6 +1113,25 @@ Within the theoretical model, high witness debt is an audit-risk indicator: the
 system has reports whose visible state survived farther than their admissible
 support. Empirical implementation, simulation, usability study, and performance
 work remain outside this manuscript.
+
+\section{Data and Code Availability}
+\label{sec:availability}
+
+No empirical datasets are used in this manuscript. The finite models are the
+ledger tuples, obligation objects, path certificates, cryptographic witness
+surfaces, and transition tables written explicitly in \cref{app:witness-library}
+and checked in \cref{app:proofs}. They were evaluated analytically by finite
+case inspection and algebraic calculation against the definitions in
+\cref{sec:claims-obligations,sec:paths}. They were not verified with a model
+checker, theorem prover, executable reference semantics, or separate reference
+script.
+
+The repository's build tooling renders the manuscript to PDF and plain text; it
+does not constitute an independent verifier for the separation theorems. The
+engineering schemas in \cref{app:engineering-artifacts} are reproducibility
+profiles for future implementations of claim passports, PathCert validators,
+obligation registries, support-ledger validators, status reports, and
+witness-debt counters.
 
 \section{Related Work}
 \label{sec:related-work}
