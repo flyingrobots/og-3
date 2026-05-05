@@ -16,11 +16,15 @@ LATEX := pdflatex
 BIBER := biber
 PANDOC := pandoc
 COQC := coqc
+PYTHON := python3
 PANDOC_FLAGS := --quiet --wrap=none -f latex -t plain
 LATEX_FLAGS := -interaction=nonstopmode -file-line-error -output-directory=$(BUILD_DIR)
 COQ_SOURCES := formal/coq/OG3.v
+COVERAGE_MANIFEST := formal/coverage.json
+COVERAGE_CHECKER := formal/check_coverage.py
+COVERAGE_TABLE := formal/generated/coverage_table.tex
 
-.PHONY: all pdf txt verify clean
+.PHONY: all pdf txt verify coq-check formal-check formal-sync clean
 
 all: pdf
 
@@ -28,18 +32,33 @@ pdf: $(DIST_PDF)
 
 txt: $(TXT_OUTPUT)
 
-verify:
+verify: coq-check formal-check
+
+coq-check:
 	@command -v $(COQC) >/dev/null 2>&1 || { echo "Error: $(COQC) is required for 'make verify'."; exit 1; }
 	$(COQC) $(COQ_SOURCES)
 
-$(DIST_PDF): $(TEX_SOURCE) $(BIB_SOURCE) | $(BUILD_DIR) $(DIST_DIR)
+formal-check:
+	@command -v $(PYTHON) >/dev/null 2>&1 || { echo "Error: $(PYTHON) is required for 'make formal-check'."; exit 1; }
+	$(PYTHON) $(COVERAGE_CHECKER) --check
+
+formal-sync:
+	@command -v $(PYTHON) >/dev/null 2>&1 || { echo "Error: $(PYTHON) is required for 'make formal-sync'."; exit 1; }
+	$(PYTHON) $(COVERAGE_CHECKER) --write
+	$(MAKE) coq-check
+	$(PYTHON) $(COVERAGE_CHECKER) --check
+
+$(COVERAGE_TABLE): $(COVERAGE_MANIFEST) $(COVERAGE_CHECKER) $(COQ_SOURCES) $(TEX_SOURCE)
+	$(PYTHON) $(COVERAGE_CHECKER) --write
+
+$(DIST_PDF): $(TEX_SOURCE) $(BIB_SOURCE) $(COVERAGE_TABLE) | $(BUILD_DIR) $(DIST_DIR)
 	$(LATEX) $(LATEX_FLAGS) $(TEX_SOURCE)
 	$(BIBER) --input-directory $(BUILD_DIR) --output-directory $(BUILD_DIR) $(TEX_MAIN)
 	$(LATEX) $(LATEX_FLAGS) $(TEX_SOURCE)
 	$(LATEX) $(LATEX_FLAGS) $(TEX_SOURCE)
 	cp -f $(BUILD_PDF) $(DIST_PDF)
 
-$(TXT_OUTPUT): $(TEX_SOURCE) | $(BUILD_DIR) $(DIST_DIR)
+$(TXT_OUTPUT): $(TEX_SOURCE) $(COVERAGE_TABLE) | $(BUILD_DIR) $(DIST_DIR)
 	@command -v $(PANDOC) >/dev/null 2>&1 || { echo "Error: $(PANDOC) is required for 'make txt'."; exit 1; }
 	awk 'BEGIN { infig=0; idx=0; cap="" } \
 		{ \

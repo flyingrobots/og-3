@@ -11,6 +11,7 @@ The file `OG3.v` mechanizes:
 - satisfaction and admission
 - unmet-support and witness-debt calculation
 - executable finite witnesses for the manuscript's main separation examples
+- paper-to-Coq coverage through `formal/coverage.json`
 
 Cryptographic primitives are modeled abstractly as finite verifier facts. The
 formalization does not implement or verify Ed25519, zero-knowledge proof
@@ -21,7 +22,10 @@ Run:
 
 ```bash
 make verify
+make formal-sync
 ```
 
-`make verify` requires `coqc` on `PATH`. Homebrew provides Coq/Rocq through the
-`rocq` formula.
+`make verify` requires `coqc` and `python3` on `PATH`. Homebrew provides
+Coq/Rocq through the `rocq` formula. `make formal-sync` regenerates the LaTeX
+coverage table from `formal/coverage.json` and checks that each listed paper
+label and Coq object exists.

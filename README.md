@@ -20,6 +20,7 @@ Geometry paper template.
 - `observer_geometry_3.tex`: main manuscript source
 - `observer_geometry_3.refs.bib`: bibliography database
 - `formal/coq/OG3.v`: compact Coq/Rocq check of the finite witness calculus
+- `formal/coverage.json`: paper-to-Coq finite witness coverage map
 - `.zenodo.json`: draft Zenodo deposition metadata
 - `CITATION.cff`: draft citation metadata
 - `source/OG-III-paper-outline.md`: working outline snapshot
@@ -33,7 +34,8 @@ Geometry paper template.
 - `pdflatex`
 - `biber`
 - `pandoc` (only required for `make txt`)
-- `coqc` (only required for `make verify`; provided by the Homebrew `rocq`
+- `python3` (required for `make verify` and coverage-table generation)
+- `coqc` (required for `make verify`; provided by the Homebrew `rocq`
   formula)
 
 ### Commands
@@ -46,8 +48,14 @@ make pdf txt
 make verify
 ```
 
-`make verify` checks the finite support-ledger witness calculations used by the
-manuscript. It does not verify real cryptographic implementations.
+```bash
+make formal-sync
+```
+
+`make verify` checks the finite support-ledger witness calculations and the
+paper-to-Coq coverage table. `make formal-sync` regenerates the coverage table,
+checks the Coq file, and verifies that the generated table is current. These
+targets do not verify real cryptographic implementations.
 
 ## License
 

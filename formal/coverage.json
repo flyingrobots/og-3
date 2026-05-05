@@ -1,0 +1,101 @@
+[
+  {
+    "id": "og3.noncommutative_support_transport",
+    "paper_label": "lem:noncommutative-support-transport",
+    "paper_ref": "Lemma 4.3",
+    "coq_object": "og3_noncomm_transport",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "order-sensitive support translators"
+  },
+  {
+    "id": "og3.witness_sensitivity",
+    "paper_label": "thm:witness-sensitivity",
+    "paper_ref": "Theorem 5.1",
+    "coq_object": "og3_witness_sensitivity",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "same visible state, different support"
+  },
+  {
+    "id": "og3.mediated_support_translation",
+    "paper_label": "prop:mediated-support-translation",
+    "paper_ref": "Proposition 5.2",
+    "coq_object": "og3_mediated_translation",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "mediator-provided support receipt"
+  },
+  {
+    "id": "og3.path_dependent_support_transport",
+    "paper_label": "thm:path-dependent-support-transport",
+    "paper_ref": "Theorem 5.3",
+    "coq_object": "og3_path_transport",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "fixed endpoint accumulation witness"
+  },
+  {
+    "id": "og3.verification_revelation_separation",
+    "paper_label": "prop:verification-revelation-separation",
+    "paper_ref": "Proposition 6.1",
+    "coq_object": "og3_verify_reveal",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "verification without payload revelation"
+  },
+  {
+    "id": "og3.validity_admissibility_separation",
+    "paper_label": "thm:validity-admissibility-separation",
+    "paper_ref": "Theorem 6.2",
+    "coq_object": "og3_validity_admission",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "valid proof, failed observer admission"
+  },
+  {
+    "id": "og3.cryptographic_freshness_separation",
+    "paper_label": "prop:cryptographic-freshness-separation",
+    "paper_ref": "Proposition 6.3",
+    "coq_object": "og3_crypto_freshness",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "fresh versus stale frontier support"
+  },
+  {
+    "id": "og3.cryptographic_authority_separation",
+    "paper_label": "prop:cryptographic-authority-separation",
+    "paper_ref": "Proposition 6.4",
+    "coq_object": "og3_crypto_authority",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "verified signature, blocked authority"
+  },
+  {
+    "id": "og3.nonzero_witness_holonomy",
+    "paper_label": "thm:nonzero-witness-holonomy",
+    "paper_ref": "Theorem 7.2",
+    "coq_object": "og3_witness_holonomy",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "closed state loop with witness defect"
+  },
+  {
+    "id": "og3.support_soundness_failure",
+    "paper_label": "thm:support-soundness-failure",
+    "paper_ref": "Theorem 8.2",
+    "coq_object": "og3_support_soundness",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "supported report with unmet debt"
+  },
+  {
+    "id": "og3.typed_false_report",
+    "paper_label": "def:typed-false-report",
+    "paper_ref": "Definition 8.4",
+    "coq_object": "og3_typed_false_report",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "state support separated from authority refutation"
+  }
+]

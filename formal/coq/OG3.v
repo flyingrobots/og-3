@@ -129,7 +129,7 @@ Record packet : Set := Packet {
 Definition P_cert : packet := Packet X L_cert.
 Definition P_raw : packet := Packet X L_raw.
 
-Example witness_sensitivity :
+Example og3_witness_sensitivity :
   visible P_cert = visible P_raw /\
   admit L_cert O_auth = Supported /\
   admit L_raw O_auth = Underdetermined.
@@ -137,7 +137,15 @@ Proof.
   repeat split; reflexivity.
 Qed.
 
-Example mediated_support_translation :
+Example og3_path_transport :
+  visible P_cert = visible P_raw /\
+  admit L_cert O_auth = Supported /\
+  admit L_raw O_auth = Underdetermined.
+Proof.
+  exact og3_witness_sensitivity.
+Qed.
+
+Example og3_mediated_translation :
   admit L_raw O_auth = Underdetermined /\
   admit L_mediated O_auth = Supported.
 Proof.
@@ -168,7 +176,7 @@ Definition T_c (L : ledger) : ledger :=
 Definition L_redacted_before_compress : ledger :=
   Ledger [SX; PAlpha; FF] [] [] [].
 
-Example noncommutative_support_transport :
+Example og3_noncomm_transport :
   T_r (T_c L_cert) = L_compressed /\
   T_c (T_r L_cert) = L_redacted_before_compress.
 Proof.
@@ -195,7 +203,7 @@ Definition revelation_aperture (c : crypt_surface) : nat :=
   | _ => 1
   end.
 
-Example verification_revelation_separation :
+Example og3_verify_reveal :
   verify SealedPredicate = true /\
   verification_aperture SealedPredicate = 1 /\
   revelation_aperture SealedPredicate = 0.
@@ -209,7 +217,7 @@ Definition O_proof_admission : obligation :=
 Definition L_wrong_binding : ledger :=
   Ledger [CommitC; PiZk] [] [] [].
 
-Example validity_admissibility_separation :
+Example og3_validity_admission :
   verify SealedPredicate = true /\
   admit L_wrong_binding O_proof_admission = Underdetermined.
 Proof.
@@ -225,7 +233,7 @@ Definition L_F : ledger :=
 Definition L_F0 : ledger :=
   Ledger [CommitC; PiZk; FF0] [FF] [] [].
 
-Example cryptographic_freshness_separation :
+Example og3_crypto_freshness :
   verify FreshAtF = true /\
   verify FreshAtF0 = true /\
   satisfy L_F O_fresh = Yes /\
@@ -240,7 +248,7 @@ Definition O_authority : obligation :=
 Definition L_blocked_authority : ledger :=
   Ledger [SigmaK; IK] [] [AAlphaK] [].
 
-Example cryptographic_authority_separation :
+Example og3_crypto_authority :
   verify SignedAuthority = true /\
   admit L_blocked_authority O_authority = AuthorityBlocked.
 Proof.
@@ -255,14 +263,14 @@ Definition state_loop_closed (_ : ledger) : bool := true.
 Definition witness_loop_closed (L : ledger) : bool :=
   all_discharged L auth_atoms.
 
-Example nonzero_witness_holonomy :
+Example og3_witness_holonomy :
   state_loop_closed L_holonomy = true /\
   witness_loop_closed L_holonomy = false.
 Proof.
   repeat split; reflexivity.
 Qed.
 
-Example support_soundness_failure :
+Example og3_support_soundness :
   admit L_raw O_auth = Underdetermined /\
   overreport Supported (admit L_raw O_auth) = true /\
   debt L_raw O_auth Supported = auth_atoms.
@@ -276,7 +284,7 @@ Definition O_state : obligation :=
 Definition L_refuted_authority : ledger :=
   Ledger [SX; SigmaK] [] [] [RefNonMember].
 
-Example typed_false_report_separates_state_and_authority :
+Example og3_typed_false_report :
   admit L_refuted_authority O_state = Supported /\
   mem_atom RefNonMember (refuted L_refuted_authority) = true.
 Proof.
