@@ -199,6 +199,7 @@
 \section{Introduction}
 \label{sec:introduction}
 
+We begin with a motivating contrast.
 Two transport paths deliver the same final document to the same endpoint:
 \texttt{document text = X}. The first path carries a signed edit, Alice's
 identity binding, the admitted policy epoch, and a freshness frontier. The
@@ -217,10 +218,8 @@ is supported only on the path that carries, or admissibly compresses, the
 signature, identity, policy, and freshness atoms. OG-III turns that contrast
 into a finite calculus: same endpoint state, different justified claim status.
 
-The thesis is:
-\[
-  \text{endpoint agreement leaves support agreement open.}
-\]
+We proceed from a single claim: endpoint agreement leaves support agreement
+open.
 OG-I supplies structured observers and accumulated memory
 \cite{ross_og_i_2026}; OG-II supplies distributed observer paths and the
 state-convergence/support-surface split~\cite{ross_og_ii_2026}. OG-III studies
@@ -240,7 +239,7 @@ $\Val_{\gamma}^{P,\ctx}(\varphi)$ is the justified status of $\varphi$ after
 transport. If a report treats missing support as discharged, the gap is witness
 debt.
 
-\subsection{Minimal Core}
+\paragraph{Minimal core.}
 \label{sec:minimal-core}
 
 The essential calculus has four parts: obligations
@@ -250,7 +249,7 @@ $\Just$. Path certificates, compression registries, cryptographic examples,
 engineering schemas, and the Coq/Rocq file are useful layers around that core.
 They are not separate theories.
 
-\subsection{What This Is Not}
+\paragraph{Scope management.}
 \label{sec:what-this-is-not}
 
 OG-III is not a metaphorical vocabulary for \enquote{context}. Every separation
@@ -281,8 +280,22 @@ Sections~\ref{sec:imports}--\ref{sec:paths} define the imported interfaces and
 the finite support calculus. Sections~\ref{sec:path-dependent}--\ref{sec:soundness}
 prove the main separations using the signed-edit example, cryptographic witness
 surfaces, a closed loop, and report/debt accounting. The remaining sections
-record robustness, engineering interpretation, availability, related work, and
-the bridge to OG-IV.
+record robustness, engineering interpretation, availability, related work, and a
+conclusion that bridges to OG-IV.
+
+\paragraph{Contributions.}
+This paper contributes:
+\begin{enumerate}[leftmargin=*,label=\arabic*.]
+  \item a finite support-obligation calculus in which claim, purpose, and
+        context determine a typed obligation object and a four-component path
+        ledger;
+  \item path-sensitive separation witnesses for endpoint agreement, support
+        transport, loop defect, cryptographic validity/admission, freshness,
+        and authority; and
+  \item a report/debt accounting layer that separates justified status from
+        emitted report and identifies supported-claim hallucination as a
+        special case of overreport.
+\end{enumerate}
 
 \section{Imported Interfaces from OG-I and OG-II}
 \label{sec:imports}
@@ -332,7 +345,9 @@ transport graph between such systems. Assume deterministic replayable histories,
 finite observers, declared purposes, declared support contexts, and checkable
 path certificates. Under those assumptions, every primitive needed for the
 theorem spine is defined below as finite atoms, finite ledgers, finite
-obligations, and local status rules.
+obligations, and local status rules. All main theorems are witnessed over the
+finite signed-edit family and its cryptographic, loop, and reporting variants
+in \cref{app:witness-library}.
 
 \subsection{Assumption Boundary: Non-Replayable Histories}
 \label{sec:nonreplayable-histories}
@@ -447,7 +462,12 @@ globally ordered; each names a different obstruction to responsible reporting.
 The tag $\refuted$ denotes an admitted typed refutation of the claim component
 under evaluation. A typed refutation may target provenance, authority,
 freshness, membership, or admission while leaving endpoint state support
-available for a separate claim.
+available for a separate claim. Formally, each purpose/context pair supplies a
+preorder $(\mathsf{Status}_{P,\ctx},\leq_{P,\ctx})$: it is reflexive and
+transitive, need not be total, and may leave $\refuted$, $\authorityblocked$,
+$\underdetermined$, and $\unverifiable$ incomparable except where a local
+reporting interface declares an explicit strength comparison. When the context
+is clear, OG-III writes $\leq_P$.
 \end{definition}
 
 \begin{definition}[Justified status and report]
@@ -552,7 +572,9 @@ For a rejected certificate $\chi$, let
     \{\rho_{\mathrm{cert}}(\chi,\phi,P,\ctx)\})
 \]
 where $\rho_{\mathrm{cert}}(\chi,\phi,P,\ctx)$ is a typed refutation atom
-targeting the path-support component asserted by $\chi$.
+targeting the path-support component asserted by $\chi$. A rejected certificate
+refutes the certificate's support-preservation assertion, not necessarily the
+underlying historical event or endpoint state.
 Let $M_{S_1}^{\gamma}$ denote the endpoint observer's native accumulated memory
 after receiving object or update material along path $\gamma$. Then
 \[
@@ -929,14 +951,14 @@ central distinction is:
 
 \begin{figure}[ht]
 \centering
-\begin{tikzpicture}[node distance=1.8cm]
+\begin{tikzpicture}[node distance=1.45cm]
   \node[ogbox] (crypt) {$\CryptSupp$};
   \node[ogbox, below=of crypt] (verify) {$\Verify(\CryptSupp,\ctx)=\mathrm{accept}$};
   \node[ogbox, below=of verify] (admit) {$\Admit_S(\CryptSupp,\phi,P,\ctx)$};
-  \node[ogbox, below left=1.4cm and 2.7cm of admit] (accept) {accept};
-  \node[ogbox, below left=1.4cm and 0.8cm of admit] (reject) {reject\\refuted};
-  \node[ogbox, below right=1.4cm and 0.4cm of admit] (und) {underdetermined};
-  \node[ogbox, below right=1.4cm and 2.8cm of admit] (blocked) {authority blocked};
+  \node[ogbox, right=2.8cm of admit] (accept) {accept};
+  \node[ogbox, below=0.55cm of accept] (reject) {reject\\refuted};
+  \node[ogbox, below=0.55cm of reject] (und) {underdetermined};
+  \node[ogbox, below=0.55cm of und] (blocked) {authority\\blocked};
   \draw[ogline] (crypt) -- (verify);
   \draw[ogline] (verify) -- (admit);
   \draw[ogthin] (admit) -- (accept);
@@ -1198,13 +1220,16 @@ $\phi_{\mathrm{nr}}$ is supported only for $S_{\log}$ and remains
 $\underdetermined$ for $S_{\mathrm{state}}$.
 \end{proposition}
 
-\section{Support Soundness, Witness Debt, and False Reports Without Dishonesty}
+\section{Support Soundness, Witness Debt, and Overreport}
 \label{sec:soundness}
 
 This section adds reporting. Let $\Just_S^P(\phi,\ctx)$ be the strongest status
 justified by admissible support, and let $\Report_S^P(\phi,\ctx)$ be the status
 emitted by the observer or system. Report strength is compared by a local
 preorder $\leq_P$, not a global lattice.
+Formally, $\leq_P$ is reflexive and transitive on the finite status tags
+available to the purpose/context interface. It is intentionally partial unless
+the interface declares more comparisons.
 For ordinary support-reporting purposes one may have
 $\underdetermined\leq_P\supported$,
 $\unverifiable\leq_P\supported$, and
@@ -1341,6 +1366,13 @@ PathCert validators, claim passports, support compression registries, loop-defec
 checkers, witness-debt counters, freshness/frontier checks, authority-blocked
 status, and laundering detectors.
 
+The obligation registry is itself a governance surface. If two observers use
+different registry versions or disagree about
+$\Obl_P(\phi,\ctx)$, OG-III does not silently resolve the dispute; it records a
+support-context mismatch, blocked registry authority, or underdetermined
+admission according to the local policy. Registry stability is therefore part
+of the support carried by a reproducible audit path.
+
 Within the theoretical model, high witness debt is an audit-risk indicator: the
 system has reports whose visible state survived farther than their admissible
 support. Empirical implementation, simulation, usability study, and performance
@@ -1379,12 +1411,17 @@ against the definitions in \cref{sec:claims-obligations,sec:paths}. The
 corresponding finite witness calculations are also computationally checked by a
 compact Coq/Rocq reference formalization included in this repository at
 \texttt{formal/coq/OG3.v}. It can be checked with \texttt{make verify} when
-\texttt{coqc} is available. The public source repository is
+\texttt{coqc} is available. The current release was checked locally with Rocq
+Prover 9.1.1 and OCaml 5.4.1; CI pins the \texttt{rocq/rocq-prover:9.1}
+container and uses only the bundled Rocq standard library modules imported in
+\texttt{formal/coq/OG3.v}. The public source repository is
 \href{https://github.com/flyingrobots/og-3}{\texttt{github.com/flyingrobots/og-3}}.
 Versioned code archives are available through the Zenodo concept DOI
 \href{https://doi.org/10.5281/zenodo.20054992}{doi:10.5281/zenodo.20054992}
 and the GitHub releases page
 \href{https://github.com/flyingrobots/og-3/releases}{\texttt{github.com/flyingrobots/og-3/releases}}.
+The current archived code release is
+\href{https://doi.org/10.5281/zenodo.20055508}{doi:10.5281/zenodo.20055508}.
 The initial archived code release is
 \href{https://doi.org/10.5281/zenodo.20054993}{doi:10.5281/zenodo.20054993};
 exact per-version archive DOIs are assigned by Zenodo when the corresponding
@@ -1471,6 +1508,16 @@ calculus for comparing arbitrary claims after observer transport, including
 redaction, stale freshness, authority blockage, declared loss, and overreporting
 across ledger and non-ledger systems.
 
+Practical accountability frameworks are another applied neighbor. PeerReview
+maintains tamper-evident records of messages sent and received by deterministic
+nodes so observed Byzantine faults can be detected and linked to faulty nodes,
+while correct nodes can defend themselves against false accusations
+\cite{haeberlen_peerreview_2007}. OG-III shares the accountability concern but
+abstracts away from node-fault isolation: its ledger records which finite
+support obligations for an arbitrary claim were carried, blocked, declared lost,
+compressed, or refuted along a path, and witness debt measures when the emitted
+report outruns that admitted support.
+
 Replicated data types and weak-consistency models study conditions under which
 distributed replicas converge on state or preserve causal relationships. Causal
 memory formalizes agreement on the relative order of causally related
@@ -1527,16 +1574,53 @@ OG-III uses that separation conservatively: a proof can expand verification
 aperture while leaving payload revelation closed, and cryptographic verification
 still remains distinct from observer admission.
 
-\section{Bridge to OG-IV}
+\section{Summary and Conclusion}
+\label{sec:conclusion}
 \label{sec:ogiv}
 
-OG-III asks: what support exists, survives, verifies, is blocked, is stale, or is lost? OG-IV asks: what did the observer claim about that support, and was that claim honest?
+OG-III proves that endpoint agreement does not determine support agreement.
+Claims impose finite support obligations; paths transform support ledgers;
+local admission turns discharged support into justified status; and reports can
+outrun that status by carrying witness debt. Cryptographic objects strengthen
+the witness surface but do not collapse verification, revelation, authority,
+freshness, and admission into one predicate.
 
-The structural handoff is:
+\paragraph{Central distinctions maintained throughout the paper.}
+\begin{enumerate}[leftmargin=*,label=\arabic*.]
+  \item Endpoint agreement vs. support agreement: same visible state does not
+        entail same justified claim status.
+  \item Unmet obligation vs. witness debt: missing support that is declared
+        downgrades status; debt arises when a report treats it as discharged.
+  \item Cryptographic verification vs. observer admission: a proof may verify
+        while failing the purpose/context admission rule.
+  \item Verification aperture vs. revelation aperture: a sealed proof can be
+        checked without revealing its committed payload.
+  \item Overreport vs. hallucination: hallucination is the supported-claim case
+        of overreport; not every overreport is a hallucination.
+  \item Typed refutation vs. Boolean negation: a refuted authority, freshness,
+        membership, or admission claim may leave endpoint state support
+        available for separate evaluation.
+\end{enumerate}
+
+\paragraph{Suggested reading paths.}
+Readers interested in the support core can read
+\cref{sec:claims-obligations,sec:paths,sec:path-dependent} together with
+\cref{app:witness-library,app:proofs}. Readers interested in cryptographic
+witness surfaces can read \cref{sec:crypto,sec:holonomy}. Readers interested
+in audit and reporting can read \cref{sec:soundness,sec:engineering} and
+\cref{app:engineering-artifacts}. Readers following the series interface can
+read \cref{sec:imports} and this conclusion.
+
+\paragraph{Looking ahead.}
+OG-III asks: what support exists, survives, verifies, is blocked, is stale, or
+is lost? OG-IV asks: what did the observer claim about that support, and was
+that claim honest? The structural handoff is
 \[
   \Debt_\gamma^P(\phi,\ctx,\Report)>0.
 \]
-Dishonesty begins when an observer reports as if that debt were discharged under a reporting obligation. In Observer Geometry, the deeper lie is often a false claim about what the observer was entitled to claim.
+Dishonesty begins when an observer reports as if that debt were discharged
+under a reporting obligation. In Observer Geometry, the deeper lie is often a
+false claim about what the observer was entitled to claim.
 
 \appendix
 
@@ -2145,7 +2229,7 @@ For $L_{\mathrm{state}}$, neither absence-support atom is discharged, so the
 absence claim remains underdetermined. Positive state agreement therefore leaves
 negative-witness support open.
 
-\paragraph{D.11 Purpose-Indexed Equivalence (\cref{prop:purpose-indexed-equivalence}).}
+\paragraph{D.12 Purpose-Indexed Equivalence (\cref{prop:purpose-indexed-equivalence}).}
 Use $L_{\mathrm{cert}}$ and $L_{\mathrm{raw}}$ from A.1. For
 $P_{\mathrm{state}}$, both ledgers discharge the state-reading obligation
 because both carry $s_X$. Thus the observers agree on the relevant state claim
@@ -2153,7 +2237,7 @@ family. For $P_{\mathrm{auth}}$, $L_{\mathrm{cert}}$ discharges the authorship
 obligation, while $L_{\mathrm{raw}}$ carries only $s_X$. The same observers are
 equivalent for state support and separated for authorship support.
 
-\paragraph{D.12 Support-Soundness Failure / Witness Debt (\cref{thm:support-soundness-failure}).}
+\paragraph{D.13 Support-Soundness Failure / Witness Debt (\cref{thm:support-soundness-failure}).}
 Use A.8. The raw path carries $L_{\mathrm{raw}}$ and the authorship obligation
 requires $\{\sigma_A,i_A,p_\alpha,f_F\}$. Therefore
 \[
@@ -2174,7 +2258,7 @@ fails. The debt set is the unmet obligation treated as discharged:
 If the endpoint instead declares the loss and downgrades the status, the same
 missing atoms remain unmet support and do not become debt.
 
-\paragraph{D.13 Typed false report.}
+\paragraph{D.14 Typed false report.}
 Use A.9. The support for the endpoint state and the support for admission under
 policy are different typed coordinates. A report that says the update is
 present may be supported by $s_X$ or by an update-state atom. A report that says

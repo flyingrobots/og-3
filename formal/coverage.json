@@ -123,7 +123,7 @@
     "coq_object": "og3_typed_false_report",
     "kind": "finite_witness",
     "status": "mechanized",
-    "scope": "state support separated from authority refutation"
+    "scope": "finite instantiation of typed false-report definition"
   },
   {
     "id": "og3.purpose_indexed_equivalence",

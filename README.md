@@ -8,6 +8,8 @@ Paper DOI: <https://doi.org/10.5281/zenodo.20046284>
 
 Code archive concept DOI: <https://doi.org/10.5281/zenodo.20054992>
 
+Current code artifact DOI: <https://doi.org/10.5281/zenodo.20055508>
+
 Initial code artifact DOI: <https://doi.org/10.5281/zenodo.20054993>
 
 Author: James Ross, Independent Researcher
@@ -57,7 +59,10 @@ facts, and the manuscript supplies the mathematical interpretation.
 - `biber`
 - `pandoc` for text export
 - `python3` for coverage-table checks
-- `coqc` for formal verification, provided by the Homebrew `rocq` formula
+- `coqc` for formal verification. This release was checked locally with Rocq
+  Prover 9.1.1 and OCaml 5.4.1; CI pins the `rocq/rocq-prover:9.1` container.
+  The Coq/Rocq file uses only the bundled standard library modules imported in
+  `formal/coq/OG3.v`.
 
 ## Common Commands
 

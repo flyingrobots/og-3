@@ -33,6 +33,11 @@ make formal-sync
 ```
 
 `make verify` requires `coqc` and `python3` on `PATH`. Homebrew provides
-Coq/Rocq through the `rocq` formula. `make formal-sync` regenerates the LaTeX
-coverage artifact from `formal/coverage.json` and checks that each listed paper
-label and Coq object exists.
+Coq/Rocq through the `rocq` formula. This release was checked locally with Rocq
+Prover 9.1.1 and OCaml 5.4.1; CI pins the `rocq/rocq-prover:9.1` container.
+The file imports only bundled standard-library modules:
+`Stdlib.List` and `Stdlib.Bool.Bool`.
+
+`make formal-sync` regenerates the LaTeX coverage artifact from
+`formal/coverage.json` and checks that each listed paper label and Coq object
+exists.

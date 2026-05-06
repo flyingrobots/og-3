@@ -83,6 +83,9 @@ Definition blocked_required (L : ledger) (O : obligation) : bool :=
 Definition partial_required (L : ledger) (O : obligation) : bool :=
   existsb (fun a => discharged L a || mem_atom a (declared L)) (required O).
 
+(* Certificate invalidity targets the path-support assertion made by a
+   certificate. It does not assert that the underlying historical event, such
+   as Alice signing, did not occur. *)
 Definition refutes_atom (r a : atom) : bool :=
   match r, a with
   | RefNonMember, AAlphaK => true
@@ -109,6 +112,9 @@ Definition admit (L : ledger) (O : obligation) : status :=
   else match satisfy L O with
        | Yes => Supported
        | AuthorityBlockedSat => AuthorityBlocked
+       (* The reference model collapses diagnostic Partial and No into the
+          same admission-level status. The manuscript and engineering appendix
+          retain the diagnostic difference for debt and loss accounting. *)
        | Partial => Underdetermined
        | No => Underdetermined
        end.
@@ -171,6 +177,9 @@ Example og3_path_transport :
   admit L_cert O_auth = Supported /\
   admit L_raw O_auth = Underdetermined.
 Proof.
+  (* The path-transport theorem uses the same finite ledgers as witness
+     sensitivity, with a stateless endpoint accumulator. Under that fixed
+     accumulator, the extra manuscript condition is trivially satisfied. *)
   exact og3_witness_sensitivity.
 Qed.
 
