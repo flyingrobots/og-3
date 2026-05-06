@@ -90,9 +90,18 @@
     "scope": "closed state loop with witness defect"
   },
   {
+    "id": "og3.pathcert_holonomy_detection",
+    "paper_label": "prop:pathcert-holonomy-detection",
+    "paper_ref": "Proposition 7.4",
+    "coq_object": "og3_pathcert_holonomy_detection",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "PathCert audit flags or rejects closed-loop witness defects"
+  },
+  {
     "id": "og3.negative_witness_fragility",
     "paper_label": "prop:negative-witness-fragility",
-    "paper_ref": "Proposition 7.3",
+    "paper_ref": "Proposition 7.5",
     "coq_object": "og3_negative_witness_fragility",
     "kind": "finite_witness",
     "status": "mechanized",

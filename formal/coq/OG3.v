@@ -300,6 +300,35 @@ Proof.
   repeat split; reflexivity.
 Qed.
 
+Inductive loop_action : Set :=
+| LoopAccept
+| LoopFlag
+| LoopReject
+| LoopOpenState.
+
+Definition holonomy_defect (L : ledger) (O : obligation) : list atom :=
+  unmet L O.
+
+Definition nonzero_holonomy (state_closed : bool) (L : ledger) (O : obligation) : bool :=
+  state_closed && negb (some_alternative_discharged L O).
+
+Definition holonomy_action
+    (strict_support state_closed : bool) (L : ledger) (O : obligation)
+    : loop_action :=
+  if nonzero_holonomy state_closed L O
+  then if strict_support then LoopReject else LoopFlag
+  else if state_closed then LoopAccept else LoopOpenState.
+
+Example og3_pathcert_holonomy_detection :
+  state_loop_closed L_holonomy = true /\
+  holonomy_defect L_holonomy O_auth = auth_atoms /\
+  holonomy_action false true L_holonomy O_auth = LoopFlag /\
+  holonomy_action true true L_holonomy O_auth = LoopReject /\
+  holonomy_action true true L_cert O_auth = LoopAccept.
+Proof.
+  repeat split; reflexivity.
+Qed.
+
 Example og3_support_soundness :
   admit L_raw O_auth = Underdetermined /\
   overreport Supported (admit L_raw O_auth) = true /\

@@ -1123,6 +1123,69 @@ authorship witness coordinate has a finite defect.
 \label{fig:witness-holonomy}
 \end{figure}
 
+\begin{definition}[Holonomy audit]
+\label{def:holonomy-audit}
+Let $\chi=\PathCert(\gamma,\phi,P,\ctx)$ be accepted by observer $S$ for a
+closed path $\gamma:S\to S$, with ledgers $L_0,\ldots,L_n$ and terminal ledger
+$L_n=(C_n,D_n,B_n,R_n)$. Let $\pi_{\mathrm{st}}$ be the finite visible-state
+projection and let $O=\Obl_P(\phi,\ctx)=(R_O,\mathcal E_O)$. The holonomy audit
+computes
+\[
+  U_\chi = R_O\setminus \Disch_S^{P,\ctx}(L_n),
+  \qquad
+  D_\chi = U_\chi\cap D_n,
+  \qquad
+  B_\chi = U_\chi\cap B_n.
+\]
+Its state-closure bit is
+\[
+  \mathsf{Closed}_{\mathrm{st}}(\chi)
+  =
+  [\pi_{\mathrm{st}}(L_0)=\pi_{\mathrm{st}}(L_n)].
+\]
+The audit action is
+\[
+  \mathsf{HolAudit}_S^P(\chi,\phi,\ctx)=
+  \begin{cases}
+    \mathrm{open\_state}, & \mathsf{Closed}_{\mathrm{st}}(\chi)=0,\\
+    \mathrm{accept}, & \mathsf{Closed}_{\mathrm{st}}(\chi)=1
+      \text{ and } U_\chi=\varnothing,\\
+    \mathrm{flag}(U_\chi,D_\chi,B_\chi), &
+      \mathsf{Closed}_{\mathrm{st}}(\chi)=1 \text{ and } U_\chi\neq\varnothing.
+  \end{cases}
+\]
+A strict support-preservation policy replaces the final
+$\mathrm{flag}$ action by $\mathrm{reject}$ for the support-preserving passport
+or route claim. That rejection concerns the claim that the loop preserved
+support; the accepted PathCert may still remain audit evidence for the redaction
+or loss that occurred.
+\end{definition}
+
+\begin{proposition}[PathCert holonomy detection]
+\label{prop:pathcert-holonomy-detection}
+For every accepted finite PathCert $\chi$ and finite obligation
+$\Obl_P(\phi,\ctx)$, $\mathsf{HolAudit}_S^P(\chi,\phi,\ctx)$ is decidable.
+For the closed loop in \cref{thm:nonzero-witness-holonomy}, the audit returns
+\[
+  \mathsf{Closed}_{\mathrm{st}}(\chi)=1,\qquad
+  U_\chi=\{\sigma_A,i_A,p_\alpha,f_F\}.
+\]
+Thus a runtime using path certificates can systematically flag the nonzero
+witness loop defect, and a strict support-preservation runtime can reject any
+claim that the loop transported authorship support intact.
+\end{proposition}
+
+\begin{proof}
+Accepted PathCert validation exposes the finite ledger sequence
+$L_0,\ldots,L_n$ and checks each step relation. The visible-state projection,
+discharged set, declared-loss set, and blocked set are all finite computations,
+so $U_\chi$, $D_\chi$, $B_\chi$, and the audit action are decidable. In the
+finite loop above, $T_2$ preserves $s_X$ and the terminal text digest while
+moving $\sigma_A,i_A,p_\alpha,f_F$ into declared redaction. The endpoint state
+projection therefore closes, but none of the authorship-obligation atoms is
+discharged by $L_n$. The audit returns the displayed nonempty residual set.
+\end{proof}
+
 Absence claims require negative witnesses relative to aperture and frontier. ``I did not see a conflict'' is not ``no conflict occurred.''
 
 \begin{proposition}[Negative Witness Fragility]
@@ -1267,9 +1330,9 @@ guidelines. Candidate systems could transport claim-support ledgers alongside
 state and then test whether the added support surface improves audit outcomes,
 operator diagnosis, or downstream admission decisions. Artifacts to evaluate
 include obligation registries, context-bound receipts, path certificates,
-PathCert validators, claim passports, support compression registries,
-witness-debt counters, freshness/frontier checks, authority-blocked status, and
-laundering detectors.
+PathCert validators, claim passports, support compression registries, loop-defect
+checkers, witness-debt counters, freshness/frontier checks, authority-blocked
+status, and laundering detectors.
 
 Within the theoretical model, high witness debt is an audit-risk indicator: the
 system has reports whose visible state survived farther than their admissible
@@ -1285,6 +1348,7 @@ work remain outside this manuscript.
 \midrule
 Obligation registry & Declares $\Obl_P(\phi,\ctx)$ & Wrong or missing requirement \\
 PathCert & Records support transformations & Unsupported path claim \\
+Loop-defect checker & Compares closed-path state and discharged support & Nonzero witness holonomy \\
 Support ledger & Carries $C,D,B,R$ atoms & Missing, redacted, or blocked support \\
 Compression registry & Maps receipts to discharged atoms & Fake or overgeneral receipt \\
 Witness-debt counter & Compares report to unmet support & Overreport or supported-claim hallucination \\
@@ -1707,7 +1771,10 @@ redaction:
    \varnothing,\varnothing).
 \]
 Let $T_3$ and $T_4$ preserve this ledger. Then the path closes on the visible
-state coordinate and fails to close on the authorship witness coordinate.
+state coordinate and fails to close on the authorship witness coordinate. The
+corresponding PathCert $\chi_{\circlearrowleft}$ records
+$L_0,T_1(L_0),T_2(T_1(L_0)),T_3(T_2(T_1(L_0))),T_4(T_3(T_2(T_1(L_0))))$ and
+finite step certificates $\delta_1,\ldots,\delta_4$ for those transformations.
 
 \paragraph{A.8 Witness-debt path.}
 Use the raw path $\gamma_{\mathrm{raw}}$ and the authorship claim. The carried
@@ -2014,7 +2081,28 @@ The loop is closed at the observer endpoint and open in the support coordinate;
 the redaction declaration explains the downgrade but does not discharge the
 authorship obligation.
 
-\paragraph{D.10 Negative Witness Fragility (\cref{prop:negative-witness-fragility}).}
+\paragraph{D.10 PathCert Holonomy Detection (\cref{prop:pathcert-holonomy-detection}).}
+Use the accepted certificate $\chi_{\circlearrowleft}$ from A.7. PathCert
+validation checks each finite step and exposes the terminal ledger
+\[
+  L_4=(\{s_X\},\{\sigma_A,i_A,p_\alpha,f_F\},\varnothing,\varnothing).
+\]
+The state projection of $L_0$ and $L_4$ is $s_X$, so
+$\mathsf{Closed}_{\mathrm{st}}(\chi_{\circlearrowleft})=1$. For the authorship
+obligation,
+\[
+  \Disch_S^{P_{\mathrm{auth}},\ctx}(L_4)=\{s_X\},
+  \qquad
+  U_{\chi_{\circlearrowleft}}=\{\sigma_A,i_A,p_\alpha,f_F\}.
+\]
+All four residual atoms are declared redacted, so
+$D_{\chi_{\circlearrowleft}}=U_{\chi_{\circlearrowleft}}$ and
+$B_{\chi_{\circlearrowleft}}=\varnothing$. The audit therefore returns
+$\mathrm{flag}(U_{\chi_{\circlearrowleft}},D_{\chi_{\circlearrowleft}},
+B_{\chi_{\circlearrowleft}})$ under an audit-only policy and rejects the
+support-preservation claim under a strict support-preservation policy.
+
+\paragraph{D.11 Negative Witness Fragility (\cref{prop:negative-witness-fragility}).}
 Use A.10. Both $L_{\log}$ and $L_{\mathrm{state}}$ carry $s_X$, so the
 state-reading obligation $(\{s_X\},\{\{s_X\}\})$ is discharged for each
 observer. The non-revocation obligation requires the frontier and nonmembership
@@ -2139,6 +2227,10 @@ judgement. Its body has these fields:
         \texttt{absent}, \texttt{accepted}, or \texttt{rejected}; rejected
         certificates must name the failure code used to create the typed
         certificate-refutation atom in $R$.
+  \item[\texttt{loop\_policy}] optional value
+        \texttt{absent}, \texttt{audit\_only}, or
+        \texttt{support\_preserving}; closed paths that claim preserved support
+        must use \texttt{support\_preserving}.
   \item[\texttt{terminal\_ledger}] digest of $\Carry_\gamma(\phi,\ctx)$ after
         extraction.
   \item[\texttt{status\_report}] digest of the support status report below.
@@ -2192,6 +2284,12 @@ Validation of a PathCert is deterministic:
         deterministic failure code and the corresponding certificate-refutation
         atom $\rho_{\mathrm{cert}}(\chi,\phi,P,\ctx)$.
 \end{enumerate}
+A closed-path validator then runs $\mathsf{HolAudit}$ from
+\cref{def:holonomy-audit}. A nonzero holonomy audit is not automatically a
+PathCert validation failure: the certificate may correctly record lawful
+redaction or declared loss. It is a runtime failure only for passports or routes
+whose \texttt{loop\_policy} is \texttt{support\_preserving}; otherwise it is
+recorded as a flagged loop defect and passed to admission, debt, and reporting.
 
 \paragraph{Obligation registry schema.}
 The obligation registry is an append-only finite table. Each entry has:
@@ -2291,6 +2389,11 @@ passport:
   \item[\texttt{refutations}] admitted typed refutations.
   \item[\texttt{path\_cert\_status}] absent, accepted, or rejected; rejected
         status identifies the certificate-refutation atom included in $R$.
+  \item[\texttt{loop\_audit}] absent for non-closed paths; otherwise the
+        $\mathsf{HolAudit}$ digest with state-closure bit, residual unmet atoms,
+        declared-loss residuals, blocked residuals, and action
+        \texttt{accept}, \texttt{flag}, \texttt{reject}, or
+        \texttt{open\_state}.
   \item[\texttt{justified\_status}] value of $\Just_S^P(\phi,\ctx)$.
   \item[\texttt{emitted\_report}] value emitted by the observer or system.
   \item[\texttt{debt}] output of the witness-debt counter.
@@ -2317,6 +2420,28 @@ Declared loss does not by itself create debt. Blocked support does not create
 debt when the emitted report is $\authorityblocked$ or weaker in the local
 preorder. A report of $\supported$ for an obligation with unmet authorship,
 authority, or freshness atoms counts those atoms as debt.
+
+\paragraph{Loop-defect checker.}
+For a claim passport whose path is closed or whose route profile declares a
+return-to-origin invariant, the loop-defect checker runs after PathCert
+validation and before final admission:
+\begin{enumerate}[leftmargin=*]
+  \item Confirm that the PathCert was accepted; if it was rejected, use the
+        certificate-refutation path from the ordinary extraction rule.
+  \item Compare $\pi_{\mathrm{st}}(L_0)$ with $\pi_{\mathrm{st}}(L_n)$.
+  \item Compute $U_\chi$, $D_\chi$, and $B_\chi$ from
+        \cref{def:holonomy-audit}.
+  \item If the state coordinate is open, return \texttt{open\_state}.
+  \item If $U_\chi=\varnothing$, return \texttt{accept}.
+  \item If $U_\chi\neq\varnothing$ and the loop policy is
+        \texttt{audit\_only}, return \texttt{flag} with the residual atoms.
+  \item If $U_\chi\neq\varnothing$ and the loop policy is
+        \texttt{support\_preserving}, return \texttt{reject} for the
+        support-preservation claim.
+\end{enumerate}
+This checker prevents a system from treating closed visible state as closed
+support. It does not forbid a state-only import whose PathCert truthfully records
+redaction, blockage, staleness, or loss.
 
 \paragraph{Status and admission evaluator.}
 Given a valid registry entry and a valid ledger, the evaluator runs:
@@ -2351,6 +2476,8 @@ $R_{T_i}$ as an envelope checker:
   \item At the endpoint, run $\Bind_S(M,\chi)$ by checking that the native
         memory index contains the terminal artifact digest $h$ and the final
         envelope digest.
+  \item If the envelope chain is closed or declares a support-preserving return,
+        run the loop-defect checker and attach its result to the status report.
 \end{enumerate}
 The result is a concrete PathCert validator with the same accept/reject behavior
 as the abstract validator in \cref{sec:paths}. A reject result is not used as a

@@ -13,6 +13,8 @@ The file `OG3.v` mechanizes:
 - unmet-support and witness-debt calculation
 - the finite distinction between absent certification and rejected
   certificate material
+- finite closed-loop holonomy audit actions for flagging or rejecting witness
+  defects
 - executable finite witnesses for the manuscript's main separation examples
 - paper-to-Coq coverage through `formal/coverage.json`
 
