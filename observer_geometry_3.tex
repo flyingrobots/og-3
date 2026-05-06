@@ -1378,6 +1378,43 @@ system has reports whose visible state survived farther than their admissible
 support. Empirical implementation, simulation, usability study, and performance
 work remain outside this manuscript.
 
+\paragraph{Version-control holonomy.}
+Version-control systems give a concrete engineering instance of the same
+pattern. A rebase, squash, cherry-pick, merge, or manual conflict resolution
+can preserve the final text of a line while changing the support attached to
+that line: origin commit, author, review trailer, signature, source path, or
+branch frontier. In this setting the state coordinate is the line or fragment
+content, and the witness coordinate is the finite support surface supplied by
+blame records, commits, parent links, trailers, signatures, review metadata,
+and ref frontiers.
+
+A \texttt{git-holaudit}-style checker treats each line or code fragment as a
+claim-bearing object and compares endpoint state preservation against
+provenance-support preservation. It emits a laundering warning only when the
+line state is unchanged, some provenance, authority, or freshness support is
+weakened, and no admitted declaration records the compression or loss. The
+point is support accounting, not blame as ground truth: Git blame is itself a
+witness surface, and legitimate rewrites discharge the audit obligation when
+they carry a checkable old-to-new mapping or explicit loss declaration.
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}@{}}
+\toprule
+\TableHeaderRow Git path & Code state & Provenance support & Declaration & OG-III status \\
+\midrule
+Rebase with old-to-new map & same & preserved through rewrite certificate & yes & supported \\
+Squash without trailer & same & review, signature, or frontier support collapsed & no & debt \\
+Cherry-pick with source trailer & same & compressed to source reference & yes & compressed \\
+Manual copy & same & source path and origin support lost & no & undet./debt \\
+Invalid source trailer & same & claimed source contradicted or unverifiable & attempted & cert. failure \\
+\bottomrule
+\end{tabularx}
+\caption{Version-control holonomy as an engineering instance. The endpoint code can agree while line-level support diverges.}
+\label{tab:version-control-holonomy}
+\end{table}
+
 \begin{table}[ht]
 \centering
 \small
@@ -1391,6 +1428,7 @@ Loop-defect checker & Compares closed-path state and discharged support & Nonzer
 Support ledger & Carries $C,D,B,R$ atoms & Missing, redacted, or blocked support \\
 Compression registry & Maps receipts to discharged atoms & Fake or overgeneral receipt \\
 Witness-debt counter & Compares report to unmet support & Overreport or supported-claim hallucination \\
+Version-control HolAudit & Applies support accounting to Git line witnesses & Undeclared provenance weakening \\
 Freshness checker & Binds frontier and context & Stale proof reuse \\
 Admission policy & Turns verified support into local status & Validity/admissibility split \\
 \bottomrule
@@ -1426,6 +1464,11 @@ The initial archived code release is
 \href{https://doi.org/10.5281/zenodo.20054993}{doi:10.5281/zenodo.20054993};
 exact per-version archive DOIs are assigned by Zenodo when the corresponding
 GitHub release is archived.
+A separate early prototype,
+\href{https://github.com/flyingrobots/git-holaudit}{\texttt{git-holaudit}},
+explores version-control holonomy detection over Git line witnesses. It is a
+companion engineering interpretation and is not used to establish the finite
+Coq/Rocq witness results in this manuscript.
 The accompanying Coq/Rocq file is a compact finite reference model for the
 support-accounting witnesses used in the manuscript. It mechanizes simplified
 support atoms, four-component ledgers, obligation objects, finite satisfaction
