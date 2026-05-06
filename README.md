@@ -8,7 +8,7 @@ Paper DOI: <https://doi.org/10.5281/zenodo.20046284>
 
 Code archive concept DOI: <https://doi.org/10.5281/zenodo.20054992>
 
-Current code artifact DOI: <https://doi.org/10.5281/zenodo.20055508>
+Prior code artifact DOI: <https://doi.org/10.5281/zenodo.20055508>
 
 Initial code artifact DOI: <https://doi.org/10.5281/zenodo.20054993>
 
@@ -101,7 +101,7 @@ Use the DOI for this draft unless a later published version supersedes it:
 
 ```text
 Ross, James. Observer Geometry III: Path Geometry and Support Obligations.
-Version 0.1.2-draft. 2026. https://doi.org/10.5281/zenodo.20046284
+Version 1.0.0-rc.1. 2026. https://doi.org/10.5281/zenodo.20046284
 ```
 
 Machine-readable citation metadata is available in `CITATION.cff`.
