@@ -6,9 +6,9 @@
 
 Paper DOI: <https://doi.org/10.5281/zenodo.20046284>
 
-Code artifact DOI: <https://doi.org/10.5281/zenodo.20054993>
+Code archive concept DOI: <https://doi.org/10.5281/zenodo.20054992>
 
-Code concept DOI: <https://doi.org/10.5281/zenodo.20054992>
+Initial code artifact DOI: <https://doi.org/10.5281/zenodo.20054993>
 
 Author: James Ross, Independent Researcher
 
@@ -96,7 +96,7 @@ Use the DOI for this draft unless a later published version supersedes it:
 
 ```text
 Ross, James. Observer Geometry III: Path Geometry and Support Obligations.
-Version 0.1.0-draft. 2026. https://doi.org/10.5281/zenodo.20046284
+Version 0.1.1-draft. 2026. https://doi.org/10.5281/zenodo.20046284
 ```
 
 Machine-readable citation metadata is available in `CITATION.cff`.
@@ -107,9 +107,12 @@ The public repository for this work is:
 
 <https://github.com/flyingrobots/og-3>
 
-The archived `v0.1.0-draft` code artifact is:
+Versioned code archives are available through the Zenodo concept DOI and the
+GitHub releases page:
 
-<https://github.com/flyingrobots/og-3/releases/tag/v0.1.0-draft>
+<https://doi.org/10.5281/zenodo.20054992>
+
+<https://github.com/flyingrobots/og-3/releases>
 
 ## License
 
