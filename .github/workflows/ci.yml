@@ -12,6 +12,9 @@ on:
 permissions:
   contents: read
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -25,18 +28,24 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up OCaml/opam
-        uses: ocaml/setup-ocaml@v3
-        with:
-          ocaml-compiler: 5.4.1
-
-      - name: Install Rocq
-        run: |
-          opam repo add rocq-released https://rocq-prover.org/opam/released
-          opam install -y rocq-prover rocq-core=9.1.1
+      - name: Pull Rocq image
+        run: docker pull rocq/rocq-prover:9.1
 
       - name: Run formal checks
-        run: opam exec -- make verify
+        run: |
+          mkdir -p .build/ci-bin
+          cat > .build/ci-bin/coqc <<'EOF'
+          #!/usr/bin/env bash
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -e HOME=/tmp \
+            -v "$PWD:/work" \
+            -w /work \
+            rocq/rocq-prover:9.1 \
+            coqc "$@"
+          EOF
+          chmod +x .build/ci-bin/coqc
+          PATH="$PWD/.build/ci-bin:$PATH" make verify
 
   manuscript:
     name: Manuscript render
