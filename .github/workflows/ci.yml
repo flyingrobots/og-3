@@ -42,7 +42,7 @@ jobs:
             -v "$PWD:/work" \
             -w /work \
             rocq/rocq-prover:9.1 \
-            coqc "$@"
+            rocq compile "$@"
           EOF
           chmod +x .build/ci-bin/coqc
           PATH="$PWD/.build/ci-bin:$PATH" make verify
