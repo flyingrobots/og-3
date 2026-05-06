@@ -388,6 +388,37 @@ path certificates. Under those assumptions, every new primitive used below is
 defined in this paper: support obligations, carried support ledgers, declared
 loss, witness debt, satisfaction, admission, path certificates, witness
 holonomy, verification/admission separation, and support-soundness failure.
+
+\subsection{Assumption Boundary: Non-Replayable Histories}
+\label{sec:nonreplayable-histories}
+
+The deterministic replay assumption is a proof profile, not a claim that
+deployed distributed systems supply total replay. It says that the finite
+witnesses in this manuscript can be checked by replaying an explicit sequence of
+ledger-transforming steps. Practical systems may contain scheduler
+nondeterminism, concurrent updates, leader changes, message loss, partial
+partitions, local random choices, or merge policies whose relevant inputs are not
+fully preserved.
+
+In those settings the calculus degrades conservatively. A PathCert that cannot
+name the ordering, frontier, quorum certificate, randomness commitment, merge
+rule, or failure-domain evidence needed by an obligation does not discharge that
+obligation. The missing support appears as $\underdetermined$ or
+$\unverifiable$; a stale or split frontier appears in $D$; inaccessible authority
+or quorum material appears in $B$; and witness debt arises only if the emitted
+report is stronger than the status justified by the surviving ledger. Thus
+non-replayability is not repaired by pretending replay succeeded. It is recorded
+as an explicit support limitation.
+
+One can adapt the model by replacing a single replay path with a finite branch
+set of admissible histories or with a conservative summary certificate. For
+claims that require all admissible branches to support the same component,
+$\Disch_S^{P,\ctx}$ uses the intersection of branch-discharge sets. For claims
+whose policy admits existential evidence, the obligation registry must say so and
+name the accepted branch witness. Network partitions are treated as frontier
+splits: state claims may remain supported while global absence, freshness, or
+authority claims degrade until a later certificate supplies the missing
+frontier-join or consensus evidence.
 \FloatBarrier
 
 \section{Claims, Contexts, Statuses, and Support Obligations}
@@ -1372,10 +1403,13 @@ against the definitions in \cref{sec:claims-obligations,sec:paths}. The
 corresponding finite witness calculations are also computationally checked by a
 compact Coq/Rocq reference formalization included in this repository at
 \texttt{formal/coq/OG3.v}. It can be checked with \texttt{make verify} when
-\texttt{coqc} is available. Persistent public code locator:
-\textbf{TODO}. The final public manuscript must replace this placeholder with
-a repository URL or archival DOI for the repository containing
-\texttt{formal/coq/OG3.v}. The accompanying Coq/Rocq file is a compact finite
+\texttt{coqc} is available. Persistent public code locator: \textbf{TODO
+(release blocker)}. This draft checkout has no configured public remote that
+contains \texttt{formal/coq/OG3.v}. The final public manuscript must replace
+this placeholder with a repository URL or archival DOI for the repository
+containing \texttt{formal/coq/OG3.v}; until that locator is supplied, readers
+outside the draft repository cannot independently retrieve and reproduce the
+computational checks. The accompanying Coq/Rocq file is a compact finite
 reference model for the support-accounting witnesses used in the manuscript. It
 mechanizes simplified support atoms, four-component ledgers, obligation
 objects, finite satisfaction and admission examples, unmet-support and
@@ -1467,6 +1501,22 @@ ways to specify eventual consistency
 OG-III uses those results as an import boundary: even where replicas converge
 in visible state or carry causal order, support-status convergence can fail
 unless the path preserves the witnesses required by the relevant claim family.
+
+Epistemic logic in distributed systems is another direct neighbor. Chandy and
+Misra characterize how processes can learn facts about a distributed
+computation; Halpern and Moses formalize knowledge and common knowledge in
+distributed environments; Fagin, Halpern, Moses, and Vardi give the standard
+book-length treatment of reasoning about knowledge across distributed systems,
+artificial intelligence, and game theory
+\cite{chandy_processes_learn_1985,halpern_moses_knowledge_1990,fagin_reasoning_knowledge_1995}.
+OG-III is compatible with that tradition but uses an operational accounting
+interface rather than possible-world indistinguishability as its primary object.
+The calculus asks which finite support atoms an observer path transported,
+lost, blocked, compressed, or refuted for a claim-purpose-context judgement.
+That makes path-dependent support a witness-level counterpart to epistemic
+access: two observers may agree on visible state and even on the claim sentence
+while differing in the support ledger that entitles either observer to report
+$\supported$.
 
 Database provenance studies where data came from and why query results hold.
 Buneman, Khanna, and Tan distinguish why- and where-provenance, and Cheney,

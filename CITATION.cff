@@ -8,7 +8,6 @@ authors:
 version: "0.1.0-draft"
 date-released: "2026-05-05"
 license: "CC-BY-4.0"
-repository-code: "https://github.com/flyingrobots/aion"
 keywords:
   - "observer geometry"
   - "support obligations"
