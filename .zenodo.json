@@ -1,8 +1,6 @@
 {
-  "title": "Observer Geometry III: Path Geometry and Support Obligations",
-  "doi": "10.5281/zenodo.20046284",
-  "upload_type": "publication",
-  "publication_type": "workingpaper",
+  "title": "AIΩN Observer Geometry III: Manuscript Source and Coq/Rocq Reference Model",
+  "upload_type": "software",
   "creators": [
     {
       "name": "Ross, James",
@@ -10,7 +8,7 @@
       "affiliation": "Independent Researcher"
     }
   ],
-  "description": "Observer Geometry III develops a support-obligation calculus for path-sensitive witness transport. The manuscript studies cases where observers agree on endpoint state while disagreeing on which claims that state can justify, because support atoms, certificates, authority facts, freshness facts, redactions, blocks, losses, and typed refutations differ across the observer path. The deposit includes the LaTeX manuscript source, bibliography, generated PDF and plain-text reading copies, citation metadata, Zenodo metadata, and a compact Coq/Rocq finite reference model for the ledger-level witness calculations. The formal model mechanizes simplified finite support ledgers, obligation objects, satisfaction/admission examples, witness-debt calculations, and finite separation witnesses; real cryptographic implementations and full path-certificate validation are abstracted as finite verifier facts.",
+  "description": "This software artifact contains the public source repository for AIΩN Observer Geometry III. It includes the LaTeX manuscript source, bibliography, build scripts, citation and Zenodo metadata, coverage manifest, generated formal-coverage table, and a compact Coq/Rocq finite reference model for the ledger-level witness calculations used by the paper. The formal model mechanizes simplified finite support atoms, four-component ledgers, obligation objects, satisfaction/admission examples, witness-debt calculations, and finite separation witnesses. Real cryptographic implementations, path-certificate validation, distributed-system execution, and full policy admission are abstracted as finite verifier facts or manuscript-level witness surfaces.",
   "access_right": "open",
   "license": "cc-by-4.0",
   "version": "0.1.0-draft",
@@ -34,10 +32,9 @@
   ],
   "related_identifiers": [
     {
-      "identifier": "https://github.com/flyingrobots/og-3",
-      "relation": "isSupplementedBy",
-      "resource_type": "software"
+      "identifier": "https://doi.org/10.5281/zenodo.20046284",
+      "relation": "isSupplementTo"
     }
   ],
-  "notes": "The accompanying Coq/Rocq model is a finite reference model for manuscript witness calculations, not a full implementation of the cryptographic or distributed-systems mechanisms discussed in the paper."
+  "notes": "This repository archive is intended as the reproducibility artifact for the OG-III working paper. The accompanying Coq/Rocq model is a finite reference model for manuscript witness calculations, not a full implementation of the cryptographic or distributed-systems mechanisms discussed in the paper."
 }
