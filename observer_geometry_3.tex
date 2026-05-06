@@ -58,7 +58,7 @@
 \AtEndEnvironment{table}{\rowcolors{2}{}{}}
 
 \setlength{\headheight}{30pt}
-\newcommand{\paperdoi}{Draft manuscript}
+\newcommand{\paperdoi}{DOI: \href{https://doi.org/10.5281/zenodo.20046284}{10.5281/zenodo.20046284}}
 \newcommand{\paperversion}{Version 0.1.0-draft}
 \newcommand{\publicationdate}{May 2026}
 \newcommand{\runningauthor}{James Ross}
@@ -144,7 +144,7 @@
 \newcommand{\unverifiable}{\mathsf{unverifiable}}
 
 \newcommand{\paperkeywords}{observer geometry; support obligations; proof-carrying paths; witness holonomy; observer-relative claim status; cryptographic witnesses; audit systems}
-\newcommand{\paperabstract}{Observer Geometry I showed that observers cannot be reduced to scalar distance: projection, basis, accumulation, aperture, degeneracy, insufficiency, bias gaps, and signatures all separate. Observer Geometry II showed the distributed consequence: state convergence is not observer convergence, because replicas may agree on visible state while retaining, erasing, transforming, or obstructing different witness surfaces. This paper studies the next obstruction. Endpoint agreement is not support agreement. A claim's justified support-status can depend on the path by which support, authority, freshness, and context are transported. We introduce purpose-indexed support obligations, path-indexed carried-support ledgers, declared loss, witness debt, path certificates, and local report-strength preorders. A claim survives transport only when the path preserves, compresses, verifies, opens, or explicitly declares the loss, blocking, staleness, or redaction of the support required for that claim. We prove finite separation results for witness sensitivity, path-dependent support transport, nonzero witness holonomy, validity/admissibility separation, and support-soundness failure. Cryptographic objects are treated as finite witness surfaces that separate commitment, verification, revelation, authority, freshness, and admission. The result is a support-obligation calculus for recording what state arrived and which claims that path is structurally capable of supporting.}
+\newcommand{\paperabstract}{Two observer paths can deliver the same endpoint-visible state while carrying different support for provenance, authority, freshness, absence, or admission claims. OG-III formalizes that separation with a finite support-obligation calculus. Claims, purposes, and contexts determine required support atoms; paths deliver ledgers of carried, declared-lost, blocked, and refuting support; local discharge and admission rules determine the justified status that an endpoint may report. The running example is a signed-edit audit: the final document text is identical, but only one path carries the signature, identity, policy, and freshness support needed for the authorship claim. Finite witnesses prove witness sensitivity, path-dependent support transport, nonzero loop defect, cryptographic verification/admission separation, freshness and authority separation, and support-soundness failure. Cryptographic objects enter as witness surfaces rather than as new protocol claims. A compact Coq/Rocq model checks the finite ledger calculations.}
 
 \tikzset{
   ogbox/.style={draw=black, rounded corners=2pt, line width=0.9pt, fill=white, align=center, inner sep=6pt},
@@ -199,38 +199,32 @@
 \section{Introduction}
 \label{sec:introduction}
 
-Consider the audit contrast. Two transport paths deliver the same final document
-to the same endpoint observer: \texttt{document text = X}. Along the first path,
-the object carries a signed edit receipt, an identity binding, a policy epoch,
-and a freshness frontier at which those facts can be checked. Along the second
-path, the object carries only the final text after copying, redaction, or
-summary. A state-reading observer sees the same document in both cases. An
-authorship-audit observer sees different support. The claim ``the document
-contains text $X$'' may be responsibly reported along both paths; the claim
-``Alice authorised edit $e$'' is responsibly reportable only along the path that
-carried admissible provenance and authority support.
+Two transport paths deliver the same final document to the same endpoint:
+\texttt{document text = X}. The first path carries a signed edit, Alice's
+identity binding, the admitted policy epoch, and a freshness frontier. The
+second path carries only the copied final text. A state reader sees the same
+document. An authorship auditor does not see the same support.
 
-This paper takes the path-transport slice of the Observer Geometry program.
-OG-I modeled observers as structured systems with projection, basis,
-accumulation, aperture, degeneracy, insufficiency floors, bias gaps, and
-observer signatures~\cite{ross_og_i_2026}. OG-II developed the distributed case:
-replicas may converge in visible state while their observer surfaces remain
-different, because witnessed updates, frontiers, suffix transport, policy
-closure, provenance, and obstruction structure may be retained or erased
-differently along the way~\cite{ross_og_ii_2026}. OG-III uses those interfaces
-to study claim support across observer paths. Endpoint agreement fixes a visible
-surface. It does not fix which witnesses, receipts, authority metadata,
-freshness frontiers, and disclosure constraints survived the route by which that
-surface arrived.
+This is the running example. The state claim
+\[
+  \phi_{\mathrm{text}}=\text{\enquote{the document contains text $X$}}
+\]
+is supported on both paths. The audit claim
+\[
+  \phi_{\mathrm{auth}}=\text{\enquote{Alice authorised edit $e$}}
+\]
+is supported only on the path that carries, or admissibly compresses, the
+signature, identity, policy, and freshness atoms. OG-III turns that contrast
+into a finite calculus: same endpoint state, different justified claim status.
 
-The paper is organized around one claim: \textbf{endpoint agreement leaves
-support agreement open}. A provenance claim, an absence claim, an authority
-claim, a freshness claim, and a state claim impose different support
-obligations. A path may carry that support directly, compress it into a receipt,
-replace it with a cryptographic proof, bind it for future opening, declare it
-redacted, mark it authority-blocked, or lose it entirely. The endpoint
-observer's responsible status for the claim is bounded by the support that
-survived transport in admissible form.
+The thesis is:
+\[
+  \text{endpoint agreement leaves support agreement open.}
+\]
+OG-I supplies structured observers and accumulated memory
+\cite{ross_og_i_2026}; OG-II supplies distributed observer paths and the
+state-convergence/support-surface split~\cite{ross_og_ii_2026}. OG-III studies
+what support survives along such paths.
 
 The central object is a path-indexed support judgement built from
 \[
@@ -243,100 +237,52 @@ $\varphi$ under purpose $P$ and context $\ctx$; $\Carry_{\gamma}(\varphi,\ctx)$
 is the support actually carried, compressed, opened, certified, blocked,
 redacted, or declared lost along observer path $\gamma$; and
 $\Val_{\gamma}^{P,\ctx}(\varphi)$ is the justified status of $\varphi$ after
-transport. A path may preserve enough visible structure to make a claim
-discussable while dropping the support required for the reported status of that
-claim. That gap is witness debt. Witness debt is structural; dishonesty enters
-only when an observer reports as if the debt were discharged.
+transport. If a report treats missing support as discharged, the gap is witness
+debt.
 
-\paragraph{Support transport.}
-OG-III keeps the geometry finite, discrete, and witness-based. Observer paths
-are finite chains of translators between structured observers. A translator
-preserves the coordinates, witnesses, receipts, authority conditions, and
-freshness constraints declared for the task. A path therefore moves state and
-transforms support. It may preserve support, compress support, certify support,
-redact support, block support, launder support, or create support debt.
+\subsection{Minimal Core}
+\label{sec:minimal-core}
 
-Cryptographic witnesses matter here because they make several observer
-distinctions mathematically sharp. A hash or authenticated root can commit to a
-history without revealing it. A signature can bind authorship, authority, or a
-frontier. A commitment can preserve future decidability while leaving present
-projection degenerate. An authenticated data structure can transport compact
-membership, exclusion, or update witnesses. A compact relational proof can
-support a relation over committed structure without transporting the full
-structure. A zero-knowledge proof can expand verification aperture while keeping
-revelation aperture bounded. A capability or encryption condition can make a
-claim authority-blocked rather than false. These primitives are treated as
-finite witness surfaces: mechanisms that separate visibility, retained support,
-verification, revelation, authority, and freshness.
+The essential calculus has four parts: obligations
+$\Obl_P(\phi,\ctx)$; path ledgers $L=(C,D,B,R)$; local discharge/admission
+rules $\Disch,\Sat,\Admit$; and report comparison through $\Report$ versus
+$\Just$. Path certificates, compression registries, cryptographic examples,
+engineering schemas, and the Coq/Rocq file are useful layers around that core.
+They are not separate theories.
 
-\paragraph{Contributions.}
-The paper contributes four pieces:
-\begin{enumerate}[leftmargin=*]
-  \item A purpose-indexed support-obligation calculus for claims, contexts,
-        statuses, carried support, declared loss, and witness debt.
-  \item A path-indexed support-transport model with checkable path certificates
-        and extraction from endpoint accumulation into claim-purpose-context
-        support ledgers.
-  \item A finite separation suite for witness sensitivity, path-dependent
-        support transport, nonzero witness holonomy, validity/admissibility
-        separation, and support-soundness failure.
-  \item A cryptographic witness interpretation that treats commitments,
-        signatures, authenticated roots, compact proofs, capabilities, and
-        disclosure controls as observer surfaces rather than protocol features
-        outside the geometry.
-\end{enumerate}
+\subsection{What This Is Not}
+\label{sec:what-this-is-not}
 
-\paragraph{Formal result summary.}
-The primary theorem spine consists of witness sensitivity
+OG-III is not a metaphorical vocabulary for \enquote{context}. Every separation
+claim below is a finite witness over declared atoms, ledgers, paths, and local
+admission rules. It is also not a truth procedure: the calculus does not decide
+whether Alice really acted, only whether the transported support justifies the
+reported claim status. It is not a new cryptographic protocol; signatures,
+commitments, authenticated roots, and compact proofs appear as witness surfaces
+that discharge or fail to discharge typed obligations. Finally, it is not an
+ethics or culpability theory. OG-III records support-status mismatch. OG-IV is
+where honesty, reporting duty, and accountability enter.
+
+\subsection{Results and Roadmap}
+\label{sec:results-roadmap}
+
+The theorem spine is witness sensitivity
 (\cref{thm:witness-sensitivity}), path-dependent support transport
 (\cref{thm:path-dependent-support-transport}), nonzero loop defect
 (\cref{thm:nonzero-witness-holonomy}), validity/admissibility separation
 (\cref{thm:validity-admissibility-separation}), and support-soundness failure
-(\cref{thm:support-soundness-failure}). Mediated support translation
-(\cref{prop:mediated-support-translation}) and verification/revelation
-separation (\cref{prop:verification-revelation-separation}) are supporting
-propositions. The finite witnesses are collected in
-\cref{app:witness-library}; the ledger checks and extended proof sketches are
-collected in \cref{app:proofs}.
+(\cref{thm:support-soundness-failure}). Supporting finite witnesses cover
+mediated support translation, verification/revelation separation, freshness
+separation, authority separation, negative witnesses, invalid certificate
+observability, and loop-defect auditing. The witnesses are in
+\cref{app:witness-library}; extended calculations are in \cref{app:proofs}.
 
-\paragraph{Proof boundary.}
-The results below should be read with this boundary in mind. OG-III proves
-finite separation and accounting statements about support obligations over
-declared observer paths. It does not provide a universal truth procedure, a
-global merge law, a smooth connection on a manifold, or a completeness theorem
-for all possible evidence. Each result is witnessed by a finite observer graph,
-a finite support table, and a declared purpose/context pair. The intended
-question is local: given the support a path carried or declared lost, which
-claim-status reports are structurally justified?
-
-\paragraph{Scope management.}
-OG-III remains structural. It analyzes false, unsupported, stale, blocked,
-laundered, and overstrong reports as support-status mismatches. It does not
-assign dishonesty, culpability, accountability, or rights. Those require a
-further theory of reporting obligations: what the observer knew, what it was
-entitled to reveal, what it was required to declare, and whether it represented
-its support situation accurately. That is the subject of OG-IV. The handoff is
-simple: OG-III asks what support exists, survives, verifies, is blocked, is
-stale, or is lost; OG-IV asks what the observer claimed about that support, and
-whether that claim was honest.
-
-\paragraph{Roadmap.}
-Section~\ref{sec:imports} fixes the imported interfaces from OG-I and OG-II.
-Section~\ref{sec:claims-obligations} defines claims, support contexts,
-statuses, support obligations, carried support, declared loss, and witness debt.
-Section~\ref{sec:paths} develops observer paths, path certificates,
-satisfaction, admission, and noncommutative support transport.
-Section~\ref{sec:path-dependent} proves witness sensitivity and
-path-dependent support transport. Section~\ref{sec:crypto} isolates
-cryptographic witness surfaces and the verification/admission split.
-Section~\ref{sec:holonomy} develops witness holonomy, freshness, and negative
-witnesses. Section~\ref{sec:soundness} defines support soundness, overreporting,
-hallucination as supported-claim overreport, witness debt, and typed false
-reports. Section~\ref{sec:robustness} records purpose-indexed equivalence, and
-Section~\ref{sec:engineering} records engineering implications.
-Section~\ref{sec:availability} gives the data/code availability statement,
-Section~\ref{sec:related-work} situates the framework, and
-Section~\ref{sec:ogiv} gives the bridge to OG-IV.
+Sections~\ref{sec:imports}--\ref{sec:paths} define the imported interfaces and
+the finite support calculus. Sections~\ref{sec:path-dependent}--\ref{sec:soundness}
+prove the main separations using the signed-edit example, cryptographic witness
+surfaces, a closed loop, and report/debt accounting. The remaining sections
+record robustness, engineering interpretation, availability, related work, and
+the bridge to OG-IV.
 
 \section{Imported Interfaces from OG-I and OG-II}
 \label{sec:imports}
@@ -384,10 +330,9 @@ For a self-contained reading of OG-III, a reader may take OG-I's observer as an
 ordinary structured observation system and OG-II's path language as a finite
 transport graph between such systems. Assume deterministic replayable histories,
 finite observers, declared purposes, declared support contexts, and checkable
-path certificates. Under those assumptions, every new primitive used below is
-defined in this paper: support obligations, carried support ledgers, declared
-loss, witness debt, satisfaction, admission, path certificates, witness
-holonomy, verification/admission separation, and support-soundness failure.
+path certificates. Under those assumptions, every primitive needed for the
+theorem spine is defined below as finite atoms, finite ledgers, finite
+obligations, and local status rules.
 
 \subsection{Assumption Boundary: Non-Replayable Histories}
 \label{sec:nonreplayable-histories}
@@ -423,6 +368,12 @@ frontier-join or consensus evidence.
 
 \section{Claims, Contexts, Statuses, and Support Obligations}
 \label{sec:claims-obligations}
+
+This section adds the first layer: a claim-purpose-context triple determines a
+finite support obligation. The signed-edit example supplies the basic contrast:
+$\phi_{\mathrm{text}}$ needs text-state support, while
+$\phi_{\mathrm{auth}}$ needs signature, identity, policy, and freshness support
+or an admitted receipt for them.
 
 \begin{definition}[Finite support calculus base]
 Fix finite sets of claims $\Phi$, purposes $\mathcal P$, observers
@@ -575,7 +526,9 @@ $R_O\cap(D\cup B)$; and $\Debt$ is the subset of unmet atoms that the endpoint
 report nevertheless treats as discharged.
 \end{definition}
 
-Thus unmet obligation is not yet witness debt. Missing support that is explicitly declared should downgrade the claim status; debt appears when a report behaves as if missing support had been carried or discharged.
+Thus unmet obligation is not yet witness debt. Missing support that is
+explicitly declared should downgrade the claim status; debt appears when a
+report behaves as if missing support had been carried or discharged.
 The case $\Sat=\authorityblocked$ should be read as a blocked or suspended
 obligation when the endpoint reports it as blocked. It becomes witness debt only
 if the endpoint erases the block and reports ordinary support.
@@ -713,6 +666,9 @@ for the evaluated path-support component.
 
 \section{Observer Paths and Support Transport}
 \label{sec:paths}
+
+This section adds transport: observer paths transform ledgers, and PathCerts
+make those transformations checkable at the endpoint.
 
 Let
 \[
@@ -855,9 +811,13 @@ carried support ledgers, are unequal.
 \section{Witness Sensitivity and Path-Dependent Support Transport}
 \label{sec:path-dependent}
 
+This section uses the signed-edit witness to prove the main separation:
+endpoint-equal paths can justify different statuses for the same claim.
+
 \begin{theorem}[Witness Sensitivity]
 \label{thm:witness-sensitivity}
-Equal projection does not determine equal support status. There exist observers, support bundles, and claims such that
+Equal projection does not determine equal support status. There exist observers,
+support bundles, and claims such that
 \[
   \pi_S(O_1)=\pi_S(O_2)
 \]
@@ -897,7 +857,8 @@ different support status.
 
 \begin{proposition}[Mediated Support Translation]
 \label{prop:mediated-support-translation}
-There exist observers $S_0,M,S_1$, a claim $\phi$, and a purpose $P$ such that a mediator receiving the same source material as the direct path translates support into an endpoint-admissible form that direct transport loses or fails to provide:
+There are paths where direct transport loses support but a mediator translates
+the same source material into an endpoint-admissible receipt:
 \[
   \Val_{S_0\to S_1}^{P,\ctx}(\phi)=\underdetermined,
   \qquad
@@ -951,15 +912,15 @@ The divergence is therefore due to transported support and certificate content,
 not a change in endpoint accumulation policy.
 \end{proof}
 
-This is the paper's poster result. It turns snapshot equality into an audit question rather than a support guarantee. Snapshot-only systems are context graveyards: they preserve visible state while burying the path that made stronger claims admissible.
+Snapshot equality is therefore an audit question, not a support guarantee.
 
 \section{Cryptographic Witness Surfaces}
 \label{sec:crypto}
 
-Cryptography belongs in OG-III as a witness laboratory. Cryptographic objects
-separate commitment, verification, revelation, authority, freshness, and
-admission. The finite witnesses in this section and \cref{app:witness-library}
-make those separations explicit. The central distinction is:
+This section changes the witness surface, not the calculus. Cryptographic
+objects are support atoms or discharge alternatives that can separate
+commitment, verification, revelation, authority, freshness, and admission. The
+central distinction is:
 \[
   \Verify(\CryptSupp,\ctx)=\mathrm{accept}
   \quad\not\Rightarrow\quad
@@ -1073,7 +1034,10 @@ observer admission follows that status. The finite ledger check is in
 \section{Witness Holonomy, Freshness, and Negative Witnesses}
 \label{sec:holonomy}
 
-Witness holonomy gives the paper geometric teeth without smooth geometry. OG-III does not assume a metric, tangent space, smooth manifold, or differential connection. It defines an operational finite analogue: closed observer transport may return to the same visible state while failing to return the same witness, provenance, authority, or freshness support.
+This section adds closed paths. \enquote{Witness holonomy} names a finite loop
+defect, not a smooth-geometric structure: a closed observer path may return to
+the same visible state while failing to return the same provenance, authority,
+freshness, or witness support.
 
 \begin{definition}[Coordinate defect]
 \label{def:coordinate-defect}
@@ -1081,7 +1045,9 @@ For a closed path $\gamma:S\to S$ and coordinate $c$,
 \[
   \Def_c(\gamma,\phi)\in\{0,\mathrm{partial},1\}.
 \]
-The value $\mathrm{partial}$ is allowed only when the defect points to a finite obligation component or named caveat, such as $\stale(F)$, context mismatch, partial authority, or partial freshness.
+The value $\mathrm{partial}$ is allowed only when the defect points to a finite
+obligation component or named caveat, such as $\stale(F)$, context mismatch,
+partial authority, or partial freshness.
 \end{definition}
 
 \begin{theorem}[Nonzero Loop Defect]
@@ -1217,7 +1183,8 @@ projection therefore closes, but none of the authorship-obligation atoms is
 discharged by $L_n$. The audit returns the displayed nonempty residual set.
 \end{proof}
 
-Absence claims require negative witnesses relative to aperture and frontier. ``I did not see a conflict'' is not ``no conflict occurred.''
+Absence claims require negative witnesses relative to aperture and frontier.
+\enquote{I did not see a conflict} is not \enquote{no conflict occurred}.
 
 \begin{proposition}[Negative Witness Fragility]
 \label{prop:negative-witness-fragility}
@@ -1234,7 +1201,10 @@ $\underdetermined$ for $S_{\mathrm{state}}$.
 \section{Support Soundness, Witness Debt, and False Reports Without Dishonesty}
 \label{sec:soundness}
 
-Let $\Just_S^P(\phi,\ctx)$ be the strongest status justified by admissible support, and let $\Report_S^P(\phi,\ctx)$ be the status emitted by the observer or system. Report strength is compared by a local preorder $\leq_P$, not a global lattice.
+This section adds reporting. Let $\Just_S^P(\phi,\ctx)$ be the strongest status
+justified by admissible support, and let $\Report_S^P(\phi,\ctx)$ be the status
+emitted by the observer or system. Report strength is compared by a local
+preorder $\leq_P$, not a global lattice.
 For ordinary support-reporting purposes one may have
 $\underdetermined\leq_P\supported$,
 $\unverifiable\leq_P\supported$, and
@@ -1249,9 +1219,10 @@ Pointwise support soundness holds when
 \[
   \Report_S^P(\phi,\ctx)\leq_P \Just_S^P(\phi,\ctx).
 \]
-Pathwise support soundness, written $\mathsf{SupportSound}_P(\gamma)$, holds when this
-pointwise condition holds for every claim $\phi$ in the purpose family $P$,
-using the status justified by $\Carry_\gamma(\phi,\ctx)$ at the endpoint.
+Pathwise support soundness, written $\mathsf{SupportSound}_P(\gamma)$, holds
+when this pointwise condition holds for every claim $\phi$ in the purpose
+family $P$, using the status justified by $\Carry_\gamma(\phi,\ctx)$ at the
+endpoint.
 \end{definition}
 
 \begin{theorem}[Support-Soundness Failure / Witness Debt]
@@ -1329,7 +1300,12 @@ For an authority claim $\phi_{\mathrm{auth}}=$ ``update $u$ was admitted under p
 \section{Purpose-Indexed Equivalence and Robustness}
 \label{sec:robustness}
 
-Purpose-indexed equivalence is written $S\simeq_P S'$ when two observers agree on support status for the relevant claim family. Equivalence for state claims does not imply equivalence for provenance, intent, authority, verification, or freshness claims. A claim is robust over a path class when all admissible paths preserve the relevant justified status; it is fragile when two admissible paths with the same endpoints induce different justified statuses.
+Write $S\simeq_P S'$ when two observers agree on support status for the
+relevant claim family. State-purpose equivalence need not imply provenance,
+authority, verification, freshness, or intent equivalence. A claim is robust
+over a path class when all admissible paths preserve its justified status, and
+fragile when two admissible paths with the same endpoints induce different
+statuses.
 
 \begin{proposition}[Purpose-Indexed Equivalence]
 \label{prop:purpose-indexed-equivalence}

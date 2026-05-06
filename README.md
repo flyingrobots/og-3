@@ -1,69 +1,106 @@
 # AIΩN Observer Geometry III
 
-LaTeX source for **Observer Geometry III**.
+**Observer Geometry III: Path Geometry and Support Obligations**
 
-Observer Geometry III studies path-sensitive support transport: endpoint
-agreement is not support agreement, and claim status depends on the support
-obligations carried, compressed, verified, opened, blocked, redacted, or lost
-along an observer path.
+DOI: <https://doi.org/10.5281/zenodo.20046284>
 
-## Status
+Author: James Ross, Independent Researcher
 
-Draft manuscript scaffold.
+ORCID: <https://orcid.org/0009-0006-0025-7801>
 
-Papers I and II are treated as published fixed interfaces. This repository is
-the working home for porting the OG-III outline into the canonical Observer
-Geometry paper template.
+This repository contains the manuscript source, generated reading copies, and
+finite reference checks for **Observer Geometry III**. The paper studies
+path-sensitive support transport: endpoint agreement is not support agreement,
+and a claim's justified status depends on which support obligations, witnesses,
+certificates, authority facts, freshness facts, losses, blocks, and refutations
+survive the observer path.
 
-## Files
+OG-III follows Observer Geometry I and II. Papers I and II are treated here as
+fixed published interfaces; this repository is the working and archival home for
+the OG-III manuscript and its companion finite witness model.
 
-- `observer_geometry_3.tex`: main manuscript source
-- `observer_geometry_3.refs.bib`: bibliography database
-- `formal/coq/OG3.v`: compact Coq/Rocq finite reference model for the witness calculations
-- `formal/coverage.json`: paper-to-Coq finite witness coverage map
-- `.zenodo.json`: draft Zenodo deposition metadata
-- `CITATION.cff`: draft citation metadata
-- `source/OG-III-paper-outline.md`: working outline snapshot
-- `source/OG-Ideas.md`: idea parking lot snapshot
-- `Makefile`: build pipeline for PDF and text exports
+## Main Artifacts
 
-## Build Pipeline
+- `observer_geometry_3.tex` - manuscript source
+- `observer_geometry_3.refs.bib` - bibliography database
+- `dist/observer_geometry_3.pdf` - generated PDF reading copy
+- `dist/observer_geometry_3.txt` - generated plain-text reading copy
+- `formal/coq/OG3.v` - compact Coq/Rocq finite reference model
+- `formal/coverage.json` - paper-to-Coq finite witness coverage map
+- `formal/generated/coverage_table.tex` - generated manuscript coverage table
+- `.zenodo.json` - Zenodo deposition metadata
+- `CITATION.cff` - citation metadata
+- `source/` - outline and working notes retained for provenance
 
-### Requirements
+## Formal Reference Model
+
+The Coq/Rocq file is a compact finite reference model for the witness
+calculations used in the manuscript. It mechanizes simplified support atoms,
+four-component support ledgers, obligation objects, finite satisfaction and
+admission examples, unmet-support and witness-debt calculations, and the finite
+separation witnesses named in the coverage table.
+
+The model deliberately abstracts real cryptographic implementations. It does
+not implement Ed25519, zero-knowledge systems, Merkle proofs, transparency logs,
+full path-certificate validation, extraction from native observer memory, or
+full policy admission. Cryptographic surfaces are represented as finite verifier
+facts, and the manuscript supplies the mathematical interpretation.
+
+## Build Requirements
 
 - `pdflatex`
 - `biber`
-- `pandoc` (only required for `make txt`)
-- `python3` (required for `make verify` and coverage-table generation)
-- `coqc` (required for `make verify`; provided by the Homebrew `rocq`
-  formula)
+- `pandoc` for text export
+- `python3` for coverage-table checks
+- `coqc` for formal verification, provided by the Homebrew `rocq` formula
 
-### Commands
+## Common Commands
+
+Build the generated PDF and text exports:
 
 ```bash
 make pdf txt
 ```
 
+Check the Coq/Rocq reference model and the paper-to-Coq coverage map:
+
 ```bash
 make verify
 ```
+
+Regenerate the coverage table, check the Coq/Rocq file, and verify that the
+generated coverage artifact is current:
 
 ```bash
 make formal-sync
 ```
 
-`make verify` checks the finite support-ledger witness calculations and the
-paper-to-Coq coverage artifact. `make formal-sync` regenerates the coverage
-artifact, checks the Coq file, and verifies that the generated artifact is
-current. These targets check a simplified finite reference model; they do not
-verify path-certificate validation, extraction from native observer memory, full
-policy admission, or real cryptographic implementations. The model does include
-the finite ledger-level check that rejected certificate material is observable
-as typed refutation rather than treated as absent support.
+Remove generated build outputs:
+
+```bash
+make clean
+```
+
+## Citation
+
+Use the DOI for this draft unless a later published version supersedes it:
+
+```text
+Ross, James. Observer Geometry III: Path Geometry and Support Obligations.
+Version 0.1.0-draft. 2026. https://doi.org/10.5281/zenodo.20046284
+```
+
+Machine-readable citation metadata is available in `CITATION.cff`.
+
+## Repository
+
+The public repository for this work is:
+
+<https://github.com/flyingrobots/og-3>
 
 ## License
 
 Licensed under Creative Commons Attribution 4.0 International (`CC BY 4.0`).
-See [`LICENSE`](./LICENSE).
+See `LICENSE`.
 
 Copyright © 2026 James Ross.

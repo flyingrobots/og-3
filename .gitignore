@@ -1,7 +1,23 @@
+# macOS and local editor state
 .DS_Store
+._*
+*~
+*.swp
+*.swo
+.idea/
+.vscode/
+.zed/
+
+# Local coordination/runtime state
 .graft/
+
+# Manuscript build outputs
 .build/
 dist/
+observer_geometry_3.pdf
+observer_geometry_3.txt
+
+# LaTeX/Biber generated files
 *.aux
 *.bbl
 *.bcf
@@ -12,14 +28,34 @@ dist/
 *.lof
 *.log
 *.lot
+*.nav
 *.out
-*.pdf
 *.run.xml
+*.snm
 *.synctex.gz
 *.toc
+*.vrb
 *.xdv
-*.vo
-*.vo[sk]
+
+# Coq/Rocq generated files
 *.glob
-.lia.cache
+*.vo
+*.vos
+*.vok
+*.vio
+.lia.cache/
 .coq-native/
+
+# Python tooling and virtual environments
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Local environment overrides
+.env
+.env.local
+.env.*.local
