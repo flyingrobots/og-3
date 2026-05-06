@@ -1355,6 +1355,18 @@ support atom or compression receipt. The calculus also records cases where the
 proof is valid for one purpose while admission fails for the current observer,
 purpose, or context.
 
+Modern recursive-proof systems and accumulation schemes sharpen the compression
+side of this comparison. Halo gives recursive proof composition without a
+trusted setup; accumulation schemes show how recursive composition can yield
+proof-carrying data under weaker verifier requirements; Fractal and Nova develop
+transparent, post-quantum, and folding-based routes to recursive arguments and
+incrementally verifiable computation
+\cite{bowe_halo_2019,bunz_recursive_accumulation_2020,chiesa_fractal_2019,kothapalli_nova_2021}.
+OG-III treats these systems as high-capacity compression-receipt surfaces: the
+formal question is which typed obligations a compact recursive artifact
+discharges under a path, and what support remains unavailable when a valid proof
+is stale, blocked, omitted, or admitted for a different claim context.
+
 Authenticated data structures and transparency logs supply concrete witness
 surfaces for membership, consistency, freshness, and tamper-evidence. Tamassia's
 authenticated-data-structure model separates source, responder, proof, and
@@ -1400,6 +1412,19 @@ debugging, annotation propagation, and confidence
 aligned with provenance in treating support as structured evidence, while its
 main distinction is path-indexed support obligation: two endpoint-equal objects
 may carry different support for the same purpose-indexed claim.
+
+Secure and cryptographic provenance work moves closer to OG-III's operational
+surface. ProvChain records cloud provenance in a blockchain-backed history;
+authenticated-data-structure approaches use verification trees, signatures, and
+auditor views to preserve content and chronology; recent security-and-privacy
+surveys classify provenance mechanisms around audit, accountability, integrity,
+confidentiality, and attack resistance
+\cite{liang_provchain_2017,jamil_secure_provenance_2018,pan_data_provenance_security_2023}.
+These systems give concrete storage and verification protocols for authoritative
+history. OG-III abstracts over the storage substrate and states the accounting
+conditions: which provenance atoms are carried, which authority and freshness
+obligations they discharge, which losses are declared or blocked, and how
+reports compare with admitted support after a path.
 
 Zero-knowledge proofs give the canonical separation between verification and
 revelation. Goldwasser, Micali, and Rackoff formalize knowledge complexity and
