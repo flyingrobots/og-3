@@ -1,5 +1,5 @@
 {
-  "title": "AIΩN Observer Geometry III: Manuscript Source and Coq/Rocq Reference Model",
+  "title": "Observer Geometry III: Manuscript Source and Coq/Rocq Reference Model",
   "upload_type": "software",
   "creators": [
     {
@@ -8,7 +8,7 @@
       "affiliation": "Independent Researcher"
     }
   ],
-  "description": "This software artifact contains the public source repository for AIΩN Observer Geometry III. It includes the LaTeX manuscript source, bibliography, build scripts, citation and Zenodo metadata, coverage manifest, generated formal-coverage table, and a compact Coq/Rocq finite reference model for the ledger-level witness calculations used by the paper. The formal model mechanizes simplified finite support atoms, four-component ledgers, obligation objects, satisfaction/admission examples, witness-debt calculations, and finite separation witnesses. Real cryptographic implementations, path-certificate validation, distributed-system execution, and full policy admission are abstracted as finite verifier facts or manuscript-level witness surfaces.",
+  "description": "This software artifact contains the public source repository for Observer Geometry III. It includes the LaTeX manuscript source, bibliography, build scripts, citation and Zenodo metadata, coverage manifest, generated formal-coverage table, and a compact Coq/Rocq finite reference model for the ledger-level witness calculations used by the paper. The formal model mechanizes simplified finite support atoms, four-component ledgers, obligation objects, satisfaction/admission examples, witness-debt calculations, and finite separation witnesses. Real cryptographic implementations, path-certificate validation, distributed-system execution, and full policy admission are abstracted as finite verifier facts or manuscript-level witness surfaces.",
   "access_right": "open",
   "license": "cc-by-4.0",
   "version": "0.1.1-draft",

@@ -1,4 +1,4 @@
-# AIΩN Observer Geometry III
+# Observer Geometry III
 
 **Observer Geometry III: Path Geometry and Support Obligations**
 
