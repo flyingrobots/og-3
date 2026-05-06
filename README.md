@@ -4,7 +4,11 @@
 
 [![CI](https://github.com/flyingrobots/og-3/actions/workflows/ci.yml/badge.svg)](https://github.com/flyingrobots/og-3/actions/workflows/ci.yml)
 
-DOI: <https://doi.org/10.5281/zenodo.20046284>
+Paper DOI: <https://doi.org/10.5281/zenodo.20046284>
+
+Code artifact DOI: <https://doi.org/10.5281/zenodo.20054993>
+
+Code concept DOI: <https://doi.org/10.5281/zenodo.20054992>
 
 Author: James Ross, Independent Researcher
 
@@ -102,6 +106,10 @@ Machine-readable citation metadata is available in `CITATION.cff`.
 The public repository for this work is:
 
 <https://github.com/flyingrobots/og-3>
+
+The archived `v0.1.0-draft` code artifact is:
+
+<https://github.com/flyingrobots/og-3/releases/tag/v0.1.0-draft>
 
 ## License
 
