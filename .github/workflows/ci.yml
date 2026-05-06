@@ -12,9 +12,6 @@ on:
 permissions:
   contents: read
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -26,7 +23,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Pull Rocq image
         run: docker pull rocq/rocq-prover:9.1
@@ -37,14 +34,13 @@ jobs:
           cat > .build/ci-bin/coqc <<'EOF'
           #!/usr/bin/env bash
           docker run --rm \
-            --user "$(id -u):$(id -g)" \
-            -e HOME=/tmp \
             -v "$PWD:/work" \
             -w /work \
             rocq/rocq-prover:9.1 \
             rocq compile "$@"
           EOF
           chmod +x .build/ci-bin/coqc
+          chmod -R a+rwX .
           PATH="$PWD/.build/ci-bin:$PATH" make verify
 
   manuscript:
@@ -53,7 +49,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install manuscript toolchain
         run: |
@@ -91,7 +87,7 @@ jobs:
         run: git diff --check
 
       - name: Upload rendered artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: observer-geometry-3-dist
           path: |
