@@ -2,6 +2,8 @@
 
 **Observer Geometry III: Path Geometry and Support Obligations**
 
+[![CI](https://github.com/flyingrobots/og-3/actions/workflows/ci.yml/badge.svg)](https://github.com/flyingrobots/og-3/actions/workflows/ci.yml)
+
 DOI: <https://doi.org/10.5281/zenodo.20046284>
 
 Author: James Ross, Independent Researcher
@@ -30,7 +32,6 @@ the OG-III manuscript and its companion finite witness model.
 - `formal/generated/coverage_table.tex` - generated manuscript coverage table
 - `.zenodo.json` - Zenodo deposition metadata
 - `CITATION.cff` - citation metadata
-- `source/` - outline and working notes retained for provenance
 
 ## Formal Reference Model
 
@@ -74,6 +75,10 @@ generated coverage artifact is current:
 ```bash
 make formal-sync
 ```
+
+GitHub Actions runs `make verify`, validates `.zenodo.json`, renders the PDF
+and text exports, checks the generated coverage table, scans LaTeX/Biber logs,
+and uploads the rendered reading copies as workflow artifacts.
 
 Remove generated build outputs:
 

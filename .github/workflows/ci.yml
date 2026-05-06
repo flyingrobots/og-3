@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  formal:
+    name: Formal verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up OCaml/opam
+        uses: ocaml/setup-ocaml@v3
+        with:
+          ocaml-compiler: 5.4.1
+
+      - name: Install Rocq
+        run: |
+          opam repo add rocq-released https://rocq-prover.org/opam/released
+          opam install -y rocq-prover rocq-core=9.1.1
+
+      - name: Run formal checks
+        run: opam exec -- make verify
+
+  manuscript:
+    name: Manuscript render
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install manuscript toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            biber \
+            jq \
+            lmodern \
+            pandoc \
+            ripgrep \
+            texlive-bibtex-extra \
+            texlive-fonts-recommended \
+            texlive-latex-base \
+            texlive-latex-extra \
+            texlive-latex-recommended \
+            texlive-pictures
+
+      - name: Validate metadata
+        run: jq . .zenodo.json >/dev/null
+
+      - name: Build PDF and text exports
+        run: make -B pdf txt
+
+      - name: Check generated coverage table
+        run: git diff --exit-code -- formal/generated/coverage_table.tex
+
+      - name: Check LaTeX and Biber logs
+        run: |
+          if rg -n "(Undefined references|undefined citations|Citation .* undefined|LaTeX Warning|Package .* Warning|Overfull|Underfull|Error|Emergency stop|Fatal|pdfTeX warning)" .build/observer_geometry_3.log .build/observer_geometry_3.blg; then
+            echo "Unexpected LaTeX/Biber warning or error output found."
+            exit 1
+          fi
+
+      - name: Check whitespace
+        run: git diff --check
+
+      - name: Upload rendered artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: observer-geometry-3-dist
+          path: |
+            dist/observer_geometry_3.pdf
+            dist/observer_geometry_3.txt
+          if-no-files-found: error
