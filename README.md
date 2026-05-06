@@ -96,7 +96,7 @@ Use the DOI for this draft unless a later published version supersedes it:
 
 ```text
 Ross, James. Observer Geometry III: Path Geometry and Support Obligations.
-Version 0.1.1-draft. 2026. https://doi.org/10.5281/zenodo.20046284
+Version 0.1.2-draft. 2026. https://doi.org/10.5281/zenodo.20046284
 ```
 
 Machine-readable citation metadata is available in `CITATION.cff`.
