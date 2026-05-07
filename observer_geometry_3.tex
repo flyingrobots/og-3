@@ -652,15 +652,15 @@ for the evaluated path-support component.
 
 \begin{figure}[ht]
 \centering
-\begin{tikzpicture}[node distance=1.7cm]
-  \node[ogbox] (claim) {claim $\phi$\\purpose $P$\\context $\ctx$};
-  \node[ogbox, below=of claim] (obl) {$\Obl_P(\phi,\ctx)$};
-  \node[ogbox, below=of obl] (carry) {$\Carry_\gamma(\phi,\ctx)$};
-  \node[ogbox, below left=1.3cm and 0.2cm of carry] (unmet) {$\Unmet_\gamma$};
-  \node[ogbox, below=1.3cm of carry] (loss) {$\DeclaredLoss_\gamma$};
-  \node[ogbox, below right=1.3cm and 0.2cm of carry] (status) {justified\\status};
-  \node[ogwarnbox, text width=2.6cm, below=1.25cm of status] (report) {emitted\\$\Report_S^P$};
-  \node[ogwarnbox, text width=2.8cm, below=1.25cm of loss] (debt) {$\Debt_\gamma^P$\\from unmet\\and report};
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \node[ogbox] (claim) at (0,0) {claim $\phi$\\purpose $P$\\context $\ctx$};
+  \node[ogbox] (obl) at (0,-1.45) {$\Obl_P(\phi,\ctx)$};
+  \node[ogbox] (carry) at (0,-2.9) {$\Carry_\gamma(\phi,\ctx)$};
+  \node[ogbox] (unmet) at (-2.75,-4.25) {$\Unmet_\gamma$};
+  \node[ogbox] (loss) at (2.75,-4.25) {$\DeclaredLoss_\gamma$};
+  \node[ogbox] (status) at (0,-5.65) {justified\\status};
+  \node[ogwarnbox, text width=2.6cm] (report) at (2.75,-7.15) {emitted\\$\Report_S^P$};
+  \node[ogwarnbox, text width=2.9cm] (debt) at (-2.75,-7.15) {$\Debt_\gamma^P$\\from unmet\\and report};
   \draw[ogline] (claim) -- (obl);
   \draw[ogline] (obl) -- (carry);
   \draw[ogthin] (carry) -- (unmet);
@@ -669,7 +669,7 @@ for the evaluated path-support component.
   \draw[ogline] (loss) -- (status);
   \draw[ogthin] (status) -- (report);
   \draw[ogline] (unmet) -- (debt);
-  \draw[ogline] (report) -- (debt);
+  \draw[ogline] (report.west) -- (debt.east);
 \end{tikzpicture}
 \caption{Support accounting pipeline. Justified status is produced by obligation accounting, while witness debt also depends on the emitted report.}
 \label{fig:support-pipeline}
