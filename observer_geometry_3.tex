@@ -17,6 +17,7 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{tabularx}
+\usepackage{xltabular}
 \usepackage{placeins}
 \usepackage{caption}
 \usepackage{tikz}
@@ -1456,48 +1457,61 @@ compact Coq/Rocq reference formalization. The model is a finite reference
 semantics for support-accounting examples, not a full cryptographic or
 distributed-systems implementation.
 
-\begin{table}[ht]
-\centering
+\begingroup
 \footnotesize
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.36\textwidth}>{\raggedright\arraybackslash}X}
+\begin{xltabular}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.36\textwidth}>{\raggedright\arraybackslash}X}
+\caption{Data and code availability summary. Exact per-version archive DOIs are assigned by Zenodo when GitHub releases are archived; the concept DOI and release page are stable locators for the archive family.}
+\label{tab:data-code-availability}\\
 \toprule
 \TableHeaderRow Item & Location or command & Status \\
 \midrule
+\endfirsthead
+\toprule
+\TableHeaderRow Item & Location or command & Status \\
+\midrule
+\endhead
+\midrule
+\multicolumn{3}{r}{\footnotesize Continued on next page} \\
+\endfoot
+\bottomrule
+\endlastfoot
 Public source repository &
 \href{https://github.com/flyingrobots/og-3}{\texttt{flyingrobots/og-3}} &
 Public repository for source, metadata, and generated reading copies. \\
+\rowcolor{tablerowbg}
 Code archive concept DOI &
 \href{https://doi.org/10.5281/zenodo.20054992}{doi:10.5281/zenodo.20054992} &
 Stable Zenodo archive family for versioned code artifacts. \\
 Prior code archive DOI &
 \href{https://doi.org/10.5281/zenodo.20055508}{doi:10.5281/zenodo.20055508} &
 Prior archived code release. \\
+\rowcolor{tablerowbg}
 Initial code archive DOI &
 \href{https://doi.org/10.5281/zenodo.20054993}{doi:10.5281/zenodo.20054993} &
 Initial archived code release. \\
 Formal model &
 \texttt{formal/coq/OG3.v} &
 Compact Coq/Rocq finite reference model. \\
+\rowcolor{tablerowbg}
 Verification command &
 \texttt{make verify} &
 Checks the Coq/Rocq file and coverage map when \texttt{coqc} is available. \\
 Formal sync command &
 \texttt{make formal-sync} &
 Regenerates the coverage table and checks that generated artifacts are current. \\
+\rowcolor{tablerowbg}
 Checked local toolchain &
 Rocq Prover 9.1.1; OCaml 5.4.1 &
 Local environment used for this release. \\
 CI container &
 \texttt{rocq/rocq-prover:9.1} &
 Pinned GitHub Actions formal-verification environment. \\
+\rowcolor{tablerowbg}
 Companion prototype &
 \href{https://github.com/flyingrobots/git-holaudit}{\texttt{flyingrobots/\allowbreak{}git-holaudit}} &
 Engineering interpretation over Git line witnesses; not used for Coq/Rocq witness results. \\
-\bottomrule
-\end{tabularx}
-\caption{Data and code availability summary. Exact per-version archive DOIs are assigned by Zenodo when GitHub releases are archived; the concept DOI and release page are stable locators for the archive family.}
-\label{tab:data-code-availability}
-\end{table}
+\end{xltabular}
+\endgroup
 \FloatBarrier
 
 The generated coverage map binds manuscript labels to Coq/Rocq objects.
