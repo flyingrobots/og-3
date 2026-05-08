@@ -346,6 +346,14 @@ Proof.
   repeat split; reflexivity.
 Qed.
 
+Example og3_hallucination_overreport :
+  admit L_raw O_auth = Underdetermined /\
+  overreport Supported (admit L_raw O_auth) = true /\
+  debt L_raw O_auth Supported = auth_atoms.
+Proof.
+  repeat split; reflexivity.
+Qed.
+
 Definition O_state : obligation :=
   Obligation [SX] [[SX]].
 
@@ -385,6 +393,17 @@ Example og3_purpose_equivalence :
   admit L_cert O_state = Supported /\
   admit L_raw O_state = Supported /\
   admit L_cert O_auth = Supported /\
+  admit L_raw O_auth = Underdetermined.
+Proof.
+  repeat split; reflexivity.
+Qed.
+
+Example og3_path_class_robustness :
+  admit L_cert O_state = Supported /\
+  admit L_mediated O_state = Supported /\
+  admit L_raw O_state = Supported /\
+  admit L_cert O_auth = Supported /\
+  admit L_mediated O_auth = Supported /\
   admit L_raw O_auth = Underdetermined.
 Proof.
   repeat split; reflexivity.

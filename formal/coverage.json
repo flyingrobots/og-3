@@ -117,9 +117,18 @@
     "scope": "supported report with unmet debt"
   },
   {
+    "id": "og3.hallucination_overreport",
+    "paper_label": "prop:hallucination-overreport",
+    "paper_ref": "Proposition 8.4",
+    "coq_object": "og3_hallucination_overreport",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "supported-claim hallucination as overreport"
+  },
+  {
     "id": "og3.typed_false_report",
     "paper_label": "def:typed-false-report",
-    "paper_ref": "Definition 8.4",
+    "paper_ref": "Definition 8.5",
     "coq_object": "og3_typed_false_report",
     "kind": "finite_witness",
     "status": "mechanized",
@@ -133,5 +142,14 @@
     "kind": "finite_witness",
     "status": "mechanized",
     "scope": "state equivalence without authorship equivalence"
+  },
+  {
+    "id": "og3.path_class_robustness",
+    "paper_label": "prop:path-class-robustness",
+    "paper_ref": "Proposition 9.2",
+    "coq_object": "og3_path_class_robustness",
+    "kind": "finite_witness",
+    "status": "mechanized",
+    "scope": "state robustness with authorship fragility over a larger path class"
   }
 ]

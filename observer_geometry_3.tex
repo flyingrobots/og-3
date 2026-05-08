@@ -301,16 +301,21 @@ where honesty, reporting duty, and accountability enter.
 \subsection{Results and Roadmap}
 \label{sec:results-roadmap}
 
-The theorem spine is witness sensitivity
+The main theorem spine has five results: witness sensitivity
 (\cref{thm:witness-sensitivity}), path-dependent support transport
 (\cref{thm:path-dependent-support-transport}), nonzero loop defect
 (\cref{thm:nonzero-witness-holonomy}), validity/admissibility separation
 (\cref{thm:validity-admissibility-separation}), and support-soundness failure
-(\cref{thm:support-soundness-failure}). Supporting finite witnesses cover
-mediated support translation, verification/revelation separation, freshness
-separation, authority separation, negative witnesses, invalid certificate
-observability, and loop-defect auditing. The witnesses are in
-\cref{app:witness-library}; extended calculations are in \cref{app:proofs}.
+(\cref{thm:support-soundness-failure}). These are the results needed for the
+paper's central claim that endpoint agreement does not determine support
+agreement.
+
+Supporting finite witnesses cover mediated support translation,
+verification/revelation separation, freshness separation, authority separation,
+negative witnesses, invalid certificate observability, and loop-defect auditing.
+They make the theorem spine checkable without broadening the core calculus. The
+witnesses are in \cref{app:witness-library}; extended calculations are in
+\cref{app:proofs}.
 
 Sections~\ref{sec:imports}--\ref{sec:paths} define the imported interfaces and
 the finite support calculus. Sections~\ref{sec:path-dependent}--\ref{sec:soundness}
@@ -318,6 +323,10 @@ prove the main separations using the signed-edit example, cryptographic witness
 surfaces, a closed loop, and report/debt accounting. The remaining sections
 record robustness, engineering interpretation, availability, related work, and a
 conclusion that bridges to OG-IV.
+The main figures give a parallel visual map: support accounting
+(\cref{fig:support-pipeline}), extraction from memory and PathCert material
+(\cref{fig:extract-carry}), cryptographic verification/admission
+(\cref{fig:verify-admit}), and loop defect (\cref{fig:witness-holonomy}).
 
 \paragraph{Contributions.}
 This paper contributes:
@@ -424,6 +433,11 @@ $\phi_{\mathrm{text}}$ needs text-state support, while
 $\phi_{\mathrm{auth}}$ needs signature, identity, policy, and freshness support
 or an admitted receipt for them.
 
+\paragraph{Finite objects.}
+The first definitions fix the finite universe of typed support atoms, ledgers,
+contexts, and obligations. This is the minimum algebra needed before paths,
+certificates, and reports enter.
+
 \begin{definition}[Finite support calculus base]
 Fix finite sets of claims $\Phi$, purposes $\mathcal P$, observers
 $\mathcal S$, support kinds $\mathcal K$, and support payloads
@@ -484,6 +498,10 @@ admission-policy support, but every such requirement is encoded as typed atoms
 and finite discharge alternatives.
 \end{definition}
 
+\paragraph{Statuses and reports.}
+The next definitions separate an endpoint's justified status from what it emits.
+Status tags are local support judgements, not global truth values.
+
 \begin{definition}[Status discipline]
 Statuses are finite tags, not a global truth lattice. OG-III uses tags such as
 \[
@@ -509,8 +527,9 @@ Fix endpoint observer $S_1$, path $\gamma:S_0\to S_1$, claim $\phi$, purpose
 $P$, and context $\ctx$. Let $\Status$ map admission outcomes to status tags:
 $\mathrm{accept}\mapsto\supported$,
 $\mathrm{reject}\mapsto\refuted$,
-$\authorityblocked\mapsto\authorityblocked$, and
-$\underdetermined\mapsto\underdetermined$. The justified status is
+$\authorityblocked\mapsto\authorityblocked$,
+$\underdetermined\mapsto\underdetermined$, and
+$\unverifiable\mapsto\unverifiable$. The justified status is
 \[
   \Just_{S_1,\gamma}^P(\phi,\ctx)
   =
@@ -557,6 +576,11 @@ This is a structural distinction, not a dishonesty judgement. It is the basis
 for later cases in which $S$ reports honestly from testimony while upstream
 reporter $L$ overreported, laundered, or fabricated support.
 \end{proposition}
+
+\paragraph{Carried support and extraction.}
+The final layer of this section connects path-carried support to OG-I native
+accumulation. Unmet support, declared loss, and witness debt are computed after
+this extraction step.
 
 \begin{definition}[Carried support and witness debt]
 For path $\gamma$, the path-indexed support ledger is
@@ -717,6 +741,7 @@ for the evaluated path-support component.
 \caption{$M_S$ to $\Carry_\gamma$ extraction. $\Carry_\gamma$ is not $M_S$; it is extracted from endpoint accumulation plus checkable path declarations. Absent certificates add no path support; rejected certificates add a typed validation-failure refutation.}
 \label{fig:extract-carry}
 \end{figure}
+\FloatBarrier
 
 \section{Observer Paths and Support Transport}
 \label{sec:paths}
@@ -773,7 +798,7 @@ $S$'s native ledger view. A certificate may declare loss, redaction, blockage,
 or staleness; those declarations enter $D$ or $B$ and do not discharge required
 atoms. A rejected certificate never contributes $\Term(\chi)$; if extraction is
 attempted with rejected certificate material, the failure is recorded through
-the $\CertReject$ typed-refutation atom from \cref{prop:invalid-cert-observable}.
+the $\CertReject$ typed-refutation atom from Proposition~\ref{prop:invalid-cert-observable}.
 \end{definition}
 
 \begin{definition}[Satisfaction and admission]
@@ -801,7 +826,7 @@ For $L=(C,D,B,R)$ and $O=(R_O,\mathcal E_O)$, the evaluation rule is:
 Observer admission has type
 \[
   \Admit_S:\Ledg\times\Phi\times\mathcal P\times\mathsf{Ctx}
-  \to\{\mathrm{accept},\mathrm{reject},\underdetermined,\authorityblocked\}.
+  \to\{\mathrm{accept},\mathrm{reject},\underdetermined,\authorityblocked,\unverifiable\}.
 \]
 During admission, take $O=\Obl_P(\phi,\ctx)$. Let
 $\mathsf{Ref}_S^{P,\ctx}(L,\phi)$ be the finite set of typed refutation
@@ -972,9 +997,11 @@ Snapshot equality is therefore an audit question, not a support guarantee.
 \label{sec:crypto}
 
 This section changes the witness surface, not the calculus. Cryptographic
-objects are support atoms or discharge alternatives that can separate
-commitment, verification, revelation, authority, freshness, and admission. The
-central distinction is:
+objects are support atoms or discharge alternatives whose commitment,
+verification, revelation, authority, freshness, and admission surfaces can be
+tracked separately. The finite separations in this section prove
+verification/revelation, validity/admissibility, freshness, and authority
+separations. The central distinction is:
 \[
   \Verify(\CryptSupp,\ctx)=\mathrm{accept}
   \quad\not\Rightarrow\quad
@@ -991,12 +1018,14 @@ central distinction is:
   \node[ogbox, below=0.55cm of accept] (reject) {reject\\refuted};
   \node[ogbox, below=0.55cm of reject] (und) {underdetermined};
   \node[ogbox, below=0.55cm of und] (blocked) {authority\\blocked};
+  \node[ogbox, below=0.55cm of blocked] (unver) {unverifiable};
   \draw[ogline] (crypt) -- (verify);
   \draw[ogline] (verify) -- (admit);
   \draw[ogthin] (admit) -- (accept);
   \draw[ogthin] (admit) -- (reject);
   \draw[ogthin] (admit) -- (und);
   \draw[ogthin] (admit) -- (blocked);
+  \draw[ogthin] (admit) -- (unver);
 \end{tikzpicture}
 \caption{Verify / Admit split. Cryptographic validity is not observer admissibility.}
 \label{fig:verify-admit}
@@ -1332,12 +1361,34 @@ That is, the emitted report is strictly stronger than the status justified by
 admissible support.
 \end{definition}
 
+\begin{proposition}[Hallucination as supported-claim overreport]
+\label{prop:hallucination-overreport}
+Fix a purpose/context interface in which
+$\underdetermined<_P\supported$ and
+$\unverifiable<_P\supported$. Let
+$\Hallucinate_S^P(\phi,\ctx)$ denote the case where
+$\Report_S^P(\phi,\ctx)=\supported$ while
+$\Just_S^P(\phi,\ctx)\in\{\underdetermined,\unverifiable\}$ because carried
+support fails to discharge $\Obl_P(\phi,\ctx)$. Then
 \[
   \Hallucinate_S^P(\phi,\ctx)
-  \subset
+  \subseteq
   \OverReport_S^P(\phi,\ctx).
 \]
-Hallucination is the supported-claim case of overreport: the observer reports $\supported$ while carried support fails the obligation. Not every overreport is a hallucination.
+The inclusion is not generally an equality: a stale-to-fresh report or an
+authority-blocked-to-supported report can be an overreport without being the
+supported-claim hallucination case.
+\end{proposition}
+
+\begin{proof}
+If $\Hallucinate_S^P(\phi,\ctx)$ holds, the report is $\supported$ and the
+justified status is either $\underdetermined$ or $\unverifiable$. By the
+assumed local preorder, that justified status is strictly weaker than
+$\supported$. Therefore
+$\Just_S^P(\phi,\ctx)<_P\Report_S^P(\phi,\ctx)$, which is exactly
+$\OverReport_S^P(\phi,\ctx)$. The stale and authority-blocked examples show
+that overreport can occur outside the supported-claim hallucination case.
+\end{proof}
 
 \begin{definition}[Typed false report]
 \label{def:typed-false-report}
@@ -1384,6 +1435,35 @@ observers. The certified observer also carries
 $\{\sigma_A,i_A,p_\alpha,f_F\}$ or an admitted receipt for those atoms, while
 the raw observer carries no authorship support. Therefore the observers agree
 for $P_{\mathrm{state}}$ and separate for $P_{\mathrm{auth}}$.
+\end{proof}
+
+\begin{proposition}[Path-Class Robustness and Fragility]
+\label{prop:path-class-robustness}
+There exist two finite path classes with the same source and target such that
+the text-state claim is robust over both classes, while the authorship-audit
+claim is robust over the certified class and fragile over the larger mixed
+class.
+\end{proposition}
+
+\begin{proof}[Finite witness]
+Use the signed-edit family from \cref{app:witness-library}. Let
+$\Gamma_{\mathrm{cert}}$ contain paths whose terminal ledger discharges the
+authorship obligation, either by carrying
+$\{\sigma_A,i_A,p_\alpha,f_F\}$ or by carrying the admitted receipt
+$r_{\mathrm{auth}}$. Let
+$\Gamma_{\mathrm{mix}}=\Gamma_{\mathrm{cert}}\cup\{\gamma_{\mathrm{raw}}\}$,
+where
+\[
+  \Carry_{\gamma_{\mathrm{raw}}}(\phi_{\mathrm{auth}},\ctx)
+  =
+  L_{\mathrm{raw}}=(\{s_X\},\varnothing,\varnothing,\varnothing).
+\]
+Every path in both classes carries $s_X$, so the text-state claim is supported
+throughout. The authorship claim is supported on every path in
+$\Gamma_{\mathrm{cert}}$, but $\gamma_{\mathrm{raw}}$ leaves the authorship
+obligation underdetermined. Thus the same claim can be robust relative to a
+support-preserving path class and fragile once the admissible path class
+includes raw state-only transport.
 \end{proof}
 
 \section{Engineering Interpretation}
@@ -2197,23 +2277,6 @@ Status modifiers & $\stale$, fresh-at-frontier, redacted, compressed, proof-vali
 \end{OGInlineTable}
 \FloatBarrier
 
-\section{Diagrammatic Summary}
-\label{app:diagrams}
-
-The figures in the main text form the following finite reading path. The series
-ladder and canonical two-path example appear through the witness-sensitivity
-and path-dependent transport constructions in \cref{sec:path-dependent}. The
-support accounting pipeline is \cref{fig:support-pipeline}; it separates
-obligations, carried support, unmet support, declared loss, justified status,
-emitted report, and witness debt. The extraction diagram
-\cref{fig:extract-carry} shows how endpoint accumulation and PathCert material
-produce $\Carry_\gamma(\phi,\ctx)$. The Verify/Admit split is
-\cref{fig:verify-admit}; it includes acceptance, rejection by typed refutation,
-underdetermination, and authority blockage. The loop diagram
-\cref{fig:witness-holonomy} shows the finite nonzero loop defect: the state
-coordinate closes while the witness coordinate remains open. The bridge to
-OG-IV is the final debt judgement in \cref{sec:ogiv}.
-
 \section{Extended Proof Sketches}
 \label{app:proofs}
 
@@ -2222,7 +2285,7 @@ This appendix checks the theorem spine against the finite witnesses in
 projection, carried support, obligation satisfaction, admission, and report
 strength.
 
-\paragraph{D.1 Witness Sensitivity (\cref{thm:witness-sensitivity}).}
+\paragraph{D.1 Witness Sensitivity (Theorem~\ref{thm:witness-sensitivity}).}
 Use $x_{\mathrm{cert}}$ and $x_{\mathrm{raw}}$ from A.1. Since
 \[
   \pi_{S_1}(x_{\mathrm{cert}})=X=\pi_{S_1}(x_{\mathrm{raw}}),
@@ -2242,7 +2305,7 @@ compression receipt. Thus $\Sat_{S_1}^{P_{\mathrm{auth}},\ctx}=\mathrm{no}$.
 With no carried refutation, the status is $\underdetermined$. Equal projection
 therefore fails to determine equal support status.
 
-\paragraph{D.2 Mediated Support Translation (\cref{prop:mediated-support-translation}).}
+\paragraph{D.2 Mediated Support Translation (Proposition~\ref{prop:mediated-support-translation}).}
 Use A.4. On the direct path, the endpoint carries $L_{\mathrm{raw}}$ for
 $\phi_{\mathrm{auth}}$, so the authorship obligation is unmet and the status is
 $\underdetermined$. On the mediated path, $M$ observes the full support bundle
@@ -2251,7 +2314,7 @@ the compression registry, so the compressed receipt discharges
 $\{\sigma_A,i_A,p_\alpha,f_F\}$. The same source material can therefore produce
 an underdetermined direct status and a supported mediated status.
 
-\paragraph{D.3 Noncommutative Support Transport (\cref{lem:noncommutative-support-transport}).}
+\paragraph{D.3 Noncommutative Support Transport (Lemma~\ref{lem:noncommutative-support-transport}).}
 Use $T_c$ and $T_r$ from A.5. The composite $T_r\circ T_c$ first compresses the
 full authorship support into $r_{\mathrm{auth}}$ and then preserves the receipt.
 Its carried ledger is $L_c$. The composite $T_c\circ T_r$
@@ -2260,7 +2323,7 @@ is no longer satisfied, it cannot issue the authorship receipt. Its carried
 ledger is $(\{s_X,p_\alpha,f_F\},\varnothing,\varnothing,\varnothing)$. The
 ledgers differ as finite tuples, so support transport is order-sensitive.
 
-\paragraph{D.4 Path-Dependent Support Transport (\cref{thm:path-dependent-support-transport}).}
+\paragraph{D.4 Path-Dependent Support Transport (Theorem~\ref{thm:path-dependent-support-transport}).}
 Use $\gamma_{\mathrm{cert}}$ and $\gamma_{\mathrm{raw}}$ from A.3. Both paths
 have source $S_0$, target $S_1$, endpoint text $X$, and the same stateless
 endpoint accumulator $\Acc_{S_1}(M,p)=p$. Therefore the endpoint visible-state
@@ -2270,7 +2333,7 @@ raw path carries endpoint text only and is underdetermined for the authorship
 claim. Hence the paths agree on endpoint visible state and disagree on
 justified claim-status.
 
-\paragraph{D.5 Verification/Revelation Separation (\cref{prop:verification-revelation-separation}).}
+\paragraph{D.5 Verification/Revelation Separation (Proposition~\ref{prop:verification-revelation-separation}).}
 Use the sealed-predicate object from A.6 with no payload opening. The verifier
 has access to $(C,I,\pi_{\mathrm{zk}},\mathrm{stmt},\tau)$, so its verification
 aperture for the statement is positive and the verifier accepts. The observer
@@ -2278,7 +2341,7 @@ receives no opening for the committed payload, so its revelation aperture for
 that payload is zero. Verification support and revelation support are therefore
 separated by a finite cryptographic witness surface.
 
-\paragraph{D.6 Validity/Admissibility Separation (\cref{thm:validity-admissibility-separation}).}
+\paragraph{D.6 Validity/Admissibility Separation (Theorem~\ref{thm:validity-admissibility-separation}).}
 Use the same object with metadata binding $\tau=(P',\ctx,\alpha,F)$ and
 $P'\neq P$. By construction, the proof transcript verifies against the
 commitment and public inputs:
@@ -2292,7 +2355,7 @@ $\tau=(P,\ctx,\alpha,F)$. The metadata has the wrong purpose binding, so
 \]
 This finite table separates cryptographic validity from observer admission.
 
-\paragraph{D.7 Cryptographic Freshness Separation (\cref{prop:cryptographic-freshness-separation}).}
+\paragraph{D.7 Cryptographic Freshness Separation (Proposition~\ref{prop:cryptographic-freshness-separation}).}
 Use the freshness pair from A.6. Both $\CryptSupp_F$ and
 $\CryptSupp_{F_0}$ verify in $\ctx_{\mathrm{ver}}$ by construction. The
 freshness obligation is
@@ -2315,7 +2378,7 @@ frontier and is not discharged, so
 $\Sat_S^{P_{\fresh},\ctx_F}(L_{F_0},O_F)=\mathrm{partial}$. This separates
 cryptographic verification from freshness support.
 
-\paragraph{D.8 Cryptographic Authority Separation (\cref{prop:cryptographic-authority-separation}).}
+\paragraph{D.8 Cryptographic Authority Separation (Proposition~\ref{prop:cryptographic-authority-separation}).}
 Use the authority pair from A.6. The signature $\sigma_k$ verifies under key
 $k$, so $\Verify(\CryptSupp_{\mathrm{auth}},\ctx)=\mathrm{accept}$. The authority
 obligation is
@@ -2346,7 +2409,7 @@ Observer admission follows:
 \]
 This separates signature verification from authority admission.
 
-\paragraph{D.9 Nonzero Loop Defect (\cref{thm:nonzero-witness-holonomy}).}
+\paragraph{D.9 Nonzero Loop Defect (Theorem~\ref{thm:nonzero-witness-holonomy}).}
 Use $\gamma_{\circlearrowleft}$ from A.7. Each edge preserves $s_X$, so after
 the loop the state coordinate remains $X$ and
 \[
@@ -2365,7 +2428,7 @@ The loop is closed at the observer endpoint and open in the support coordinate;
 the redaction declaration explains the downgrade but does not discharge the
 authorship obligation.
 
-\paragraph{D.10 PathCert Holonomy Detection (\cref{prop:pathcert-holonomy-detection}).}
+\paragraph{D.10 PathCert Holonomy Detection (Proposition~\ref{prop:pathcert-holonomy-detection}).}
 Use the accepted certificate $\chi_{\circlearrowleft}$ from A.7. PathCert
 validation checks each finite step and exposes the terminal ledger
 \[
@@ -2386,7 +2449,7 @@ $\mathrm{flag}(U_{\chi_{\circlearrowleft}},D_{\chi_{\circlearrowleft}},
 B_{\chi_{\circlearrowleft}})$ under an audit-only policy and rejects the
 support-preservation claim under a strict support-preservation policy.
 
-\paragraph{D.11 Negative Witness Fragility (\cref{prop:negative-witness-fragility}).}
+\paragraph{D.11 Negative Witness Fragility (Proposition~\ref{prop:negative-witness-fragility}).}
 Use A.10. Both $L_{\log}$ and $L_{\mathrm{state}}$ carry $s_X$, so the
 state-reading obligation $(\{s_X\},\{\{s_X\}\})$ is discharged for each
 observer. The non-revocation obligation requires the frontier and nonmembership
@@ -2399,7 +2462,7 @@ For $L_{\mathrm{state}}$, neither absence-support atom is discharged, so the
 absence claim remains underdetermined. Positive state agreement therefore leaves
 negative-witness support open.
 
-\paragraph{D.12 Purpose-Indexed Equivalence (\cref{prop:purpose-indexed-equivalence}).}
+\paragraph{D.12 Purpose-Indexed Equivalence (Proposition~\ref{prop:purpose-indexed-equivalence}).}
 Use $L_{\mathrm{cert}}$ and $L_{\mathrm{raw}}$ from A.1. For
 $P_{\mathrm{state}}$, both ledgers discharge the state-reading obligation
 because both carry $s_X$. Thus the observers agree on the relevant state claim
@@ -2407,7 +2470,7 @@ family. For $P_{\mathrm{auth}}$, $L_{\mathrm{cert}}$ discharges the authorship
 obligation, while $L_{\mathrm{raw}}$ carries only $s_X$. The same observers are
 equivalent for state support and separated for authorship support.
 
-\paragraph{D.13 Support-Soundness Failure / Witness Debt (\cref{thm:support-soundness-failure}).}
+\paragraph{D.13 Support-Soundness Failure / Witness Debt (Theorem~\ref{thm:support-soundness-failure}).}
 Use A.8. The raw path carries $L_{\mathrm{raw}}$ and the authorship obligation
 requires $\{\sigma_A,i_A,p_\alpha,f_F\}$. Therefore
 \[
@@ -2480,7 +2543,7 @@ The canonical profile used here is named $\mathsf{OG3\text{-}profile\text{-}1}$.
   \draw[rel] (ledger) -- node[right, fill=white, inner sep=1pt, font=\scriptsize] {\texttt{terminal\_ledger}} (report);
   \draw[rel] (report) -- node[right, fill=white, inner sep=1pt, font=\scriptsize] {\texttt{status\_report}} (passport);
 \end{tikzpicture}
-\caption{Appendix E schema relationships. The claim passport is the portable root object; it references the obligation entry, optional path certificate, terminal ledger, and support status report.}
+\caption{Engineering schema relationships. The claim passport is the portable root object; it references the obligation entry, optional path certificate, terminal ledger, and support status report.}
 \label{fig:engineering-schema-relationships}
 \end{figure}
 
