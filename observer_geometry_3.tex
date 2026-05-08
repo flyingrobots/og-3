@@ -856,7 +856,22 @@ For observer $S$, purpose $P$, and context $\ctx$, admitted discharge has type
 \]
 It expands the carried component $C$ of a ledger by applying only the
 compression, proof, signature, and authority rules admitted by $S$ in
-$(P,\ctx)$. Structural support satisfaction has type
+$(P,\ctx)$. Formally, the local profile supplies a finite discharge-rule set
+\[
+  \mathcal R_S^{P,\ctx}\subseteq
+  \mathcal P_{\mathrm{fin}}(\Atoms)\times\Atoms .
+\]
+A rule $(Q,a)$ says that if every premise atom in $Q$ is already admitted, then
+$a$ is discharged. For $L=(C,D,B,R)$, define the monotone finite operator
+\[
+  F_L(X)=C\cup
+  \{\,a\mid (Q,a)\in\mathcal R_S^{P,\ctx}\text{ and }Q\subseteq X\,\}.
+\]
+Then $\Disch_S^{P,\ctx}(L)$ is the least fixed point of $F_L$, reached by
+finite iteration from $C$ because $\Atoms$ is finite. Compression receipts,
+recursive proof accumulators, authority registries, and verifier facts enter
+only through $\mathcal R_S^{P,\ctx}$ after their own typed checkers accept.
+Structural support satisfaction has type
 \[
   \Sat_S^{P,\ctx}:\Ledg\times\Obligation
   \to\{\mathrm{yes},\mathrm{no},\mathrm{partial},\authorityblocked\}.

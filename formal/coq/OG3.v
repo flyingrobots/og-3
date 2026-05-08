@@ -72,6 +72,9 @@ Definition receipt_discharge (a : atom) : list atom :=
   | _ => []
   end.
 
+(* This finite witness library only needs one-step receipt expansion. The paper
+   defines Disch as the least finite closure of admitted discharge rules; runtime
+   validators should compute that closure with canonical set/map indexes. *)
 Definition discharge_closure (L : ledger) : list atom :=
   carried L ++ flat_map receipt_discharge (carried L).
 
