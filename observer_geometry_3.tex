@@ -1008,6 +1008,18 @@ separations. The central distinction is:
   \Admit_S(\CryptSupp,\phi,P,\ctx)=\mathrm{accept}.
 \]
 
+This verification/admission distinction is not presented as a new
+cryptographic or trust-management principle. Authorization logics,
+trust-management systems, and proof-carrying authentication already separate
+credential validity from local policy compliance
+\cite{abadi_access_control_1993,blaze_trust_management_1996,appel_pca_1999}.
+The OG-III contribution is to place that familiar separation inside the same
+path-indexed support ledger used for provenance, freshness, declared loss,
+blocked authority, and emitted report strength. In this calculus, a valid proof
+is one transported support surface; observer admission is the local judgement
+that decides whether that surface discharges the current
+claim-purpose-context obligation after the path has been traversed.
+
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[node distance=1.45cm]
@@ -1060,6 +1072,28 @@ wrong admission binding gives verification acceptance and observer admission
 rejection or underdetermination. The finite admission table is checked in
 \cref{app:proofs}.
 \end{proof}
+
+\paragraph{Probabilistic verifier facts.}
+The finite witnesses above deliberately abstract cryptographic verification as
+a deterministic verifier fact. Practical zero-knowledge proofs, succinct
+arguments, recursive proofs, and signature systems instead rely on security
+parameters, computational assumptions, verifier implementations, randomness,
+and negligible but nonzero soundness error. OG-III does not replace those
+cryptographic models. Rather, it treats an accepted verifier result as a typed
+support atom such as
+\[
+  \mathsf{ProofValid}(\lambda,\mathsf{scheme},\mathsf{params},
+  \mathsf{stmt},F),
+\]
+where the security parameter $\lambda$, proof system, parameter set, verifier
+version, statement, and freshness frontier are part of the context examined by
+admission. If the verifier rejects, times out, exceeds a local cost bound, uses
+unacceptable parameters, or depends on assumptions the observer does not admit,
+the admission rule can return $\refuted$, $\unverifiable$,
+$\authorityblocked$, or $\underdetermined$. Witness debt is therefore computed
+relative to the observer's admitted verifier facts and policy thresholds, not
+as an unconditional claim that the cryptographic statement is true in every
+computational model.
 
 \begin{proposition}[Cryptographic Freshness Separation]
 \label{prop:cryptographic-freshness-separation}
@@ -1489,6 +1523,33 @@ Within the theoretical model, high witness debt is an audit-risk indicator: the
 system has reports whose visible state survived farther than their admissible
 support. Empirical implementation, simulation, usability study, and performance
 work remain outside this manuscript.
+
+\paragraph{Empirical measurement agenda.}
+The next engineering question is cost: how large support ledgers become, and
+how expensive PathCert validation is, when the calculus is used in realistic
+transport paths. A prototype or deployment study should therefore state its
+hypotheses before measuring them. The following hypotheses are the intended
+future-work targets; no storage, latency, or usability measurements are
+reported here.
+
+\begin{OGTable}{\OGSchemaTableFont}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.30\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.24\textwidth}@{}}
+\toprule
+\TableHeaderRow Hypothesis & Measurement & Path families \\
+\midrule
+Ledger growth is approximately linear without compression & Bytes per support atom, bytes per ledger component, total PathCert size, and growth against path length & direct transport, redaction loop, stale-frontier path \\
+\OGAltRow
+Compression receipts trade storage reduction for validation work & Compression ratio, receipt registry lookups, receipt-validation time, and residual unmet atoms & squash, recursive receipt, mediated support translation \\
+PathCert validation cost is dominated by edge checks and cryptographic verifier calls & Wall-clock validation time, verifier-call count, per-step validation cost, and rejected-certificate rate & accepted path, malformed path, invalid terminal binding \\
+\OGAltRow
+Witness-debt counters are cheap relative to certificate validation & Obligation lookup time, finite set-difference time, and debt-report generation time & overreport, declared loss, blocked authority \\
+Policy-rich contexts increase underdetermination unless declarations are standardized & Rates of $\underdetermined$, $\unverifiable$, $\authorityblocked$, $\refuted$, and accepted reports by context family & mixed registry versions, stale frontiers, authority-blocked paths \\
+\bottomrule
+\end{tabularx}
+\caption{Hypothesis-driven empirical agenda for future support-ledger implementations. The paper's current evidence is formal and finite; these measurements would evaluate deployment cost.}
+\label{tab:measurement-agenda}
+\end{OGTable}
+\FloatBarrier
 
 \paragraph{Version-control holonomy.}
 Version-control systems give a concrete engineering instance of the same
