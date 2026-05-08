@@ -285,6 +285,27 @@ $\Just$. Path certificates, compression registries, cryptographic examples,
 engineering schemas, and the Coq/Rocq file are useful layers around that core.
 They are not separate theories.
 
+\begin{OGInlineTable}{\OGTableFont}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.30\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\TableHeaderRow Object & One-line role \\
+\midrule
+$\Obl_P(\phi,\ctx)$ & Finite support obligation imposed by a claim, purpose, and context. \\
+$L=(C,D,B,R)$ & Support ledger: carried, declared-lost, blocked, and refuting atoms. \\
+$\Carry_\gamma(\phi,\ctx)$ & Ledger extracted from the object and path certificate after transport along $\gamma$. \\
+$\PathCert(\gamma,\phi,P,\ctx)$ & Finite certificate that records the path, edge transformations, terminal ledger, and validation binding. \\
+$\Disch_S^{P,\ctx}(L)$ & Local discharge closure that expands carried atoms through receipts, proofs, and policy rules. \\
+$\Sat_S^{P,\ctx}(L,O)$ & Finite satisfaction judgement for a ledger against an obligation. \\
+$\Admit_S(L,\phi,P,\ctx)$ & Observer-local admission outcome after refutation, discharge, blockage, and underdetermination checks. \\
+$\Just_{S,\gamma}^P(\phi,\ctx)$ & Justified endpoint status induced by carried support and admission. \\
+$\Report_S^P(\phi,\ctx)$ & Status emitted by the observer; may be weaker, equal, or stronger than $\Just$. \\
+$\Debt_\gamma^P(\phi,\ctx,\Report)$ & Unmet support atoms that the emitted report treats as discharged. \\
+\bottomrule
+\end{tabularx}
+\caption{Core calculus quick reference. This is the minimum object set used by the theorem spine.}
+\label{tab:core-calculus-reference}
+\end{OGInlineTable}
+
 \paragraph{Scope management.}
 \label{sec:what-this-is-not}
 
@@ -324,8 +345,9 @@ surfaces, a closed loop, and report/debt accounting. The remaining sections
 record robustness, engineering interpretation, availability, related work, and a
 conclusion that bridges to OG-IV.
 The main figures give a parallel visual map: support accounting
-(\cref{fig:support-pipeline}), extraction from memory and PathCert material
-(\cref{fig:extract-carry}), cryptographic verification/admission
+(\cref{fig:support-pipeline}), signed-edit path separation
+(\cref{fig:signed-edit-two-paths}), extraction from memory and PathCert
+material (\cref{fig:extract-carry}), cryptographic verification/admission
 (\cref{fig:verify-admit}), and loop defect (\cref{fig:witness-holonomy}).
 
 \paragraph{Contributions.}
@@ -459,6 +481,14 @@ and $R$ records typed refutation atoms. Admission is computed later by
 expanding $C$ through the local discharge map $\Disch_S^{P,\ctx}$. Ledger union
 $L\sqcup L'$ is componentwise set union.
 \end{definition}
+
+Because $C,D,B,R$ are finite sets, ledger union is associative, commutative,
+idempotent, and has the empty ledger
+$(\varnothing,\varnothing,\varnothing,\varnothing)$ as identity. These are
+accounting properties of ledger aggregation. They do not imply that path
+transformers commute: a redaction followed by a receipt compressor can differ
+from the same compressor followed by redaction because each transformer can
+inspect which atoms are still carried.
 
 \begin{definition}[Finite obligation object]
 An obligation object is a pair
@@ -892,6 +922,35 @@ carried support ledgers, are unequal.
 
 This section uses the signed-edit witness to prove the main separation:
 endpoint-equal paths can justify different statuses for the same claim.
+
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[font=\small]
+  \node[ogbox, text width=0.24\textwidth] (src) at (0,0)
+    {source edit\\text $X$\\Alice signature available};
+  \node[ogbox, text width=0.30\textwidth] (cert) at (-4.0,-2.25)
+    {certified path $\gamma_{\mathrm{cert}}$\\
+     $L_{\mathrm{cert}}=(\{s_X,\sigma_A,i_A,p_\alpha,f_F\},\varnothing,\varnothing,\varnothing)$};
+  \node[ogbox, text width=0.28\textwidth] (raw) at (4.0,-2.25)
+    {raw-copy path $\gamma_{\mathrm{raw}}$\\
+     $L_{\mathrm{raw}}=(\{s_X\},\varnothing,\varnothing,\varnothing)$};
+  \node[ogbox, text width=0.25\textwidth] (endpoint) at (0,-4.35)
+    {same endpoint projection\\$\pi_{S_1}=X$};
+  \node[ogbox, text width=0.25\textwidth] (certstatus) at (-4.0,-6.15)
+    {$\phi_{\mathrm{auth}}$\\$\Just=\supported$};
+  \node[ogbox, text width=0.25\textwidth] (rawstatus) at (4.0,-6.15)
+    {$\phi_{\mathrm{auth}}$\\$\Just=\underdetermined$};
+  \draw[ogline] (src) -- (cert);
+  \draw[ogline] (src) -- (raw);
+  \draw[ogline] (cert) -- (endpoint);
+  \draw[ogline] (raw) -- (endpoint);
+  \draw[ogthin] (cert) -- (certstatus);
+  \draw[ogthin] (raw) -- (rawstatus);
+\end{tikzpicture}
+\caption{Signed-edit two-path witness. The endpoint text agrees, but the authorship-support ledger does not.}
+\label{fig:signed-edit-two-paths}
+\end{figure}
+\FloatBarrier
 
 \begin{theorem}[Witness Sensitivity]
 \label{thm:witness-sensitivity}

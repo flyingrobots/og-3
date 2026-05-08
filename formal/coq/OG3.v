@@ -191,6 +191,33 @@ Proof.
   repeat split; reflexivity.
 Qed.
 
+Example receipt_discharge_closure_sanity :
+  all_discharged L_mediated auth_atoms = true /\
+  unmet L_mediated O_auth = [].
+Proof.
+  repeat split; reflexivity.
+Qed.
+
+Definition L_cert_extended : ledger :=
+  Ledger [SX; SigmaA; IA; PAlpha; FF; CommitC] [] [] [].
+
+Example carried_extension_preserves_support_sanity :
+  admit L_cert O_auth = Supported /\
+  admit L_cert_extended O_auth = Supported.
+Proof.
+  repeat split; reflexivity.
+Qed.
+
+Definition L_cert_refuted : ledger :=
+  Ledger [SX; SigmaA; IA; PAlpha; FF] [] [] [CertInvalid].
+
+Example refutation_priority_over_support_sanity :
+  admit L_cert O_auth = Supported /\
+  admit L_cert_refuted O_auth = Refuted.
+Proof.
+  repeat split; reflexivity.
+Qed.
+
 Definition redacts_identity_signature (a : atom) : bool :=
   if atom_eq_dec a SigmaA then true
   else if atom_eq_dec a IA then true
