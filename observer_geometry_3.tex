@@ -81,6 +81,17 @@
   \rowcolors{2}{}{}%
   \end{table}%
 }
+\newenvironment{OGInlineTable}[1]{%
+  \par\smallskip
+  \begin{center}
+  #1
+  \captionsetup{type=table,hypcap=false}%
+  \rowcolors{2}{tablerowbg}{white}%
+}{%
+  \rowcolors{2}{}{}%
+  \end{center}%
+  \smallskip
+}
 
 \setlength{\headheight}{30pt}
 \newcommand{\paperdoi}{DOI: \href{https://doi.org/10.5281/zenodo.20046284}{10.5281/zenodo.20046284}}
@@ -2047,78 +2058,128 @@ non-revocation purpose.
 This appendix fixes the notation used by the calculus.
 
 \paragraph{Finite domains.}
-\begin{description}[leftmargin=*,style=nextline]
-  \item[$\Phi$] finite set of claims.
-  \item[$\mathcal P$] finite set of purposes or claim families.
-  \item[$\mathsf{Ctx}$] finite set of support contexts. A base context has form
-        $(F,\alpha,\mathrm{disclosure},\mathrm{expiry})$. A path-extended
-        context has form $(\ctx_{\mathrm{base}},\gamma)$.
-  \item[$\mathcal S$] finite set of observers.
-  \item[$\mathcal K$] finite set of support kinds, such as state, provenance,
-        authority, freshness, negative witness, proof, commitment, receipt,
-        declared loss, blockage, and typed refutation.
-  \item[$\Atoms$] finite typed support-atom universe
-        $\coprod_{k\in\mathcal K}\{k\}\times A_k$.
-  \item[$\Ledg$] finite support ledgers
-        $(C,D,B,R)$ with each component a finite subset of $\Atoms$.
-  \item[$\Mem_S$] finite native memory states for observer $S$.
-  \item[$\Packet$] finite transported packets received by an endpoint
-        accumulator.
-\end{description}
+\begin{OGInlineTable}{\OGTableFont}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\TableHeaderRow Symbol & Meaning \\
+\midrule
+$\Phi$ & Finite set of claims. \\
+$\mathcal P$ & Finite set of purposes or claim families. \\
+$\mathsf{Ctx}$ & Finite set of support contexts. A base context has form $(F,\alpha,\mathrm{disclosure},\mathrm{expiry})$; a path-extended context has form $(\ctx_{\mathrm{base}},\gamma)$. \\
+$\mathcal S$ & Finite set of observers. \\
+$\mathcal K$ & Finite set of support kinds, such as state, provenance, authority, freshness, negative witness, proof, commitment, receipt, declared loss, blockage, and typed refutation. \\
+$\Atoms$ & Finite typed support-atom universe $\coprod_{k\in\mathcal K}\{k\}\times A_k$. \\
+$\Ledg$ & Finite support ledgers $(C,D,B,R)$ with each component a finite subset of $\Atoms$. \\
+$\Mem_S$ & Finite native memory states for observer $S$. \\
+$\Packet$ & Finite transported packets received by an endpoint accumulator. \\
+\bottomrule
+\end{tabularx}
+\caption{Finite domains used by the support-obligation calculus.}
+\label{tab:glossary-finite-domains}
+\end{OGInlineTable}
 
 \paragraph{Ledger components.}
-For $L=(C,D,B,R)$, $C$ is raw carried or presented support; $D$ is declared
-loss, redaction, staleness, or unavailability; $B$ is authority blockage; and
-$R$ is typed refutation. Admission is computed from $\Disch_S^{P,\ctx}(L)$,
-which expands $C$ through local receipt, proof, signature, frontier, and policy
-rules. Componentwise ledger union is written $L\sqcup L'$.
+For $L=(C,D,B,R)$, componentwise ledger union is written $L\sqcup L'$.
+Admission is computed from $\Disch_S^{P,\ctx}(L)$, which expands $C$ through
+local receipt, proof, signature, frontier, and policy rules.
+
+\begin{OGInlineTable}{\OGTableFont}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\TableHeaderRow Component & Name & Role \\
+\midrule
+$C$ & Carried support & Raw carried or presented support atoms. \\
+$D$ & Declared loss & Declared loss, redaction, staleness, or unavailability atoms. \\
+$B$ & Authority blockage & Atoms recording that required support is blocked by authority, access, or policy. \\
+$R$ & Typed refutation & Atoms refuting a typed claim component, such as authority, freshness, membership, or certificate validity. \\
+\bottomrule
+\end{tabularx}
+\caption{Four-component support ledger notation.}
+\label{tab:glossary-ledger-components}
+\end{OGInlineTable}
 
 \paragraph{Operational maps.}
 The main operations have the following types:
-\[
-\begin{aligned}
-  \Obl &: \Phi\times\mathcal P\times\mathsf{Ctx}\to\Obligation,\\
-  \Native_S^{P,\ctx} &: \Phi\times\Mem_S\to\Ledg,\\
-  \Extract_S^{P,\ctx} &: \Phi\times\Mem_S\times(\mathsf{Cert}\cup\{\bot\})\to\Ledg,\\
-  \ValidCert_S &: \mathsf{Cert}\times\Phi\times\mathcal P\times\mathsf{Ctx}\times\Mem_S
-    \to\{\mathrm{accept},\mathrm{reject}\},\\
-  \CertReject_S^{P,\ctx} &: \Phi\times\Mem_S\times\mathsf{Cert}\to\Ledg,\\
-  \Disch_S^{P,\ctx} &: \Ledg\to\mathcal P_{\mathrm{fin}}(\Atoms),\\
-  \Sat_S^{P,\ctx} &: \Ledg\times\Obligation
-    \to\{\mathrm{yes},\mathrm{no},\mathrm{partial},\authorityblocked\},\\
-  \Admit_S &: \Ledg\times\Phi\times\mathcal P\times\mathsf{Ctx}
-    \to\{\mathrm{accept},\mathrm{reject},\underdetermined,\authorityblocked\},\\
-  \Just_{S,\gamma}^{P} &: \Phi\times\mathsf{Ctx}\to
-    \{\supported,\refuted,\underdetermined,\authorityblocked,\unverifiable\},\\
-  \Acc_S &: \Mem_S\times\Packet\to\Mem_S.
-\end{aligned}
-\]
+
+\begin{OGInlineTable}{\OGSchemaTableFont}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.43\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\TableHeaderRow Operation & Type & Role \\
+\midrule
+$\Obl$ & $\Phi\times\mathcal P\times\mathsf{Ctx}\to\Obligation$ & Looks up the support obligation for a claim, purpose, and context. \\
+$\Native_S^{P,\ctx}$ & $\Phi\times\Mem_S\to\Ledg$ & Extracts the endpoint observer's native accumulated support view. \\
+$\Extract_S^{P,\ctx}$ & $\Phi\times\Mem_S\times(\mathsf{Cert}\cup\{\bot\})\to\Ledg$ & Produces the ledger used for admission from native memory and an optional PathCert. \\
+\(\ValidCert_S\) & \(\begin{gathered}\mathsf{Cert}\times\Phi\times\mathcal P\times\mathsf{Ctx}\times\Mem_S\\ \to\{\mathrm{accept},\mathrm{reject}\}\end{gathered}\) & Validates a certificate header, step relation, and endpoint binding. \\
+$\CertReject_S^{P,\ctx}$ & $\Phi\times\Mem_S\times\mathsf{Cert}\to\Ledg$ & Emits the explicit certificate-failure refutation ledger. \\
+$\Disch_S^{P,\ctx}$ & $\Ledg\to\mathcal P_{\mathrm{fin}}(\Atoms)$ & Computes the observer's admitted discharge closure. \\
+\(\Sat_S^{P,\ctx}\) & \(\begin{gathered}\Ledg\times\Obligation\\ \to\{\mathrm{yes},\mathrm{no},\\ \mathrm{partial},\authorityblocked\}\end{gathered}\) & Evaluates obligation satisfaction before admission policy. \\
+\(\Admit_S\) & \(\begin{gathered}\Ledg\times\Phi\times\mathcal P\times\mathsf{Ctx}\\ \to\{\mathrm{accept},\mathrm{reject},\\ \underdetermined,\authorityblocked\}\end{gathered}\) & Applies local admission priority to a support ledger. \\
+\(\Just_{S,\gamma}^{P}\) & \(\begin{gathered}\Phi\times\mathsf{Ctx}\\ \to\{\supported,\refuted,\\ \underdetermined,\authorityblocked,\\ \unverifiable\}\end{gathered}\) & Returns path-indexed justified endpoint status. \\
+$\Acc_S$ & $\Mem_S\times\Packet\to\Mem_S$ & Updates native observer memory from a transported packet. \\
+\bottomrule
+\end{tabularx}
+\caption{Operational maps and their domains, codomains, and roles.}
+\label{tab:glossary-operational-maps}
+\end{OGInlineTable}
 
 \paragraph{Path certificate syntax.}
 A certificate for a path $\gamma=T_n\circ\cdots\circ T_1$ has the form
 \[
   \chi=(\gamma,\phi,P,\ctx,L_0,\ldots,L_n,\delta_1,\ldots,\delta_n,h).
 \]
-The field $h$ binds the terminal ledger to an endpoint artifact in native
-memory. Validation checks the header, each finite step relation
-$(L_{i-1},L_i,\delta_i)\in R_{T_i}$, and the binding predicate
-$\Bind_S(M,\chi)$. The terminal support view imported by extraction is
+
+\begin{OGInlineTable}{\OGTableFont}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\TableHeaderRow Field & Role \\
+\midrule
+$\gamma$ & Certified path $T_n\circ\cdots\circ T_1$. \\
+$\phi,P,\ctx$ & Claim, purpose, and context bound by the certificate header. \\
+$L_0,\ldots,L_n$ & Ledger sequence asserted along the transport path. \\
+$\delta_1,\ldots,\delta_n$ & Step witnesses checked against finite relations $(L_{i-1},L_i,\delta_i)\in R_{T_i}$. \\
+$h$ & Binding from the terminal ledger to an endpoint artifact in native memory. \\
+\bottomrule
+\end{tabularx}
+\caption{PathCert tuple fields in the glossary notation.}
+\label{tab:glossary-pathcert-fields}
+\end{OGInlineTable}
+
+Validation checks the header, each finite step relation, and the binding
+predicate $\Bind_S(M,\chi)$. The terminal support view imported by extraction is
 $\Term(\chi)=L_n$. When validation rejects, extraction imports no terminal
 ledger from $\chi$ and records a typed certificate-failure refutation instead.
 
 \paragraph{Imported terms.}
-Projection, basis, accumulation, aperture, degeneracy, insufficiency, bias gap,
-and observer signature keep their OG-I meanings. Replica observer, witnessed
-update, frontier, policy-closed site, suffix transport, and state convergence
-keep their OG-II meanings. OG-III uses those terms only as interfaces for the
-finite support-ledger maps above.
+\begin{OGInlineTable}{\OGTableFont}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\TableHeaderRow Source & Imported interface terms \\
+\midrule
+OG-I & Projection, basis, accumulation, aperture, degeneracy, insufficiency, bias gap, and observer signature. \\
+OG-II & Replica observer, witnessed update, frontier, policy-closed site, suffix transport, and state convergence. \\
+\bottomrule
+\end{tabularx}
+\caption{Imported terminology used only as interfaces for the finite support-ledger maps above.}
+\label{tab:glossary-imported-terms}
+\end{OGInlineTable}
 
 \paragraph{Status tags.}
-The base status tags are $\supported$, $\underdetermined$,
-$\unverifiable$, $\authorityblocked$, and $\refuted$. Modifiers include
-$\stale$, fresh-at-frontier, redacted, compressed, proof-valid, context-mismatch,
-certificate-validation failure, and declared loss. They are finite tags
-interpreted by a local report-strength preorder $\leq_P$.
+Status tags are finite tags interpreted by a local report-strength preorder
+$\leq_P$.
+
+\begin{OGInlineTable}{\OGTableFont}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\TableHeaderRow Tag class & Tags \\
+\midrule
+Base status tags & $\supported$, $\underdetermined$, $\unverifiable$, $\authorityblocked$, and $\refuted$. \\
+Status modifiers & $\stale$, fresh-at-frontier, redacted, compressed, proof-valid, context-mismatch, certificate-validation failure, and declared loss. \\
+\bottomrule
+\end{tabularx}
+\caption{Status tags and modifiers.}
+\label{tab:glossary-status-tags}
+\end{OGInlineTable}
+\FloatBarrier
 
 \section{Diagrammatic Summary}
 \label{app:diagrams}
