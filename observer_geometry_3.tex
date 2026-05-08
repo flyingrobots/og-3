@@ -1554,6 +1554,16 @@ from this formalization.
 \section{Related Work}
 \label{sec:related-work}
 
+The nearest literatures fall into four groups: authorization and
+proof-carrying evidence; authenticated logs, ledgers, and accountability;
+replication and distributed knowledge; and provenance. OG-III borrows
+interfaces from each group, but its target judgement is narrower: after a
+particular observer path, which finite support obligations for a
+claim-purpose-context judgement are discharged, blocked, declared lost,
+refuted, or overreported?
+
+\subsection{Authorization and Proof-Carrying Evidence}
+
 Authorization logics and trust-management systems give formal machinery for
 deciding whether credentials, principals, delegation, and local policies justify
 access. Abadi, Burrows, Lampson, and Plotkin give a logical calculus for access
@@ -1585,6 +1595,15 @@ OG-III treats these systems as high-capacity compression-receipt surfaces: the
 formal question is which typed obligations a compact recursive artifact
 discharges under a path, and what support remains unavailable when a valid proof
 is stale, blocked, omitted, or admitted for a different claim context.
+
+Zero-knowledge proofs give the canonical separation between verification and
+revelation. Goldwasser, Micali, and Rackoff formalize knowledge complexity and
+zero knowledge for interactive proofs~\cite{goldwasser_knowledge_complexity_1989}.
+OG-III uses that separation conservatively: a proof can expand verification
+aperture while leaving payload revelation closed, and cryptographic verification
+still remains distinct from observer admission.
+
+\subsection{Authenticated Logs, Ledgers, and Accountability}
 
 Authenticated data structures and transparency logs supply concrete witness
 surfaces for membership, consistency, freshness, and tamper-evidence. Tamassia's
@@ -1622,6 +1641,8 @@ support obligations for an arbitrary claim were carried, blocked, declared lost,
 compressed, or refuted along a path, and witness debt measures when the emitted
 report outruns that admitted support.
 
+\subsection{Replication, Causality, and Distributed Knowledge}
+
 Replicated data types and weak-consistency models study conditions under which
 distributed replicas converge on state or preserve causal relationships. Causal
 memory formalizes agreement on the relative order of causally related
@@ -1649,6 +1670,8 @@ access: two observers may agree on visible state and even on the claim sentence
 while differing in the support ledger that entitles either observer to report
 $\supported$.
 
+\subsection{Provenance and Secure History}
+
 Database provenance studies where data came from and why query results hold.
 Buneman, Khanna, and Tan distinguish why- and where-provenance, and Cheney,
 Chiticariu, and Tan survey why, how, and where provenance with applications to
@@ -1670,13 +1693,6 @@ history. OG-III abstracts over the storage substrate and states the accounting
 conditions: which provenance atoms are carried, which authority and freshness
 obligations they discharge, which losses are declared or blocked, and how
 reports compare with admitted support after a path.
-
-Zero-knowledge proofs give the canonical separation between verification and
-revelation. Goldwasser, Micali, and Rackoff formalize knowledge complexity and
-zero knowledge for interactive proofs~\cite{goldwasser_knowledge_complexity_1989}.
-OG-III uses that separation conservatively: a proof can expand verification
-aperture while leaving payload revelation closed, and cryptographic verification
-still remains distinct from observer admission.
 
 \section{Summary and Conclusion}
 \label{sec:conclusion}
