@@ -135,49 +135,49 @@
 \newtheorem{remark}[theorem]{Remark}
 
 \newcommand{\AION}{AI\ensuremath{\Omega}N}
-\newcommand{\Obl}{\mathsf{Obl}}
-\newcommand{\Carry}{\mathsf{Carry}}
-\newcommand{\Unmet}{\mathsf{Unmet}}
-\newcommand{\DeclaredLoss}{\mathsf{DeclaredLoss}}
-\newcommand{\Debt}{\mathsf{Debt}}
-\newcommand{\Supp}{\mathsf{Supp}}
-\newcommand{\CryptSupp}{\mathsf{CryptSupp}}
-\newcommand{\CWit}{\mathsf{CWit}}
-\newcommand{\PathCert}{\mathsf{PathCert}}
-\newcommand{\ValidCert}{\mathsf{ValidCert}}
-\newcommand{\CertReject}{\mathsf{CertReject}}
-\newcommand{\Bind}{\mathsf{Bind}}
-\newcommand{\Term}{\mathsf{Term}}
-\newcommand{\Extract}{\mathsf{Extract}}
-\newcommand{\Sat}{\mathsf{Sat}}
-\newcommand{\Admit}{\mathsf{Admit}}
-\newcommand{\Disch}{\mathsf{Disch}}
-\newcommand{\Just}{\mathsf{Just}}
-\newcommand{\Report}{\mathsf{Report}}
-\newcommand{\Val}{\mathsf{Val}}
-\newcommand{\Def}{\mathsf{Def}}
-\newcommand{\Verify}{\mathsf{Verify}}
+\newcommand{\Obl}{\mathrm{Obl}}
+\newcommand{\Carry}{\mathrm{Carry}}
+\newcommand{\Unmet}{\mathrm{Unmet}}
+\newcommand{\DeclaredLoss}{\mathrm{DeclaredLoss}}
+\newcommand{\Debt}{\mathrm{Debt}}
+\newcommand{\Supp}{\mathrm{Supp}}
+\newcommand{\CryptSupp}{\mathrm{CryptSupp}}
+\newcommand{\CWit}{\mathrm{CWit}}
+\newcommand{\PathCert}{\mathrm{PathCert}}
+\newcommand{\ValidCert}{\mathrm{ValidCert}}
+\newcommand{\CertReject}{\mathrm{CertReject}}
+\newcommand{\Bind}{\mathrm{Bind}}
+\newcommand{\Term}{\mathrm{Term}}
+\newcommand{\Extract}{\mathrm{Extract}}
+\newcommand{\Sat}{\mathrm{Sat}}
+\newcommand{\Admit}{\mathrm{Admit}}
+\newcommand{\Disch}{\mathrm{Disch}}
+\newcommand{\Just}{\mathrm{Just}}
+\newcommand{\Report}{\mathrm{Report}}
+\newcommand{\Val}{\mathrm{Val}}
+\newcommand{\Def}{\mathrm{Def}}
+\newcommand{\Verify}{\mathrm{Verify}}
 \newcommand{\Atoms}{\mathcal{A}}
-\newcommand{\Ledg}{\mathsf{Ledg}}
-\newcommand{\Mem}{\mathsf{Mem}}
-\newcommand{\Native}{\mathsf{Native}}
-\newcommand{\Packet}{\mathsf{Packet}}
-\newcommand{\Acc}{\mathsf{Acc}}
-\newcommand{\Status}{\mathsf{Status}}
-\newcommand{\Obligation}{\mathsf{Obligation}}
-\newcommand{\Refutes}{\mathsf{refutes}}
-\newcommand{\OverReport}{\mathsf{OverReport}}
-\newcommand{\Hallucinate}{\mathsf{Hallucinate}}
-\newcommand{\FalseReport}{\mathsf{FalseReport}}
-\newcommand{\Launder}{\mathsf{Launder}}
-\newcommand{\ctx}{\mathsf{ctx}}
-\newcommand{\fresh}{\mathsf{fresh}}
-\newcommand{\stale}{\mathsf{stale}}
-\newcommand{\supported}{\mathsf{supported}}
-\newcommand{\refuted}{\mathsf{refuted}}
-\newcommand{\underdetermined}{\mathsf{underdetermined}}
-\newcommand{\authorityblocked}{\mathsf{authority\_blocked}}
-\newcommand{\unverifiable}{\mathsf{unverifiable}}
+\newcommand{\Ledg}{\mathrm{Ledg}}
+\newcommand{\Mem}{\mathrm{Mem}}
+\newcommand{\Native}{\mathrm{Native}}
+\newcommand{\Packet}{\mathrm{Packet}}
+\newcommand{\Acc}{\mathrm{Acc}}
+\newcommand{\Status}{\mathrm{Status}}
+\newcommand{\Obligation}{\mathrm{Obligation}}
+\newcommand{\Refutes}{\mathrm{refutes}}
+\newcommand{\OverReport}{\mathrm{OverReport}}
+\newcommand{\Hallucinate}{\mathrm{Hallucinate}}
+\newcommand{\FalseReport}{\mathrm{FalseReport}}
+\newcommand{\Launder}{\mathrm{Launder}}
+\newcommand{\ctx}{\mathrm{ctx}}
+\newcommand{\fresh}{\mathrm{fresh}}
+\newcommand{\stale}{\mathrm{stale}}
+\newcommand{\supported}{\mathrm{supported}}
+\newcommand{\refuted}{\mathrm{refuted}}
+\newcommand{\underdetermined}{\mathrm{underdetermined}}
+\newcommand{\authorityblocked}{\mathrm{authority\_blocked}}
+\newcommand{\unverifiable}{\mathrm{unverifiable}}
 
 \newcommand{\paperkeywords}{observer geometry; support obligations; proof-carrying paths; witness holonomy; observer-relative claim status; cryptographic witnesses; audit systems}
 \newcommand{\paperabstract}{Two observer paths can deliver the same endpoint-visible state while carrying different support for provenance, authority, freshness, absence, or admission claims. OG-III formalizes that separation with a finite support-obligation calculus. Claims, purposes, and contexts determine required support atoms; paths deliver ledgers of carried, declared-lost, blocked, and refuting support; local discharge and admission rules determine the justified status that an endpoint may report. The running example is a signed-edit audit: the final document text is identical, but only one path carries the signature, identity, policy, and freshness support needed for the authorship claim. Finite witnesses prove witness sensitivity, path-dependent support transport, nonzero loop defect, cryptographic verification/admission separation, freshness and authority separation, and support-soundness failure. Cryptographic objects enter as witness surfaces rather than as new protocol claims. A compact Coq/Rocq model checks the finite ledger calculations.}
@@ -186,6 +186,7 @@
   ogbox/.style={draw=black, line width=0.9pt, fill=white, align=center, inner sep=6pt},
   ogaltbox/.style={draw=black, line width=0.9pt, fill=white, align=center, inner sep=6pt},
   ogwarnbox/.style={draw=black, line width=0.9pt, fill=white, align=center, inner sep=6pt},
+  ogstatus/.style={draw=black, line width=0.75pt, fill=tablerowbg, align=center, inner sep=5pt},
   ogline/.style={-{Latex[length=2.7mm,width=2mm]}, line width=0.9pt},
   ogthin/.style={-{Latex[length=2mm,width=1.5mm]}, line width=0.7pt}
 }
@@ -379,27 +380,37 @@ to ask which claims a transported object can still support.
 
 \subsection{Minimal Glossary}
 
-\begin{OGTable}{\OGTableFont}
-\begin{tabular}{p{0.19\textwidth}p{0.11\textwidth}p{0.31\textwidth}p{0.27\textwidth}}
+\OGStartLongTable
+\begin{xltabular}{\textwidth}{>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}p{0.10\textwidth}>{\raggedright\arraybackslash}p{0.31\textwidth}>{\raggedright\arraybackslash}X}
+\caption{Minimal imported glossary. Full glossary and notation concordance appear in \cref{app:glossary}.}
+\label{tab:imported-glossary}\\
 \toprule
 \TableHeaderRow Term & Source & Imported meaning & OG-III use \\
 \midrule
+\endfirsthead
+\toprule
+\TableHeaderRow Term & Source & Imported meaning & OG-III use \\
+\midrule
+\endhead
+\OGLongTableFooter{4}
 Observer & OG-I & Structured observer, not scalar point & Endpoint or node of support transport \\
+\OGAltRow
 Projection & OG-I & Visible state under observer aperture & Endpoint equality condition \\
 Basis & OG-I & Representational coordinate frame & Claim/status interpretation \\
+\OGAltRow
 Accumulation & OG-I & Observer memory/update state & Source for $\Extract(\cdots M_S \cdots)$ \\
 Aperture & OG-I & What can be observed, retained, checked, or revealed & Support and revelation limits \\
+\OGAltRow
 Degeneracy & OG-I & Distinct histories collapse to same projection & Source of witness sensitivity \\
 Replica observer & OG-II & Frontier-indexed distributed observer & Source of path/worldline examples \\
+\OGAltRow
 Witnessed update & OG-II & Update with retained support surface & Raw material for $\Carry_\gamma$ \\
 Frontier & OG-II & Causal, log, policy, or freshness boundary & Freshness and negative witnesses \\
+\OGAltRow
 Suffix transport & OG-II & Transport of witnessed suffixes & Precursor to proof-carrying paths \\
 State convergence & OG-II & Endpoint visible state agreement & Explicitly not support agreement \\
-\bottomrule
-\end{tabular}
-\caption{Minimal imported glossary. Full glossary and notation concordance appear in \cref{app:glossary}.}
-\label{tab:imported-glossary}
-\end{OGTable}
+\end{xltabular}
+\OGEndLongTable
 \FloatBarrier
 
 \subsection{Self-Contained Reading Convention}
@@ -450,7 +461,7 @@ frontier-join or consensus evidence.
 For deployed systems, conservative degradation should be bounded by a local
 policy object
 \[
-  \mathsf{Budget}_S^{P,\ctx}(O)=(b_U,b_D,b_B,b_R,b_\tau).
+  \mathrm{Budget}_S^{P,\ctx}(O)=(b_U,b_D,b_B,b_R,b_\tau).
 \]
 The entries bound, respectively, the tolerated number of unmet required atoms,
 declared-loss atoms, authority-blocked atoms, rejected-certificate or refutation
@@ -523,7 +534,7 @@ $E\in\mathcal E_O$.
 
 \begin{definition}[Support context]
 A support context records the local admissibility frame under which a claim is
-evaluated. The finite context set $\mathsf{Ctx}$ contains tuples
+evaluated. The finite context set $\mathrm{Ctx}$ contains tuples
 \[
   \ctx_{\mathrm{base}}=(F,\alpha,\mathrm{disclosure},\mathrm{expiry}).
 \]
@@ -533,7 +544,7 @@ Once a transport path is fixed, OG-III writes $\ctx_\gamma=(\ctx_{\mathrm{base}}
 \begin{definition}[Support obligation]
 The support-obligation map has type
 \[
-  \Obl:\Phi\times\mathcal P\times\mathsf{Ctx}\to\Obligation.
+  \Obl:\Phi\times\mathcal P\times\mathrm{Ctx}\to\Obligation.
 \]
 For a claim $\phi$, purpose $P$, and context $\ctx$, the support obligation
 \[
@@ -563,7 +574,7 @@ The tag $\refuted$ denotes an admitted typed refutation of the claim component
 under evaluation. A typed refutation may target provenance, authority,
 freshness, membership, or admission while leaving endpoint state support
 available for a separate claim. Formally, each purpose/context pair supplies a
-preorder $(\mathsf{Status}_{P,\ctx},\leq_{P,\ctx})$: it is reflexive and
+preorder $(\mathrm{Status}_{P,\ctx},\leq_{P,\ctx})$: it is reflexive and
 transitive, need not be total, and may leave $\refuted$, $\authorityblocked$,
 $\underdetermined$, and $\unverifiable$ incomparable except where a local
 reporting interface declares an explicit strength comparison. When the context
@@ -666,7 +677,7 @@ $S$, fix a finite memory set $\Mem_S$, a native ledger view
 and an extraction function
 \[
   \Extract_S^{P,\ctx}:
-  \Phi\times\Mem_S\times(\mathsf{Cert}\cup\{\bot\})\to\Ledg.
+  \Phi\times\Mem_S\times(\mathrm{Cert}\cup\{\bot\})\to\Ledg.
 \]
 For a rejected certificate $\chi$, let
 \[
@@ -774,6 +785,12 @@ for the evaluated path-support component.
 \caption{Support accounting pipeline. Justified status is produced by obligation accounting, while witness debt also depends on the emitted report.}
 \label{fig:support-pipeline}
 \end{figure}
+\FloatBarrier
+
+The pipeline view names the accounting stages. The next diagram zooms in on one
+stage that otherwise looks deceptively simple: the carried ledger used for
+admission is extracted from endpoint memory plus optional path-certificate
+material, not read directly from visible endpoint state.
 
 \begin{figure}[ht]
 \centering
@@ -804,7 +821,7 @@ Let
 be a finite observer transport graph. Vertices are observers; directed edges are
 admissible translators. Each edge $e\in E$ has a finite check relation
 \[
-  R_e\subseteq \Ledg\times\Ledg\times\mathsf{StepCert}.
+  R_e\subseteq \Ledg\times\Ledg\times\mathrm{StepCert}.
 \]
 The judgement $(L,L',\delta)\in R_e$ means that step certificate $\delta$
 checks that edge $e$ transforms incoming ledger $L$ into outgoing ledger $L'$.
@@ -822,7 +839,7 @@ is a finite tuple
 \[
   \chi=(\gamma,\phi,P,\ctx,L_0,\ldots,L_n,\delta_1,\ldots,\delta_n,h)
 \]
-where each $L_i\in\Ledg$, each $\delta_i\in\mathsf{StepCert}$, and $h$ is a
+where each $L_i\in\Ledg$, each $\delta_i\in\mathrm{StepCert}$, and $h$ is a
 terminal artifact identifier or digest recorded in endpoint memory. Its terminal
 ledger is
 \[
@@ -831,7 +848,7 @@ ledger is
 The endpoint validator has type
 \[
   \ValidCert_S:
-  \mathsf{Cert}\times\Phi\times\mathcal P\times\mathsf{Ctx}\times\Mem_S
+  \mathrm{Cert}\times\Phi\times\mathcal P\times\mathrm{Ctx}\times\Mem_S
   \to \{\mathrm{accept},\mathrm{reject}\}.
 \]
 It accepts exactly when the certificate header matches $(\gamma,\phi,P,\ctx)$,
@@ -888,28 +905,28 @@ For $L=(C,D,B,R)$ and $O=(R_O,\mathcal E_O)$, the evaluation rule is:
 \]
 Observer admission has type
 \[
-  \Admit_S:\Ledg\times\Phi\times\mathcal P\times\mathsf{Ctx}
+  \Admit_S:\Ledg\times\Phi\times\mathcal P\times\mathrm{Ctx}
   \to\{\mathrm{accept},\mathrm{reject},\underdetermined,\authorityblocked,\unverifiable\}.
 \]
 During admission, take $O=\Obl_P(\phi,\ctx)$. Let
-$\mathsf{Ref}_S^{P,\ctx}(L,\phi)$ be the finite set of typed refutation
+$\mathrm{Ref}_S^{P,\ctx}(L,\phi)$ be the finite set of typed refutation
 atoms in $R$ that pass $S$'s refutation-admission gate and target the evaluated
 claim component:
 \[
-  \mathsf{Ref}_S^{P,\ctx}(L,\phi)
+  \mathrm{Ref}_S^{P,\ctx}(L,\phi)
   =
   \{\,r\in R \mid
-    \mathsf{ValidRef}_S^{P,\ctx}(r,L,\phi)
-    \text{ and } \mathsf{target}(r)=\mathsf{component}(\phi)\,\}.
+    \mathrm{ValidRef}_S^{P,\ctx}(r,L,\phi)
+    \text{ and } \mathrm{target}(r)=\mathrm{component}(\phi)\,\}.
 \]
-The gate $\mathsf{ValidRef}$ checks the refutation's authority, binding to
+The gate $\mathrm{ValidRef}$ checks the refutation's authority, binding to
 $(\phi,P,\ctx)$, registry epoch, frontier, negative witness or rejected-certificate
 digest, and any local cost/rate budget. A syntactically well-formed refutation
 atom that fails this gate is retained as unauthenticated evidence or ignored by
 admission; it does not receive refutation priority. Admission is evaluated with
 deterministic priority:
 \begin{enumerate}[leftmargin=*]
-  \item If $\mathsf{Ref}_S^{P,\ctx}(L,\phi)\neq\varnothing$, return
+  \item If $\mathrm{Ref}_S^{P,\ctx}(L,\phi)\neq\varnothing$, return
         $\mathrm{reject}$. This includes admitted certificate-validation
         failure atoms when they target the evaluated path-support component.
   \item If $\Sat_S^{P,\ctx}(L,O)=\mathrm{yes}$ and $S$ admits the atoms used for
@@ -1135,24 +1152,24 @@ claim-purpose-context obligation after the path has been traversed.
 
 \begin{figure}[ht]
 \centering
-\begin{tikzpicture}[node distance=1.45cm]
+\begin{tikzpicture}[node distance=1.35cm]
   \node[ogbox] (crypt) {$\CryptSupp$};
   \node[ogbox, below=of crypt] (verify) {$\Verify(\CryptSupp,\ctx)=\mathrm{accept}$};
   \node[ogbox, below=of verify] (admit) {$\Admit_S(\CryptSupp,\phi,P,\ctx)$};
-  \node[ogbox, right=2.8cm of admit] (accept) {accept};
-  \node[ogbox, below=0.55cm of accept] (reject) {reject\\refuted};
-  \node[ogbox, below=0.55cm of reject] (und) {underdetermined};
-  \node[ogbox, below=0.55cm of und] (blocked) {authority\\blocked};
-  \node[ogbox, below=0.55cm of blocked] (unver) {unverifiable};
+  \node[ogstatus, below=1.05cm of admit, text width=0.34\textwidth] (result)
+    {\textbf{admission result}\\[0.25em]
+     \begin{tabular}{@{}c@{}}
+       accept\\
+       reject / refuted\\
+       underdetermined\\
+       authority blocked\\
+       unverifiable
+     \end{tabular}};
   \draw[ogline] (crypt) -- (verify);
   \draw[ogline] (verify) -- (admit);
-  \draw[ogthin] (admit) -- (accept);
-  \draw[ogthin] (admit) -- (reject);
-  \draw[ogthin] (admit) -- (und);
-  \draw[ogthin] (admit) -- (blocked);
-  \draw[ogthin] (admit) -- (unver);
+  \draw[ogline] (admit) -- (result);
 \end{tikzpicture}
-\caption{Verify / Admit split. Cryptographic validity is not observer admissibility.}
+\caption{Verify / Admit split. Cryptographic validity is not observer admissibility; the shaded box lists return statuses rather than transport steps.}
 \label{fig:verify-admit}
 \end{figure}
 
@@ -1195,8 +1212,8 @@ and negligible but nonzero soundness error. OG-III does not replace those
 cryptographic models. Rather, it treats an accepted verifier result as a typed
 support atom such as
 \[
-  \mathsf{ProofValid}(\lambda,\mathsf{scheme},\mathsf{params},
-  \mathsf{stmt},F),
+  \mathrm{ProofValid}(\lambda,\mathrm{scheme},\mathrm{params},
+  \mathrm{stmt},F),
 \]
 where the security parameter $\lambda$, proof system, parameter set, verifier
 version, statement, and freshness frontier are part of the context examined by
@@ -1219,13 +1236,14 @@ verification such that freshness support differs:
 \]
 while
 \[
-  \Sat_S^{P_{\fresh},\ctx_F}(L_F,\Obl_{P_{\fresh}}(\phi_{\fresh},\ctx_F))
-  =
-  \mathrm{yes},
-  \qquad
-  \Sat_S^{P_{\fresh},\ctx_F}(L_{F_0},\Obl_{P_{\fresh}}(\phi_{\fresh},\ctx_F))
-  =
-  \mathrm{partial}.
+  \begin{aligned}
+  \Sat_S^{P_{\fresh},\ctx_F}
+    (L_F,\Obl_{P_{\fresh}}(\phi_{\fresh},\ctx_F))
+    &=\mathrm{yes},\\
+  \Sat_S^{P_{\fresh},\ctx_F}
+    (L_{F_0},\Obl_{P_{\fresh}}(\phi_{\fresh},\ctx_F))
+    &=\mathrm{partial}.
+  \end{aligned}
 \]
 \end{proposition}
 
@@ -1303,9 +1321,9 @@ Instantiate the loop with an Ed25519 signature verifier as specified by
 RFC~8032~\cite{rfc8032}. Let $X$ be canonical document text, let $e$ be the edit
 identifier, and let $F$ be the freshness frontier. Alice signs
 \[
-  d=\mathsf{H}(X,e,F),
+  d=\mathrm{H}(X,e,F),
   \qquad
-  \sigma_A=\mathsf{Ed25519.Sign}(sk_A,d),
+  \sigma_A=\mathrm{Ed25519.Sign}(sk_A,d),
 \]
 with verification key $vk_A$. The initial authorship ledger contains
 \[
@@ -1323,12 +1341,12 @@ T_4(T_3(T_2(L_0)))&=&T_2(L_0).
 \]
 The second step first checks
 \[
-  \mathsf{Ed25519.Verify}(vk_A,d,\sigma_A)=\mathrm{accept}
+  \mathrm{Ed25519.Verify}(vk_A,d,\sigma_A)=\mathrm{accept}
 \]
 and then applies a redaction policy that retains only the text atom $s_X$ in the
 carried component $C$ and moves the removed atoms into the declared-redaction
 component $D$. Each step preserves the terminal text digest
-$\mathsf{H}(X)$, so the endpoint-visible state is again $X$. The authorship
+$\mathrm{H}(X)$, so the endpoint-visible state is again $X$. The authorship
 obligation still requires the alternative
 $\{\sigma_A,i_A,p_\alpha,f_F\}$ or an admitted compression receipt. Neither is
 present at the end of the loop. The state coordinate closes, while the
@@ -1366,19 +1384,19 @@ computes
 \]
 Its state-closure bit is
 \[
-  \mathsf{Closed}_{\mathrm{st}}(\chi)
+  \mathrm{Closed}_{\mathrm{st}}(\chi)
   =
   [\pi_{\mathrm{st}}(L_0)=\pi_{\mathrm{st}}(L_n)].
 \]
 The audit action is
 \[
-  \mathsf{HolAudit}_S^P(\chi,\phi,\ctx)=
+  \mathrm{HolAudit}_S^P(\chi,\phi,\ctx)=
   \begin{cases}
-    \mathrm{open\_state}, & \mathsf{Closed}_{\mathrm{st}}(\chi)=0,\\
-    \mathrm{accept}, & \mathsf{Closed}_{\mathrm{st}}(\chi)=1
+    \mathrm{open\_state}, & \mathrm{Closed}_{\mathrm{st}}(\chi)=0,\\
+    \mathrm{accept}, & \mathrm{Closed}_{\mathrm{st}}(\chi)=1
       \text{ and } U_\chi=\varnothing,\\
     \mathrm{flag}(U_\chi,D_\chi,B_\chi), &
-      \mathsf{Closed}_{\mathrm{st}}(\chi)=1 \text{ and } U_\chi\neq\varnothing.
+      \mathrm{Closed}_{\mathrm{st}}(\chi)=1 \text{ and } U_\chi\neq\varnothing.
   \end{cases}
 \]
 A strict support-preservation policy replaces the final
@@ -1391,10 +1409,10 @@ or loss that occurred.
 \begin{proposition}[PathCert holonomy detection]
 \label{prop:pathcert-holonomy-detection}
 For every accepted finite PathCert $\chi$ and finite obligation
-$\Obl_P(\phi,\ctx)$, $\mathsf{HolAudit}_S^P(\chi,\phi,\ctx)$ is decidable.
+$\Obl_P(\phi,\ctx)$, $\mathrm{HolAudit}_S^P(\chi,\phi,\ctx)$ is decidable.
 For the closed loop in \cref{thm:nonzero-witness-holonomy}, the audit returns
 \[
-  \mathsf{Closed}_{\mathrm{st}}(\chi)=1,\qquad
+  \mathrm{Closed}_{\mathrm{st}}(\chi)=1,\qquad
   U_\chi=\{\sigma_A,i_A,p_\alpha,f_F\}.
 \]
 Thus a runtime using path certificates can systematically flag the nonzero
@@ -1452,7 +1470,7 @@ Pointwise support soundness holds when
 \[
   \Report_S^P(\phi,\ctx)\leq_P \Just_S^P(\phi,\ctx).
 \]
-Pathwise support soundness, written $\mathsf{SupportSound}_P(\gamma)$, holds
+Pathwise support soundness, written $\mathrm{SupportSound}_P(\gamma)$, holds
 when this pointwise condition holds for every claim $\phi$ in the purpose
 family $P$, using the status justified by $\Carry_\gamma(\phi,\ctx)$ at the
 endpoint.
@@ -1508,9 +1526,10 @@ That is, the emitted report is strictly stronger than the status justified by
 admissible support.
 \end{definition}
 
-\begin{proposition}[Hallucination as supported-claim overreport]
+\begin{proposition}
 \label{prop:hallucination-overreport}
-Fix a purpose/context interface in which
+Hallucination overreport is a special case of overreport. Fix a
+purpose/context interface in which
 $\underdetermined<_P\supported$ and
 $\unverifiable<_P\supported$. Let
 $\Hallucinate_S^P(\phi,\ctx)$ denote the case where
@@ -2101,12 +2120,22 @@ The endpoint status rule is finite:
 \[
   \Val_\gamma^{P,\ctx}(\phi)=
   \begin{cases}
-    \refuted, & \mathsf{Ref}_{S_1}^{P,\ctx}(\Carry_\gamma(\phi,\ctx),\phi)\neq\varnothing,\\
-    \supported, & \Sat(\Carry_\gamma(\phi,\ctx),\Obl_P(\phi,\ctx))=\mathrm{yes}
-      \text{ and } \Admit_{S_1}=\mathrm{accept},\\
+    \refuted,
+      & \begin{gathered}
+        \mathrm{Ref}_{S_1}^{P,\ctx}
+          (\Carry_\gamma(\phi,\ctx),\phi)\neq\varnothing,
+        \end{gathered}\\
+    \supported,
+      & \begin{gathered}
+        \Sat(\Carry_\gamma(\phi,\ctx),\Obl_P(\phi,\ctx))=\mathrm{yes}\\
+        \text{and } \Admit_{S_1}=\mathrm{accept},
+        \end{gathered}\\
     \authorityblocked, & \Sat=\authorityblocked,\\
-    \underdetermined, & \Sat\in\{\mathrm{no},\mathrm{partial}\}
-      \text{ and no admitted refutation is carried}.
+    \underdetermined,
+      & \begin{gathered}
+        \Sat\in\{\mathrm{no},\mathrm{partial}\}\\
+        \text{and no admitted refutation is carried}.
+        \end{gathered}
   \end{cases}
 \]
 The support-reporting preorder used in \cref{sec:soundness} satisfies
@@ -2239,7 +2268,7 @@ frontier $F$,'' set
 For authority separation, let $u$ be an update, let $k$ be a signing key, and
 let
 \[
-  \sigma_k=\mathsf{Ed25519.Sign}(sk_k,\mathsf{H}(u,F)).
+  \sigma_k=\mathrm{Ed25519.Sign}(sk_k,\mathrm{H}(u,F)).
 \]
 Define
 \[
@@ -2268,8 +2297,8 @@ Use four observers $S,A,B,C$ and the closed path
   \gamma_{\circlearrowleft}=T_4\circ T_3\circ T_2\circ T_1:S\to S.
 \]
 Use the concrete signature instance from \cref{sec:holonomy}: $X$ is the
-canonical text, $d=\mathsf{H}(X,e,F)$, and
-$\mathsf{Ed25519.Verify}(vk_A,d,\sigma_A)=\mathrm{accept}$. Let each translator
+canonical text, $d=\mathrm{H}(X,e,F)$, and
+$\mathrm{Ed25519.Verify}(vk_A,d,\sigma_A)=\mathrm{accept}$. Let each translator
 preserve $s_X$ and the terminal text digest. Let $T_2$ verify the signature and
 then replace the full authorship support with a text-only ledger plus declared
 redaction:
@@ -2356,7 +2385,7 @@ This appendix fixes the notation used by the calculus.
 \midrule
 $\Phi$ & Finite set of claims. \\
 $\mathcal P$ & Finite set of purposes or claim families. \\
-$\mathsf{Ctx}$ & Finite set of support contexts. A base context has form $(F,\alpha,\mathrm{disclosure},\mathrm{expiry})$; a path-extended context has form $(\ctx_{\mathrm{base}},\gamma)$. \\
+$\mathrm{Ctx}$ & Finite set of support contexts. A base context has form $(F,\alpha,\mathrm{disclosure},\mathrm{expiry})$; a path-extended context has form $(\ctx_{\mathrm{base}},\gamma)$. \\
 $\mathcal S$ & Finite set of observers. \\
 $\mathcal K$ & Finite set of support kinds, such as state, provenance, authority, freshness, negative witness, proof, commitment, receipt, declared loss, blockage, and typed refutation. \\
 $\Atoms$ & Finite typed support-atom universe $\coprod_{k\in\mathcal K}\{k\}\times A_k$. \\
@@ -2397,15 +2426,15 @@ The main operations have the following types:
 \toprule
 \TableHeaderRow Operation & Type & Role \\
 \midrule
-$\Obl$ & $\Phi\times\mathcal P\times\mathsf{Ctx}\to\Obligation$ & Looks up the support obligation for a claim, purpose, and context. \\
+$\Obl$ & $\Phi\times\mathcal P\times\mathrm{Ctx}\to\Obligation$ & Looks up the support obligation for a claim, purpose, and context. \\
 $\Native_S^{P,\ctx}$ & $\Phi\times\Mem_S\to\Ledg$ & Extracts the endpoint observer's native accumulated support view. \\
-$\Extract_S^{P,\ctx}$ & $\Phi\times\Mem_S\times(\mathsf{Cert}\cup\{\bot\})\to\Ledg$ & Produces the ledger used for admission from native memory and an optional PathCert. \\
-\(\ValidCert_S\) & \(\begin{gathered}\mathsf{Cert}\times\Phi\times\mathcal P\times\mathsf{Ctx}\times\Mem_S\\ \to\{\mathrm{accept},\mathrm{reject}\}\end{gathered}\) & Validates a certificate header, step relation, and endpoint binding. \\
-$\CertReject_S^{P,\ctx}$ & $\Phi\times\Mem_S\times\mathsf{Cert}\to\Ledg$ & Emits the explicit certificate-failure refutation ledger. \\
+$\Extract_S^{P,\ctx}$ & $\Phi\times\Mem_S\times(\mathrm{Cert}\cup\{\bot\})\to\Ledg$ & Produces the ledger used for admission from native memory and an optional PathCert. \\
+\(\ValidCert_S\) & \(\begin{gathered}\mathrm{Cert}\times\Phi\times\mathcal P\times\mathrm{Ctx}\times\Mem_S\\ \to\{\mathrm{accept},\mathrm{reject}\}\end{gathered}\) & Validates a certificate header, step relation, and endpoint binding. \\
+$\CertReject_S^{P,\ctx}$ & $\Phi\times\Mem_S\times\mathrm{Cert}\to\Ledg$ & Emits the explicit certificate-failure refutation ledger. \\
 $\Disch_S^{P,\ctx}$ & $\Ledg\to\mathcal P_{\mathrm{fin}}(\Atoms)$ & Computes the observer's admitted discharge closure. \\
 \(\Sat_S^{P,\ctx}\) & \(\begin{gathered}\Ledg\times\Obligation\\ \to\{\mathrm{yes},\mathrm{no},\\ \mathrm{partial},\authorityblocked\}\end{gathered}\) & Evaluates obligation satisfaction before admission policy. \\
-\(\Admit_S\) & \(\begin{gathered}\Ledg\times\Phi\times\mathcal P\times\mathsf{Ctx}\\ \to\{\mathrm{accept},\mathrm{reject},\\ \underdetermined,\authorityblocked\}\end{gathered}\) & Applies local admission priority to a support ledger. \\
-\(\Just_{S,\gamma}^{P}\) & \(\begin{gathered}\Phi\times\mathsf{Ctx}\\ \to\{\supported,\refuted,\\ \underdetermined,\authorityblocked,\\ \unverifiable\}\end{gathered}\) & Returns path-indexed justified endpoint status. \\
+\(\Admit_S\) & \(\begin{gathered}\Ledg\times\Phi\times\mathcal P\times\mathrm{Ctx}\\ \to\{\mathrm{accept},\mathrm{reject},\\ \underdetermined,\authorityblocked\}\end{gathered}\) & Applies local admission priority to a support ledger. \\
+\(\Just_{S,\gamma}^{P}\) & \(\begin{gathered}\Phi\times\mathrm{Ctx}\\ \to\{\supported,\refuted,\\ \underdetermined,\authorityblocked,\\ \unverifiable\}\end{gathered}\) & Returns path-indexed justified endpoint status. \\
 $\Acc_S$ & $\Mem_S\times\Packet\to\Mem_S$ & Updates native observer memory from a transported packet. \\
 \bottomrule
 \end{tabularx}
@@ -2630,7 +2659,7 @@ validation checks each finite step and exposes the terminal ledger
   L_4=(\{s_X\},\{\sigma_A,i_A,p_\alpha,f_F\},\varnothing,\varnothing).
 \]
 The state projection of $L_0$ and $L_4$ is $s_X$, so
-$\mathsf{Closed}_{\mathrm{st}}(\chi_{\circlearrowleft})=1$. For the authorship
+$\mathrm{Closed}_{\mathrm{st}}(\chi_{\circlearrowleft})=1$. For the authorship
 obligation,
 \[
   \Disch_S^{P_{\mathrm{auth}},\ctx}(L_4)=\{s_X\},
@@ -2709,34 +2738,35 @@ canonical ordering, digest rules, and validator judgements.
 Every artifact below is serialized in a canonical byte encoding with sorted map
 keys and sorted finite sets. Digests are written
 \[
-  \mathsf{dig}(x)=\mathsf{Hash}(\mathsf{canonical}(x)).
+  \mathrm{dig}(x)=\mathrm{Hash}(\mathrm{canonical}(x)).
 \]
 References to claims, obligations, ledgers, certificates, and registry entries
 use these digests. A signed artifact signs the tuple
 \[
-  (\mathsf{profile},\mathsf{artifact\_kind},\mathsf{version},\mathsf{dig}(\mathsf{body})).
+  (\mathrm{profile},\mathrm{artifact\_kind},\mathrm{version},\mathrm{dig}(\mathrm{body})).
 \]
-The canonical profile used here is named $\mathsf{OG3\text{-}profile\text{-}1}$.
+The canonical profile used here is named $\mathrm{OG3\text{-}profile\text{-}1}$.
 
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[
   schema/.style={ogbox, text width=2.85cm, minimum height=1.0cm, font=\small},
+  relabel/.style={fill=white, inner sep=1.2pt, font=\scriptsize},
   rel/.style={-{Latex[length=2.3mm,width=1.6mm]}, line width=0.65pt}
 ]
   \node[schema] (passport) at (0,0) {ClaimPassport\\claim\\purpose\\context};
-  \node[schema] (registry) at (-4.2,1.75) {Obligation\\Registry\\$\Obl_P(\phi,\ctx)$ entry};
-  \node[schema] (pathcert) at (4.2,1.75) {PathCert\\path and ledger chain};
-  \node[schema] (ledger) at (4.2,-1.75) {SupportLedger\\$C,D,B,R$ atoms};
-  \node[schema] (report) at (0,-3.25) {StatusReport\\Just\\Report\\Debt};
-  \node[schema] (checker) at (-4.2,-1.75) {AtomChecker\\kind dispatch};
+  \node[schema] (registry) at (-4.65,1.85) {Obligation\\Registry\\$\Obl_P(\phi,\ctx)$ entry};
+  \node[schema] (pathcert) at (4.65,1.85) {PathCert\\path and ledger chain};
+  \node[schema] (ledger) at (4.65,-1.65) {SupportLedger\\$C,D,B,R$ atoms};
+  \node[schema] (report) at (0,-3.15) {StatusReport\\Just\\Report\\Debt};
+  \node[schema] (checker) at (-4.65,-1.65) {AtomChecker\\kind dispatch};
 
-  \draw[rel] (passport) -- node[above, fill=white, inner sep=1pt, font=\scriptsize] {\texttt{obligation\_entry}} (registry);
-  \draw[rel] (passport) -- node[above, fill=white, inner sep=1pt, font=\scriptsize] {\texttt{path\_cert}} (pathcert);
-  \draw[rel] (pathcert) -- node[right, fill=white, inner sep=1pt, font=\scriptsize] {\texttt{ledgers}} (ledger);
-  \draw[rel] (registry) -- node[left, fill=white, inner sep=1pt, font=\scriptsize] {rules} (checker);
-  \draw[rel] (ledger) -- node[right, fill=white, inner sep=1pt, font=\scriptsize] {\texttt{terminal\_ledger}} (report);
-  \draw[rel] (report) -- node[right, fill=white, inner sep=1pt, font=\scriptsize] {\texttt{status\_report}} (passport);
+  \draw[rel] (passport.west) -- node[relabel, above] {\texttt{obligation\_entry}} (registry.east);
+  \draw[rel] (passport.east) -- node[relabel, above] {\texttt{path\_cert}} (pathcert.west);
+  \draw[rel] (pathcert.south) -- node[relabel, right] {\texttt{ledgers}} (ledger.north);
+  \draw[rel] (registry.south) -- node[relabel, left] {rules} (checker.north);
+  \draw[rel] (ledger.south west) |- node[relabel, near end, above] {\texttt{terminal\_ledger}} (report.east);
+  \draw[rel] (report.north) -- node[relabel, right] {\texttt{status\_report}} (passport.south);
 \end{tikzpicture}
 \caption{Engineering schema relationships. The claim passport is the portable root object; it references the obligation entry, optional path certificate, terminal ledger, and support status report.}
 \label{fig:engineering-schema-relationships}
@@ -2745,10 +2775,10 @@ The canonical profile used here is named $\mathsf{OG3\text{-}profile\text{-}1}$.
 \paragraph{Typed support atom schema.}
 A support atom is the tuple
 \[
-  a=(\mathsf{kind},\mathsf{payload},\mathsf{issuer},\mathsf{frontier},
-     \mathsf{context},\mathsf{digest},\mathsf{signature?}).
+  a=(\mathrm{kind},\mathrm{payload},\mathrm{issuer},\mathrm{frontier},
+     \mathrm{context},\mathrm{digest},\mathrm{signature?}).
 \]
-The field $\mathsf{kind}\in\mathcal K$ determines the payload grammar. The
+The field $\mathrm{kind}\in\mathcal K$ determines the payload grammar. The
 mandatory atom kinds for this paper are
 
 \begin{OGTable}{\OGTableFont}
@@ -2756,16 +2786,16 @@ mandatory atom kinds for this paper are
 \toprule
 \TableHeaderRow Kind & Payload role \\
 \midrule
-$\mathsf{state}$ & Visible-state or object digest support. \\
-$\mathsf{signature}$ & Signature, verification key, and signed message digest. \\
-$\mathsf{identity}$ & Binding from key to principal or role. \\
-$\mathsf{policy}$ & Policy rule, epoch, and admitted authority domain. \\
-$\mathsf{frontier}$ & Freshness root, membership proof, and consistency proof. \\
-$\mathsf{receipt}$ & Compression or mediator receipt. \\
-$\mathsf{proof}$ & Proof transcript and public inputs. \\
-$\mathsf{commitment}$ & Commitment digest and scheme metadata. \\
-$\mathsf{refutation}$ & Typed negative witness against a claim component. \\
-$\mathsf{certificate\_refutation}$ & PathCert validation failure against path support. \\
+$\mathrm{state}$ & Visible-state or object digest support. \\
+$\mathrm{signature}$ & Signature, verification key, and signed message digest. \\
+$\mathrm{identity}$ & Binding from key to principal or role. \\
+$\mathrm{policy}$ & Policy rule, epoch, and admitted authority domain. \\
+$\mathrm{frontier}$ & Freshness root, membership proof, and consistency proof. \\
+$\mathrm{receipt}$ & Compression or mediator receipt. \\
+$\mathrm{proof}$ & Proof transcript and public inputs. \\
+$\mathrm{commitment}$ & Commitment digest and scheme metadata. \\
+$\mathrm{refutation}$ & Typed negative witness against a claim component. \\
+$\mathrm{certificate\_refutation}$ & PathCert validation failure against path support. \\
 \bottomrule
 \end{tabularx}
 \caption{Mandatory typed support atom kinds.}
@@ -2786,7 +2816,7 @@ judgement. Its body has these fields:
 \toprule
 \TableHeaderRow Field & Type / value & Role \\
 \midrule
-\texttt{passport\_version} & Profile identifier & Canonical profile version, here $\mathsf{OG3\text{-}profile\text{-}1}$. \\
+\texttt{passport\_version} & Profile identifier & Canonical profile version, here $\mathrm{OG3\text{-}profile\text{-}1}$. \\
 \texttt{claim\_id} & Digest & Digest of the normalized claim expression $\phi$. \\
 \texttt{claim\_family} & Finite name & Claim family used by the obligation registry. \\
 \texttt{purpose} & Purpose $P$ & Evaluation purpose. \\
@@ -2872,7 +2902,7 @@ Validation of a PathCert is deterministic:
         deterministic failure code and the corresponding certificate-refutation
         atom $\rho_{\mathrm{cert}}(\chi,\phi,P,\ctx)$.
 \end{enumerate}
-A closed-path validator then runs $\mathsf{HolAudit}$ from
+A closed-path validator then runs $\mathrm{HolAudit}$ from
 \cref{def:holonomy-audit}. A nonzero holonomy audit is not automatically a
 PathCert validation failure: the certificate may correctly record lawful
 redaction or declared loss. It is a runtime failure only for passports or routes
@@ -2907,16 +2937,16 @@ The obligation registry is an append-only finite table. Each entry has:
 \end{OGTable}
 \FloatBarrier
 
-Registry lookup is by $(\mathsf{claim\_family},P,\ctx)$. Multiple entries may
+Registry lookup is by $(\mathrm{claim\_family},P,\ctx)$. Multiple entries may
 match during migration; the validator must choose the entry with the greatest
 admitted registry frontier that is still valid for $\ctx$.
 
 \paragraph{Support ledger schema and validator.}
 A stored ledger is
 \[
-  L=(C,D,B,R,\mathsf{ledger\_meta})
+  L=(C,D,B,R,\mathrm{ledger\_meta})
 \]
-where $C,D,B,R$ are sorted finite atom lists and $\mathsf{ledger\_meta}$ records
+where $C,D,B,R$ are sorted finite atom lists and $\mathrm{ledger\_meta}$ records
 the profile, source observer, target observer, path digest, and creation
 frontier.
 
@@ -2929,7 +2959,7 @@ $C$ & Sorted finite atom list & Carried support atoms presented for admission. \
 $D$ & Sorted finite atom list & Declared loss, redaction, staleness, or unavailability atoms. \\
 $B$ & Sorted finite atom list & Authority-blocked atoms. \\
 $R$ & Sorted finite atom list & Typed refutation atoms, including certificate-refutation atoms. \\
-$\mathsf{ledger\_meta}$ & Finite metadata record & Profile, source observer, target observer, path digest, and creation frontier. \\
+$\mathrm{ledger\_meta}$ & Finite metadata record & Profile, source observer, target observer, path digest, and creation frontier. \\
 \bottomrule
 \end{tabularx}
 \caption{Support ledger component schema.}
@@ -2955,7 +2985,7 @@ is set membership, disjointness, and discharge closure.
 
 The ledger validator returns
 \[
-  \mathsf{LedgerCheck}(L) \in
+  \mathrm{LedgerCheck}(L) \in
   \{\mathrm{accept},\mathrm{reject},\mathrm{opaque\_only}\}.
 \]
 It rejects malformed typed atoms, invalid signatures, expired frontier proofs,
@@ -2966,7 +2996,7 @@ currently being evaluated.
 \paragraph{Typed support checker.}
 The typed checker is a dispatch table
 \[
-  \mathsf{CheckAtom}:\mathcal K\times\mathsf{Payload}\times\ctx
+  \mathrm{CheckAtom}:\mathcal K\times\mathrm{Payload}\times\ctx
   \to\{\mathrm{accept},\mathrm{reject},\mathrm{opaque}\}.
 \]
 The required dispatch rules are:
@@ -3024,7 +3054,7 @@ passport:
 \TableHeaderRow Field & Type / value & Role \\
 \midrule
 \texttt{path\_cert\_status} & \texttt{absent}, \texttt{accepted}, or \texttt{rejected} & Rejected status identifies the certificate-refutation atom included in $R$. \\
-\texttt{loop\_audit} & Digest or \texttt{absent} & For closed paths, records the $\mathsf{HolAudit}$ digest, state-closure bit, residual unmet atoms, declared-loss residuals, blocked residuals, and action. \\
+\texttt{loop\_audit} & Digest or \texttt{absent} & For closed paths, records the $\mathrm{HolAudit}$ digest, state-closure bit, residual unmet atoms, declared-loss residuals, blocked residuals, and action. \\
 \texttt{justified\_status} & Status & Value of $\Just_S^P(\phi,\ctx)$. \\
 \texttt{emitted\_report} & Report value & Value emitted by the observer or system. \\
 \texttt{debt} & Atom set & Output of the witness-debt counter. \\
@@ -3043,13 +3073,13 @@ For $O=(R_O,\mathcal E_O)$ and $L=(C,D,B,R)$, compute
 \[
   U=R_O\setminus \Disch_S^{P,\ctx}(L).
 \]
-Let $\mathsf{TreatsDischarged}(\Report,a)$ be true when the emitted report is
+Let $\mathrm{TreatsDischarged}(\Report,a)$ be true when the emitted report is
 at least as strong as a status that requires atom $a$ to be discharged. The debt
 counter returns
 \[
   \Debt_\gamma^P(\phi,\ctx,\Report)
   =
-  \{a\in U\mid \mathsf{TreatsDischarged}(\Report,a)\}.
+  \{a\in U\mid \mathrm{TreatsDischarged}(\Report,a)\}.
 \]
 Declared loss does not by itself create debt. Blocked support does not create
 debt when the emitted report is $\authorityblocked$ or weaker in the local
@@ -3105,9 +3135,9 @@ digest, and envelope signature. The validator profile instantiates
 $R_{T_i}$ as an envelope checker:
 \begin{enumerate}[leftmargin=*]
   \item Verify the envelope signature and translator authority.
-  \item Check that the envelope's incoming digest equals $\mathsf{dig}(L_{i-1})$.
+  \item Check that the envelope's incoming digest equals $\mathrm{dig}(L_{i-1})$.
   \item Recompute the outgoing ledger from the declared transformation
-        operation and check $\mathsf{dig}(L_i)$.
+        operation and check $\mathrm{dig}(L_i)$.
   \item Verify any compression, redaction, frontier, proof, or authority receipt
         named by the transformation.
   \item Check that the outgoing artifact digest is the incoming artifact digest
