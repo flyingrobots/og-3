@@ -58,9 +58,29 @@
 
 \captionsetup[figure]{font=small,labelfont=bf,textfont=it}
 \captionsetup[table]{font={small},labelfont=bf}
-\newcommand{\TableHeaderRow}{\rowcolor{tableheaderbg}\bfseries}
-\AtBeginEnvironment{table}{\rowcolors{2}{tablerowbg}{white}}
-\AtEndEnvironment{table}{\rowcolors{2}{}{}}
+\newcommand{\OGTableFont}{\small}
+\newcommand{\OGSchemaTableFont}{\footnotesize}
+\newcommand{\OGStartLongTable}{\begingroup\OGSchemaTableFont}
+\newcommand{\OGEndLongTable}{\endgroup}
+\newcommand{\OGTableHeaderRow}{\rowcolor{tableheaderbg}\bfseries}
+\newcommand{\TableHeaderRow}{\OGTableHeaderRow}
+\newcommand{\OGAltRow}{\rowcolor{tablerowbg}}
+\newcommand{\OGLongTableFooter}[1]{%
+  \midrule
+  \multicolumn{#1}{r}{\footnotesize Continued on next page} \\
+  \endfoot
+  \bottomrule
+  \endlastfoot
+}
+\newenvironment{OGTable}[2][ht]{%
+  \begin{table}[#1]
+  \centering
+  #2
+  \rowcolors{2}{tablerowbg}{white}%
+}{%
+  \rowcolors{2}{}{}%
+  \end{table}%
+}
 
 \setlength{\headheight}{30pt}
 \newcommand{\paperdoi}{DOI: \href{https://doi.org/10.5281/zenodo.20046284}{10.5281/zenodo.20046284}}
@@ -317,9 +337,7 @@ to ask which claims a transported object can still support.
 
 \subsection{Minimal Glossary}
 
-\begin{table}[ht]
-\centering
-\small
+\begin{OGTable}{\OGTableFont}
 \begin{tabular}{p{0.19\textwidth}p{0.11\textwidth}p{0.31\textwidth}p{0.27\textwidth}}
 \toprule
 \TableHeaderRow Term & Source & Imported meaning & OG-III use \\
@@ -339,7 +357,7 @@ State convergence & OG-II & Endpoint visible state agreement & Explicitly not su
 \end{tabular}
 \caption{Minimal imported glossary. Full glossary and notation concordance appear in \cref{app:glossary}.}
 \label{tab:imported-glossary}
-\end{table}
+\end{OGTable}
 \FloatBarrier
 
 \subsection{Self-Contained Reading Convention}
@@ -495,9 +513,7 @@ emitted status $\Report_S^P(\phi,\ctx)$ is a reported tag that may be weaker,
 equal, incomparable, or stronger under the local preorder $\leq_P$.
 \end{definition}
 
-\begin{table}[ht]
-\centering
-\small
+\begin{OGTable}{\OGTableFont}
 \begin{tabular}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}p{0.45\textwidth}}
 \toprule
 \TableHeaderRow Claim & Purpose & Typical required support \\
@@ -511,7 +527,7 @@ equal, incomparable, or stronger under the local preorder $\leq_P$.
 \end{tabular}
 \caption{Finite support-obligation sketches. $\Obl_P(\phi,\ctx)$ changes with the claim family, purpose, and context.}
 \label{tab:obligation-sketches}
-\end{table}
+\end{OGTable}
 
 \begin{proposition}[Testimony/Object Claim Separation]
 Let $\psi_L(\phi)$ denote the testimony claim \enquote{$L$ reported $\phi$}.
@@ -1402,9 +1418,7 @@ point is support accounting, not blame as ground truth: Git blame is itself a
 witness surface, and legitimate rewrites discharge the audit obligation when
 they carry a checkable old-to-new mapping or explicit loss declaration.
 
-\begin{table}[ht]
-\centering
-\footnotesize
+\begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}@{}}
 \toprule
 \TableHeaderRow Git path & Code state & Provenance support & Declaration & OG-III status \\
@@ -1418,11 +1432,9 @@ Invalid source trailer & same & claimed source contradicted or unverifiable & at
 \end{tabularx}
 \caption{Version-control holonomy as an engineering instance. The endpoint code can agree while line-level support diverges.}
 \label{tab:version-control-holonomy}
-\end{table}
+\end{OGTable}
 
-\begin{table}[ht]
-\centering
-\small
+\begin{OGTable}{\OGTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.33\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
 \TableHeaderRow Artifact & OG-III role & Failure detected \\
@@ -1440,7 +1452,7 @@ Admission policy & Turns verified support into local status & Validity/admissibi
 \end{tabularx}
 \caption{Engineering artifacts suggested by the calculus. Appendix~\ref{app:engineering-artifacts} gives finite schemas and validator sketches for these roles.}
 \label{tab:engineering-artifacts}
-\end{table}
+\end{OGTable}
 \FloatBarrier
 
 \section{Data and Code Availability}
@@ -1457,8 +1469,7 @@ compact Coq/Rocq reference formalization. The model is a finite reference
 semantics for support-accounting examples, not a full cryptographic or
 distributed-systems implementation.
 
-\begingroup
-\footnotesize
+\OGStartLongTable
 \begin{xltabular}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.36\textwidth}>{\raggedright\arraybackslash}X}
 \caption{Data and code availability summary. Exact per-version archive DOIs are assigned by Zenodo when GitHub releases are archived; the concept DOI and release page are stable locators for the archive family.}
 \label{tab:data-code-availability}\\
@@ -1470,48 +1481,44 @@ distributed-systems implementation.
 \TableHeaderRow Item & Location or command & Status \\
 \midrule
 \endhead
-\midrule
-\multicolumn{3}{r}{\footnotesize Continued on next page} \\
-\endfoot
-\bottomrule
-\endlastfoot
+\OGLongTableFooter{3}
 Public source repository &
 \href{https://github.com/flyingrobots/og-3}{\texttt{flyingrobots/og-3}} &
 Public repository for source, metadata, and generated reading copies. \\
-\rowcolor{tablerowbg}
+\OGAltRow
 Code archive concept DOI &
 \href{https://doi.org/10.5281/zenodo.20054992}{doi:10.5281/zenodo.20054992} &
 Stable Zenodo archive family for versioned code artifacts. \\
 Prior code archive DOI &
 \href{https://doi.org/10.5281/zenodo.20055508}{doi:10.5281/zenodo.20055508} &
 Prior archived code release. \\
-\rowcolor{tablerowbg}
+\OGAltRow
 Initial code archive DOI &
 \href{https://doi.org/10.5281/zenodo.20054993}{doi:10.5281/zenodo.20054993} &
 Initial archived code release. \\
 Formal model &
 \texttt{formal/coq/OG3.v} &
 Compact Coq/Rocq finite reference model. \\
-\rowcolor{tablerowbg}
+\OGAltRow
 Verification command &
 \texttt{make verify} &
 Checks the Coq/Rocq file and coverage map when \texttt{coqc} is available. \\
 Formal sync command &
 \texttt{make formal-sync} &
 Regenerates the coverage table and checks that generated artifacts are current. \\
-\rowcolor{tablerowbg}
+\OGAltRow
 Checked local toolchain &
 Rocq Prover 9.1.1; OCaml 5.4.1 &
 Local environment used for this release. \\
 CI container &
 \texttt{rocq/rocq-prover:9.1} &
 Pinned GitHub Actions formal-verification environment. \\
-\rowcolor{tablerowbg}
+\OGAltRow
 Companion prototype &
 \href{https://github.com/flyingrobots/git-holaudit}{\texttt{flyingrobots/\allowbreak{}git-holaudit}} &
 Engineering interpretation over Git line witnesses; not used for Coq/Rocq witness results. \\
 \end{xltabular}
-\endgroup
+\OGEndLongTable
 \FloatBarrier
 
 The generated coverage map binds manuscript labels to Coq/Rocq objects.
@@ -2409,9 +2416,7 @@ A support atom is the tuple
 The field $\mathsf{kind}\in\mathcal K$ determines the payload grammar. The
 mandatory atom kinds for this paper are
 
-\begin{table}[ht]
-\centering
-\small
+\begin{OGTable}{\OGTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
 \TableHeaderRow Kind & Payload role \\
@@ -2430,7 +2435,7 @@ $\mathsf{certificate\_refutation}$ & PathCert validation failure against path su
 \end{tabularx}
 \caption{Mandatory typed support atom kinds.}
 \label{tab:typed-support-atom-kinds}
-\end{table}
+\end{OGTable}
 \FloatBarrier
 
 An implementation may add atom kinds by adding registry entries. Unknown atom
@@ -2441,9 +2446,7 @@ support.
 A claim passport is the portable wrapper for one claim-purpose-context
 judgement. Its body has these fields:
 
-\begin{table}[ht]
-\centering
-\footnotesize
+\begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
 \TableHeaderRow Field & Type / value & Role \\
@@ -2461,11 +2464,9 @@ judgement. Its body has these fields:
 \end{tabularx}
 \caption{Claim passport schema: claim identity and observer context.}
 \label{tab:claim-passport-schema}
-\end{table}
+\end{OGTable}
 
-\begin{table}[ht]
-\centering
-\footnotesize
+\begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
 \TableHeaderRow Field & Type / value & Role \\
@@ -2481,7 +2482,7 @@ judgement. Its body has these fields:
 \end{tabularx}
 \caption{Claim passport schema: support, extraction, and reporting references.}
 \label{tab:claim-passport-support-schema}
-\end{table}
+\end{OGTable}
 \FloatBarrier
 
 The passport validator recomputes the claim digest, retrieves the obligation
@@ -2495,9 +2496,7 @@ certificate-refutation atom, not the native ledger alone.
 \paragraph{PathCert schema.}
 A PathCert is the finite tuple from \cref{sec:paths} stored as fields:
 
-\begin{table}[ht]
-\centering
-\footnotesize
+\begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
 \TableHeaderRow Field & Type / value & Role \\
@@ -2518,7 +2517,7 @@ A PathCert is the finite tuple from \cref{sec:paths} stored as fields:
 \end{tabularx}
 \caption{PathCert schema.}
 \label{tab:pathcert-schema}
-\end{table}
+\end{OGTable}
 \FloatBarrier
 
 Validation of a PathCert is deterministic:
@@ -2548,9 +2547,7 @@ recorded as a flagged loop defect and passed to admission, debt, and reporting.
 \paragraph{Obligation registry schema.}
 The obligation registry is an append-only finite table. Each entry has:
 
-\begin{table}[ht]
-\centering
-\footnotesize
+\begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
 \TableHeaderRow Field & Type / value & Role \\
@@ -2570,7 +2567,7 @@ The obligation registry is an append-only finite table. Each entry has:
 \end{tabularx}
 \caption{Obligation registry entry schema.}
 \label{tab:obligation-registry-schema}
-\end{table}
+\end{OGTable}
 \FloatBarrier
 
 Registry lookup is by $(\mathsf{claim\_family},P,\ctx)$. Multiple entries may
@@ -2586,9 +2583,7 @@ where $C,D,B,R$ are sorted finite atom lists and $\mathsf{ledger\_meta}$ records
 the profile, source observer, target observer, path digest, and creation
 frontier.
 
-\begin{table}[ht]
-\centering
-\small
+\begin{OGTable}{\OGTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
 \TableHeaderRow Component & Type / value & Role \\
@@ -2602,7 +2597,7 @@ $\mathsf{ledger\_meta}$ & Finite metadata record & Profile, source observer, tar
 \end{tabularx}
 \caption{Support ledger component schema.}
 \label{tab:support-ledger-schema}
-\end{table}
+\end{OGTable}
 \FloatBarrier
 
 The canonical implementation profile requires a normal form:
@@ -2634,9 +2629,7 @@ The typed checker is a dispatch table
 \]
 The required dispatch rules are:
 
-\begin{table}[ht]
-\centering
-\small
+\begin{OGTable}{\OGTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
 \TableHeaderRow Atom kind & Dispatch rule \\
@@ -2654,16 +2647,14 @@ The required dispatch rules are:
 \end{tabularx}
 \caption{Typed support checker dispatch schema.}
 \label{tab:typed-support-dispatch-schema}
-\end{table}
+\end{OGTable}
 \FloatBarrier
 
 \paragraph{Support status report schema.}
 A support status report records the full accounting result for a single
 passport:
 
-\begin{table}[ht]
-\centering
-\footnotesize
+\begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
 \TableHeaderRow Field & Type / value & Role \\
@@ -2683,11 +2674,9 @@ passport:
 \end{tabularx}
 \caption{Support status report schema: accounting fields.}
 \label{tab:support-status-report-accounting-schema}
-\end{table}
+\end{OGTable}
 
-\begin{table}[ht]
-\centering
-\footnotesize
+\begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
 \TableHeaderRow Field & Type / value & Role \\
@@ -2704,7 +2693,7 @@ passport:
 \end{tabularx}
 \caption{Support status report schema: path, report, and audit outputs.}
 \label{tab:support-status-report-output-schema}
-\end{table}
+\end{OGTable}
 \FloatBarrier
 
 \paragraph{Witness-debt counter.}
