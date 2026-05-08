@@ -17,6 +17,7 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{tabularx}
+\usepackage{longtable}
 \usepackage{placeins}
 \usepackage{caption}
 \usepackage{tikz}
@@ -2338,6 +2339,30 @@ use these digests. A signed artifact signs the tuple
 \]
 The canonical profile used here is named $\mathsf{OG3\text{-}profile\text{-}1}$.
 
+\begin{figure}[ht]
+\centering
+\begin{tikzpicture}[
+  schema/.style={ogbox, text width=2.85cm, minimum height=1.0cm, font=\small},
+  rel/.style={-{Latex[length=2.3mm,width=1.6mm]}, line width=0.65pt}
+]
+  \node[schema] (passport) at (0,0) {ClaimPassport\\claim\\purpose\\context};
+  \node[schema] (registry) at (-4.2,1.75) {Obligation\\Registry\\$\Obl_P(\phi,\ctx)$ entry};
+  \node[schema] (pathcert) at (4.2,1.75) {PathCert\\path and ledger chain};
+  \node[schema] (ledger) at (4.2,-1.75) {SupportLedger\\$C,D,B,R$ atoms};
+  \node[schema] (report) at (0,-3.25) {StatusReport\\Just\\Report\\Debt};
+  \node[schema] (checker) at (-4.2,-1.75) {AtomChecker\\kind dispatch};
+
+  \draw[rel] (passport) -- node[above, fill=white, inner sep=1pt, font=\scriptsize] {\texttt{obligation\_entry}} (registry);
+  \draw[rel] (passport) -- node[above, fill=white, inner sep=1pt, font=\scriptsize] {\texttt{path\_cert}} (pathcert);
+  \draw[rel] (pathcert) -- node[right, fill=white, inner sep=1pt, font=\scriptsize] {\texttt{ledgers}} (ledger);
+  \draw[rel] (registry) -- node[left, fill=white, inner sep=1pt, font=\scriptsize] {rules} (checker);
+  \draw[rel] (ledger) -- node[right, fill=white, inner sep=1pt, font=\scriptsize] {\texttt{terminal\_ledger}} (report);
+  \draw[rel] (report) -- node[right, fill=white, inner sep=1pt, font=\scriptsize] {\texttt{status\_report}} (passport);
+\end{tikzpicture}
+\caption{Appendix E schema relationships. The claim passport is the portable root object; it references the obligation entry, optional path certificate, terminal ledger, and support status report.}
+\label{fig:engineering-schema-relationships}
+\end{figure}
+
 \paragraph{Typed support atom schema.}
 A support atom is the tuple
 \[
@@ -2346,20 +2371,34 @@ A support atom is the tuple
 \]
 The field $\mathsf{kind}\in\mathcal K$ determines the payload grammar. The
 mandatory atom kinds for this paper are
-\[
-\begin{array}{ll}
-\mathsf{state} & \text{visible-state or object digest support},\\
-\mathsf{signature} & \text{signature, verification key, signed message digest},\\
-\mathsf{identity} & \text{binding from key to principal or role},\\
-\mathsf{policy} & \text{policy rule, epoch, and admitted authority domain},\\
-\mathsf{frontier} & \text{freshness root, membership proof, consistency proof},\\
-\mathsf{receipt} & \text{compression or mediator receipt},\\
-\mathsf{proof} & \text{proof transcript and public inputs},\\
-\mathsf{commitment} & \text{commitment digest and scheme metadata},\\
-\mathsf{refutation} & \text{typed negative witness against a claim component},\\
-\mathsf{certificate\_refutation} & \text{PathCert validation failure against path support}.
-\end{array}
-\]
+\begin{center}
+\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.67\textwidth}@{}}
+\caption{Mandatory typed support atom kinds.}
+\label{tab:typed-support-atom-kinds}\\
+\toprule
+\textbf{Kind} & \textbf{Payload role} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Kind} & \textbf{Payload role} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+$\mathsf{state}$ & Visible-state or object digest support. \\
+$\mathsf{signature}$ & Signature, verification key, and signed message digest. \\
+$\mathsf{identity}$ & Binding from key to principal or role. \\
+$\mathsf{policy}$ & Policy rule, epoch, and admitted authority domain. \\
+$\mathsf{frontier}$ & Freshness root, membership proof, and consistency proof. \\
+$\mathsf{receipt}$ & Compression or mediator receipt. \\
+$\mathsf{proof}$ & Proof transcript and public inputs. \\
+$\mathsf{commitment}$ & Commitment digest and scheme metadata. \\
+$\mathsf{refutation}$ & Typed negative witness against a claim component. \\
+$\mathsf{certificate\_refutation}$ & PathCert validation failure against path support. \\
+\end{longtable}
+\normalsize
+\end{center}
 An implementation may add atom kinds by adding registry entries. Unknown atom
 kinds are rejected for admission and may be retained only as opaque carried
 support.
@@ -2367,38 +2406,40 @@ support.
 \paragraph{Claim passport schema.}
 A claim passport is the portable wrapper for one claim-purpose-context
 judgement. Its body has these fields:
-\begin{description}[leftmargin=*,style=nextline]
-  \item[\texttt{passport\_version}] profile version, here
-        $\mathsf{OG3\text{-}profile\text{-}1}$.
-  \item[\texttt{claim\_id}] digest of the normalized claim expression $\phi$.
-  \item[\texttt{claim\_family}] finite family name used by the obligation
-        registry.
-  \item[\texttt{purpose}] purpose $P$.
-  \item[\texttt{context}] finite support context $\ctx$.
-  \item[\texttt{subject\_artifact}] digest of the state object, update, or
-        packet whose claim is being reported.
-  \item[\texttt{visible\_state}] endpoint-visible projection digest.
-  \item[\texttt{source\_observer}] observer that issued the original claim or
-        support packet.
-  \item[\texttt{target\_observer}] observer evaluating the claim.
-  \item[\texttt{obligation\_entry}] registry entry digest for
-        $\Obl_P(\phi,\ctx)$.
-  \item[\texttt{path\_cert}] digest of the PathCert used for extraction, or
-        $\bot$.
-  \item[\texttt{path\_cert\_status}] one of
-        \texttt{absent}, \texttt{accepted}, or \texttt{rejected}; rejected
-        certificates must name the failure code used to create the typed
-        certificate-refutation atom in $R$.
-  \item[\texttt{loop\_policy}] optional value
-        \texttt{absent}, \texttt{audit\_only}, or
-        \texttt{support\_preserving}; closed paths that claim preserved support
-        must use \texttt{support\_preserving}.
-  \item[\texttt{terminal\_ledger}] digest of $\Carry_\gamma(\phi,\ctx)$ after
-        extraction.
-  \item[\texttt{status\_report}] digest of the support status report below.
-  \item[\texttt{issuer\_signature}] signature by the reporting observer or
-        service.
-\end{description}
+\begin{center}
+\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.23\textwidth}>{\raggedright\arraybackslash}p{0.44\textwidth}@{}}
+\caption{Claim passport schema.}
+\label{tab:claim-passport-schema}\\
+\toprule
+\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\texttt{passport\_version} & Profile identifier & Canonical profile version, here $\mathsf{OG3\text{-}profile\text{-}1}$. \\
+\texttt{claim\_id} & Digest & Digest of the normalized claim expression $\phi$. \\
+\texttt{claim\_family} & Finite name & Claim family used by the obligation registry. \\
+\texttt{purpose} & Purpose $P$ & Evaluation purpose. \\
+\texttt{context} & Finite context $\ctx$ & Support context for the judgement. \\
+\texttt{subject\_artifact} & Digest & State object, update, or packet whose claim is being reported. \\
+\texttt{visible\_state} & Digest & Endpoint-visible projection digest. \\
+\texttt{source\_observer} & Observer identifier & Observer that issued the original claim or support packet. \\
+\texttt{target\_observer} & Observer identifier & Observer evaluating the claim. \\
+\texttt{obligation\_entry} & Registry-entry digest & Entry for $\Obl_P(\phi,\ctx)$. \\
+\texttt{path\_cert} & Digest or $\bot$ & PathCert used for extraction, if any. \\
+\texttt{path\_cert\_status} & \texttt{absent}, \texttt{accepted}, or \texttt{rejected} & Rejected certificates name the failure code used to create the typed certificate-refutation atom in $R$. \\
+\texttt{loop\_policy} & \texttt{absent}, \texttt{audit\_only}, or \texttt{support\_preserving} & Closed paths that claim preserved support must use \texttt{support\_preserving}. \\
+\texttt{terminal\_ledger} & Digest & Digest of $\Carry_\gamma(\phi,\ctx)$ after extraction. \\
+\texttt{status\_report} & Digest & Support status report in \cref{tab:support-status-report-schema}. \\
+\texttt{issuer\_signature} & Signature & Signature by the reporting observer or service. \\
+\end{longtable}
+\normalsize
+\end{center}
 
 The passport validator recomputes the claim digest, retrieves the obligation
 entry, validates the path certificate when present, recomputes the terminal
@@ -2410,24 +2451,36 @@ certificate-refutation atom, not the native ledger alone.
 
 \paragraph{PathCert schema.}
 A PathCert is the finite tuple from \cref{sec:paths} stored as fields:
-\begin{description}[leftmargin=*,style=nextline]
-  \item[\texttt{cert\_version}] canonical profile version.
-  \item[\texttt{cert\_id}] digest of the certificate body.
-  \item[\texttt{claim\_id}, \texttt{purpose}, \texttt{context}] header fields
-        matching $(\phi,P,\ctx)$.
-  \item[\texttt{path}] ordered edge list
-        $(S_0,T_1,S_1,\ldots,T_n,S_n)$.
-  \item[\texttt{ledgers}] ordered ledgers $L_0,\ldots,L_n$.
-  \item[\texttt{step\_certs}] ordered step witnesses
-        $\delta_1,\ldots,\delta_n$.
-  \item[\texttt{terminal\_artifact}] endpoint artifact digest $h$.
-  \item[\texttt{binding\_predicate}] identifier for the local
-        $\Bind_S(M,\chi)$ rule.
-  \item[\texttt{validator\_profile}] admissible edge relations, atom checkers,
-        compression registries, and signature suites.
-  \item[\texttt{issuer\_signatures}] signatures by path emitters, mediators, or
-        transport services.
-\end{description}
+\begin{center}
+\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.42\textwidth}@{}}
+\caption{PathCert schema.}
+\label{tab:pathcert-schema}\\
+\toprule
+\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\texttt{cert\_version} & Profile identifier & Canonical profile version. \\
+\texttt{cert\_id} & Digest & Digest of the certificate body. \\
+\texttt{claim\_id} & Digest & Header field matching $\phi$. \\
+\texttt{purpose} & Purpose $P$ & Header field matching the requested purpose. \\
+\texttt{context} & Finite context $\ctx$ & Header field matching the requested context. \\
+\texttt{path} & Ordered edge list & $(S_0,T_1,S_1,\ldots,T_n,S_n)$. \\
+\texttt{ledgers} & Ordered ledger list & Ledgers $L_0,\ldots,L_n$. \\
+\texttt{step\_certs} & Ordered witness list & Step witnesses $\delta_1,\ldots,\delta_n$. \\
+\texttt{terminal\_artifact} & Digest $h$ & Endpoint artifact digest. \\
+\texttt{binding\_predicate} & Predicate identifier & Local $\Bind_S(M,\chi)$ rule. \\
+\texttt{validator\_profile} & Profile digest or identifier & Admissible edge relations, atom checkers, compression registries, and signature suites. \\
+\texttt{issuer\_signatures} & Signature set & Signatures by path emitters, mediators, or transport services. \\
+\end{longtable}
+\normalsize
+\end{center}
 
 Validation of a PathCert is deterministic:
 \begin{enumerate}[leftmargin=*]
@@ -2455,23 +2508,35 @@ recorded as a flagged loop defect and passed to admission, debt, and reporting.
 
 \paragraph{Obligation registry schema.}
 The obligation registry is an append-only finite table. Each entry has:
-\begin{description}[leftmargin=*,style=nextline]
-  \item[\texttt{entry\_id}] digest of the entry body.
-  \item[\texttt{claim\_family}] claim family or predicate template.
-  \item[\texttt{purpose}] purpose $P$.
-  \item[\texttt{context\_predicate}] finite predicate deciding whether an
-        evaluation context is in scope.
-  \item[\texttt{required\_atoms}] finite set $R_O$.
-  \item[\texttt{alternatives}] finite set $\mathcal E_O$ of discharge
-        alternatives.
-  \item[\texttt{admission\_rules}] local rules for signatures, policies,
-        freshness frontiers, proof systems, and identity bindings.
-  \item[\texttt{compression\_rules}] mapping from admitted receipt atoms to the
-        obligation alternatives they discharge.
-  \item[\texttt{status\_preorder}] local report-strength preorder $\leq_P$.
-  \item[\texttt{validity\_interval}] registry epoch or frontier interval.
-  \item[\texttt{registry\_signature}] signature by the registry authority.
-\end{description}
+\begin{center}
+\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.42\textwidth}@{}}
+\caption{Obligation registry entry schema.}
+\label{tab:obligation-registry-schema}\\
+\toprule
+\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\texttt{entry\_id} & Digest & Digest of the entry body. \\
+\texttt{claim\_family} & Predicate template & Claim family or predicate template. \\
+\texttt{purpose} & Purpose $P$ & Purpose governed by the entry. \\
+\texttt{context\_predicate} & Finite predicate & Decides whether an evaluation context is in scope. \\
+\texttt{required\_atoms} & Finite set $R_O$ & Required support atoms. \\
+\texttt{alternatives} & Finite set $\mathcal E_O$ & Discharge alternatives. \\
+\texttt{admission\_rules} & Rule set & Local rules for signatures, policies, freshness frontiers, proof systems, and identity bindings. \\
+\texttt{compression\_rules} & Receipt-to-alternative map & Maps admitted receipt atoms to the obligation alternatives they discharge. \\
+\texttt{status\_preorder} & Preorder $\leq_P$ & Local report-strength ordering. \\
+\texttt{validity\_interval} & Epoch or frontier interval & Registry validity range. \\
+\texttt{registry\_signature} & Signature & Signature by the registry authority. \\
+\end{longtable}
+\normalsize
+\end{center}
 
 Registry lookup is by $(\mathsf{claim\_family},P,\ctx)$. Multiple entries may
 match during migration; the validator must choose the entry with the greatest
@@ -2512,58 +2577,74 @@ The typed checker is a dispatch table
   \to\{\mathrm{accept},\mathrm{reject},\mathrm{opaque}\}.
 \]
 The required dispatch rules are:
-\begin{description}[leftmargin=*,style=nextline]
-  \item[\texttt{signature}] verify the signature against the declared message
-        digest, verification key, suite, and context binding.
-  \item[\texttt{identity}] verify the key-principal binding and its validity
-        interval.
-  \item[\texttt{policy}] verify policy epoch, committee or role membership, and
-        policy authority.
-  \item[\texttt{frontier}] verify root signature, inclusion or nonmembership
-        proof, consistency proof, and freshness relation for $\ctx$.
-  \item[\texttt{receipt}] verify issuer authority and compression-registry
-        binding.
-  \item[\texttt{proof}] verify proof transcript, public inputs, statement
-        digest, setup digest, and context metadata.
-  \item[\texttt{commitment}] verify commitment scheme metadata and digest
-        binding.
-  \item[\texttt{refutation}] verify the negative witness and the claim component
-        it targets.
-  \item[\texttt{certificate\_refutation}] verify the rejected PathCert digest,
-        failure code, requested $(\phi,P,\ctx)$ tuple, and claim component
-        targeted by the validation failure.
-\end{description}
+\begin{center}
+\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.67\textwidth}@{}}
+\caption{Typed support checker dispatch schema.}
+\label{tab:typed-support-dispatch-schema}\\
+\toprule
+\textbf{Atom kind} & \textbf{Dispatch rule} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Atom kind} & \textbf{Dispatch rule} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\texttt{signature} & Verify the signature against the declared message digest, verification key, suite, and context binding. \\
+\texttt{identity} & Verify the key-principal binding and its validity interval. \\
+\texttt{policy} & Verify policy epoch, committee or role membership, and policy authority. \\
+\texttt{frontier} & Verify root signature, inclusion or nonmembership proof, consistency proof, and freshness relation for $\ctx$. \\
+\texttt{receipt} & Verify issuer authority and compression-registry binding. \\
+\texttt{proof} & Verify proof transcript, public inputs, statement digest, setup digest, and context metadata. \\
+\texttt{commitment} & Verify commitment scheme metadata and digest binding. \\
+\texttt{refutation} & Verify the negative witness and the claim component it targets. \\
+\texttt{certificate\_refutation} & Verify the rejected PathCert digest, failure code, requested $(\phi,P,\ctx)$ tuple, and claim component targeted by the validation failure. \\
+\end{longtable}
+\normalsize
+\end{center}
 
 \paragraph{Support status report schema.}
 A support status report records the full accounting result for a single
 passport:
-\begin{description}[leftmargin=*,style=nextline]
-  \item[\texttt{report\_version}] canonical profile version.
-  \item[\texttt{claim\_id}, \texttt{purpose}, \texttt{context}] evaluated
-        claim tuple.
-  \item[\texttt{ledger}] digest of the terminal support ledger.
-  \item[\texttt{obligation}] digest of the obligation registry entry.
-  \item[\texttt{discharged}] atoms in $\Disch_S^{P,\ctx}(L)$.
-  \item[\texttt{unmet}] required atoms not discharged.
-  \item[\texttt{declared\_loss}] required atoms declared lost, stale, blocked,
-        unavailable, or redacted.
-  \item[\texttt{blocked}] required atoms in the blocked component.
-  \item[\texttt{refutations}] admitted typed refutations.
-  \item[\texttt{path\_cert\_status}] absent, accepted, or rejected; rejected
-        status identifies the certificate-refutation atom included in $R$.
-  \item[\texttt{loop\_audit}] absent for non-closed paths; otherwise the
-        $\mathsf{HolAudit}$ digest with state-closure bit, residual unmet atoms,
-        declared-loss residuals, blocked residuals, and action
-        \texttt{accept}, \texttt{flag}, \texttt{reject}, or
-        \texttt{open\_state}.
-  \item[\texttt{justified\_status}] value of $\Just_S^P(\phi,\ctx)$.
-  \item[\texttt{emitted\_report}] value emitted by the observer or system.
-  \item[\texttt{debt}] output of the witness-debt counter.
-  \item[\texttt{overreport}] boolean value of $\OverReport_S^P(\phi,\ctx)$.
-  \item[\texttt{validator\_receipts}] digests of atom, ledger, registry, and
-        PathCert checks.
-  \item[\texttt{report\_signature}] signature by the reporting observer.
-\end{description}
+\begin{center}
+\small
+\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.43\textwidth}@{}}
+\caption{Support status report schema.}
+\label{tab:support-status-report-schema}\\
+\toprule
+\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
+\midrule
+\endfirsthead
+\toprule
+\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\texttt{report\_version} & Profile identifier & Canonical profile version. \\
+\texttt{claim\_id} & Digest & Evaluated claim. \\
+\texttt{purpose} & Purpose $P$ & Evaluated purpose. \\
+\texttt{context} & Finite context $\ctx$ & Evaluated context. \\
+\texttt{ledger} & Digest & Terminal support ledger. \\
+\texttt{obligation} & Digest & Obligation registry entry. \\
+\texttt{discharged} & Atom set & Atoms in $\Disch_S^{P,\ctx}(L)$. \\
+\texttt{unmet} & Atom set & Required atoms not discharged. \\
+\texttt{declared\_loss} & Atom set & Required atoms declared lost, stale, blocked, unavailable, or redacted. \\
+\texttt{blocked} & Atom set & Required atoms in the blocked component. \\
+\texttt{refutations} & Atom set & Admitted typed refutations. \\
+\texttt{path\_cert\_status} & \texttt{absent}, \texttt{accepted}, or \texttt{rejected} & Rejected status identifies the certificate-refutation atom included in $R$. \\
+\texttt{loop\_audit} & Digest or \texttt{absent} & For closed paths, records the $\mathsf{HolAudit}$ digest, state-closure bit, residual unmet atoms, declared-loss residuals, blocked residuals, and action. \\
+\texttt{justified\_status} & Status & Value of $\Just_S^P(\phi,\ctx)$. \\
+\texttt{emitted\_report} & Report value & Value emitted by the observer or system. \\
+\texttt{debt} & Atom set & Output of the witness-debt counter. \\
+\texttt{overreport} & Boolean & Value of $\OverReport_S^P(\phi,\ctx)$. \\
+\texttt{validator\_receipts} & Digest set & Atom, ledger, registry, and PathCert check receipts. \\
+\texttt{report\_signature} & Signature & Signature by the reporting observer. \\
+\end{longtable}
+\normalsize
+\end{center}
 
 \paragraph{Witness-debt counter.}
 For $O=(R_O,\mathcal E_O)$ and $L=(C,D,B,R)$, compute
