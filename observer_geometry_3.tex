@@ -1013,6 +1013,11 @@ cryptographic or trust-management principle. Authorization logics,
 trust-management systems, and proof-carrying authentication already separate
 credential validity from local policy compliance
 \cite{abadi_access_control_1993,blaze_trust_management_1996,appel_pca_1999}.
+The same architecture appears in decentralized-identity standards: W3C DID
+Core specifies controller-managed identifiers and verification methods, while
+the W3C Verifiable Credentials Data Model separates credential or presentation
+verification from verifier-side validation against business rules and relying
+policies \cite{w3c_did_core_2022,w3c_vc_data_model_2025}.
 The OG-III contribution is to place that familiar separation inside the same
 path-indexed support ledger used for provenance, freshness, declared loss,
 blocked authority, and emitted report strength. In this calculus, a valid proof
@@ -1533,20 +1538,20 @@ future-work targets; no storage, latency, or usability measurements are
 reported here.
 
 \begin{OGTable}{\OGSchemaTableFont}
-\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.30\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.24\textwidth}@{}}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.27\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.29\textwidth}@{}}
 \toprule
-\TableHeaderRow Hypothesis & Measurement & Path families \\
+\TableHeaderRow Hypothesis & Controlled design & Measurements \\
 \midrule
-Ledger growth is approximately linear without compression & Bytes per support atom, bytes per ledger component, total PathCert size, and growth against path length & direct transport, redaction loop, stale-frontier path \\
+Ledger growth is approximately linear without compression & Vary path length while holding the operation type fixed within each run: all direct transports, all redactions, all stale-frontier refreshes. Analyze balanced mixed-operation runs separately so operation type does not confound path length. & Bytes per support atom, bytes per ledger component, total PathCert size, and size slope by operation class. \\
 \OGAltRow
-Compression receipts trade storage reduction for validation work & Compression ratio, receipt registry lookups, receipt-validation time, and residual unmet atoms & squash, recursive receipt, mediated support translation \\
-PathCert validation cost is dominated by edge checks and cryptographic verifier calls & Wall-clock validation time, verifier-call count, per-step validation cost, and rejected-certificate rate & accepted path, malformed path, invalid terminal binding \\
+Compression receipts trade storage reduction for validation work & Compare each compressed path against an uncompressed baseline containing the identical operation sequence and support obligations. Conditions include squash, recursive receipt, and mediated support translation. & Compression ratio versus baseline, receipt registry lookups, discharge-closure expansion time, receipt-validation time, and residual unmet atoms. \\
+PathCert validation cost is dominated by edge checks and cryptographic verifier calls & Hold path length and operation mix fixed while varying only certificate status: accepted path, malformed edge, invalid terminal binding, and inadmissible verifier fact. & Wall-clock validation time, verifier-call count, per-step validation cost, and rejected-certificate rate. \\
 \OGAltRow
-Witness-debt counters are cheap relative to certificate validation & Obligation lookup time, finite set-difference time, and debt-report generation time & overreport, declared loss, blocked authority \\
-Policy-rich contexts increase underdetermination unless declarations are standardized & Rates of $\underdetermined$, $\unverifiable$, $\authorityblocked$, $\refuted$, and accepted reports by context family & mixed registry versions, stale frontiers, authority-blocked paths \\
+Witness-debt counters are cheap relative to certificate validation & Use the same extracted ledger and obligation set for debt counting and certificate validation. Measure both raw ledgers and ledgers with many compression receipts so discharge closure is included. & Obligation lookup time, $\Disch_S^{P,\ctx}(L)$ computation time, compression-registry expansion depth, finite set-difference time, and debt-report generation time. \\
+Policy-rich contexts increase underdetermination unless declarations are standardized & Establish a baseline with standardized declarations, synchronized registry versions, and uniform frontier policy. Compare against mixed registry versions, stale frontiers, authority-blocked paths, and missing declaration vocabularies. & Rates of $\underdetermined$, $\unverifiable$, $\authorityblocked$, $\refuted$, and accepted reports by context family relative to baseline. \\
 \bottomrule
 \end{tabularx}
-\caption{Hypothesis-driven empirical agenda for future support-ledger implementations. The paper's current evidence is formal and finite; these measurements would evaluate deployment cost.}
+\caption{Hypothesis-driven empirical agenda for future support-ledger implementations. The paper's current evidence is formal and finite; these controlled measurements would evaluate deployment cost and failure rates.}
 \label{tab:measurement-agenda}
 \end{OGTable}
 \FloatBarrier
@@ -1716,6 +1721,20 @@ logic~\cite{abadi_access_control_1993,blaze_trust_management_1996,appel_pca_1999
 OG-III uses compatible ingredients, but its judgement target is different: it
 classifies the support status of arbitrary claims after path transport, including
 declared loss, blockage, underdetermination, and overreporting.
+
+Decentralized Identifiers and Verifiable Credentials are the closest standards
+neighbor for credential presentation and relying-party admission. DID Core
+standardizes decentralized identifiers, DID documents, verification methods,
+and controller proof surfaces; the Verifiable Credentials Data Model describes
+issuers, holders, verifiers, verifiable presentations, securing mechanisms,
+credential status, evidence, terms of use, authorization, and verifier-side
+validation \cite{w3c_did_core_2022,w3c_vc_data_model_2025}. OG-III does not
+replace that architecture. It abstracts one layer above it: a DID document,
+verifiable presentation, credential status check, or selective-disclosure proof
+is a support surface that may discharge some claim-purpose-context obligations
+after a transport path. The calculus adds a path-indexed account of what was
+carried, compressed, blocked, declared lost, refuted, or overreported, including
+claims whose support is not naturally modeled as an identity credential.
 
 Proof-carrying data is the nearest cryptographic neighbor. Chiesa and Tromer
 attach proofs to data flowing through a distributed computation so downstream
