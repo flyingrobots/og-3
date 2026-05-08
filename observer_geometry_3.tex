@@ -183,9 +183,9 @@
 \newcommand{\paperabstract}{Two observer paths can deliver the same endpoint-visible state while carrying different support for provenance, authority, freshness, absence, or admission claims. OG-III formalizes that separation with a finite support-obligation calculus. Claims, purposes, and contexts determine required support atoms; paths deliver ledgers of carried, declared-lost, blocked, and refuting support; local discharge and admission rules determine the justified status that an endpoint may report. The running example is a signed-edit audit: the final document text is identical, but only one path carries the signature, identity, policy, and freshness support needed for the authorship claim. Finite witnesses prove witness sensitivity, path-dependent support transport, nonzero loop defect, cryptographic verification/admission separation, freshness and authority separation, and support-soundness failure. Cryptographic objects enter as witness surfaces rather than as new protocol claims. A compact Coq/Rocq model checks the finite ledger calculations.}
 
 \tikzset{
-  ogbox/.style={draw=black, rounded corners=2pt, line width=0.9pt, fill=white, align=center, inner sep=6pt},
-  ogaltbox/.style={draw=black, rounded corners=2pt, line width=0.9pt, fill=white, align=center, inner sep=6pt},
-  ogwarnbox/.style={draw=black, rounded corners=2pt, line width=0.9pt, fill=white, align=center, inner sep=6pt},
+  ogbox/.style={draw=black, line width=0.9pt, fill=white, align=center, inner sep=6pt},
+  ogaltbox/.style={draw=black, line width=0.9pt, fill=white, align=center, inner sep=6pt},
+  ogwarnbox/.style={draw=black, line width=0.9pt, fill=white, align=center, inner sep=6pt},
   ogline/.style={-{Latex[length=2.7mm,width=2mm]}, line width=0.9pt},
   ogthin/.style={-{Latex[length=2mm,width=1.5mm]}, line width=0.7pt}
 }
