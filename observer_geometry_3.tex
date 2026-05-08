@@ -17,7 +17,6 @@
 \usepackage{booktabs}
 \usepackage{array}
 \usepackage{tabularx}
-\usepackage{longtable}
 \usepackage{placeins}
 \usepackage{caption}
 \usepackage{tikz}
@@ -2371,21 +2370,14 @@ A support atom is the tuple
 \]
 The field $\mathsf{kind}\in\mathcal K$ determines the payload grammar. The
 mandatory atom kinds for this paper are
-\begin{center}
+
+\begin{table}[ht]
+\centering
 \small
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.67\textwidth}@{}}
-\caption{Mandatory typed support atom kinds.}
-\label{tab:typed-support-atom-kinds}\\
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\textbf{Kind} & \textbf{Payload role} \\
+\TableHeaderRow Kind & Payload role \\
 \midrule
-\endfirsthead
-\toprule
-\textbf{Kind} & \textbf{Payload role} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
 $\mathsf{state}$ & Visible-state or object digest support. \\
 $\mathsf{signature}$ & Signature, verification key, and signed message digest. \\
 $\mathsf{identity}$ & Binding from key to principal or role. \\
@@ -2396,9 +2388,13 @@ $\mathsf{proof}$ & Proof transcript and public inputs. \\
 $\mathsf{commitment}$ & Commitment digest and scheme metadata. \\
 $\mathsf{refutation}$ & Typed negative witness against a claim component. \\
 $\mathsf{certificate\_refutation}$ & PathCert validation failure against path support. \\
-\end{longtable}
-\normalsize
-\end{center}
+\bottomrule
+\end{tabularx}
+\caption{Mandatory typed support atom kinds.}
+\label{tab:typed-support-atom-kinds}
+\end{table}
+\FloatBarrier
+
 An implementation may add atom kinds by adding registry entries. Unknown atom
 kinds are rejected for admission and may be retained only as opaque carried
 support.
@@ -2406,21 +2402,14 @@ support.
 \paragraph{Claim passport schema.}
 A claim passport is the portable wrapper for one claim-purpose-context
 judgement. Its body has these fields:
-\begin{center}
-\small
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.23\textwidth}>{\raggedright\arraybackslash}p{0.44\textwidth}@{}}
-\caption{Claim passport schema.}
-\label{tab:claim-passport-schema}\\
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
+\TableHeaderRow Field & Type / value & Role \\
 \midrule
-\endfirsthead
-\toprule
-\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
 \texttt{passport\_version} & Profile identifier & Canonical profile version, here $\mathsf{OG3\text{-}profile\text{-}1}$. \\
 \texttt{claim\_id} & Digest & Digest of the normalized claim expression $\phi$. \\
 \texttt{claim\_family} & Finite name & Claim family used by the obligation registry. \\
@@ -2430,16 +2419,32 @@ judgement. Its body has these fields:
 \texttt{visible\_state} & Digest & Endpoint-visible projection digest. \\
 \texttt{source\_observer} & Observer identifier & Observer that issued the original claim or support packet. \\
 \texttt{target\_observer} & Observer identifier & Observer evaluating the claim. \\
+\bottomrule
+\end{tabularx}
+\caption{Claim passport schema: claim identity and observer context.}
+\label{tab:claim-passport-schema}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\TableHeaderRow Field & Type / value & Role \\
+\midrule
 \texttt{obligation\_entry} & Registry-entry digest & Entry for $\Obl_P(\phi,\ctx)$. \\
 \texttt{path\_cert} & Digest or $\bot$ & PathCert used for extraction, if any. \\
 \texttt{path\_cert\_status} & \texttt{absent}, \texttt{accepted}, or \texttt{rejected} & Rejected certificates name the failure code used to create the typed certificate-refutation atom in $R$. \\
 \texttt{loop\_policy} & \texttt{absent}, \texttt{audit\_only}, or \texttt{support\_preserving} & Closed paths that claim preserved support must use \texttt{support\_preserving}. \\
 \texttt{terminal\_ledger} & Digest & Digest of $\Carry_\gamma(\phi,\ctx)$ after extraction. \\
-\texttt{status\_report} & Digest & Support status report in \cref{tab:support-status-report-schema}. \\
+\texttt{status\_report} & Digest & Support status report in \cref{tab:support-status-report-accounting-schema,tab:support-status-report-output-schema}. \\
 \texttt{issuer\_signature} & Signature & Signature by the reporting observer or service. \\
-\end{longtable}
-\normalsize
-\end{center}
+\bottomrule
+\end{tabularx}
+\caption{Claim passport schema: support, extraction, and reporting references.}
+\label{tab:claim-passport-support-schema}
+\end{table}
+\FloatBarrier
 
 The passport validator recomputes the claim digest, retrieves the obligation
 entry, validates the path certificate when present, recomputes the terminal
@@ -2451,21 +2456,14 @@ certificate-refutation atom, not the native ledger alone.
 
 \paragraph{PathCert schema.}
 A PathCert is the finite tuple from \cref{sec:paths} stored as fields:
-\begin{center}
-\small
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.42\textwidth}@{}}
-\caption{PathCert schema.}
-\label{tab:pathcert-schema}\\
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
+\TableHeaderRow Field & Type / value & Role \\
 \midrule
-\endfirsthead
-\toprule
-\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
 \texttt{cert\_version} & Profile identifier & Canonical profile version. \\
 \texttt{cert\_id} & Digest & Digest of the certificate body. \\
 \texttt{claim\_id} & Digest & Header field matching $\phi$. \\
@@ -2478,9 +2476,12 @@ A PathCert is the finite tuple from \cref{sec:paths} stored as fields:
 \texttt{binding\_predicate} & Predicate identifier & Local $\Bind_S(M,\chi)$ rule. \\
 \texttt{validator\_profile} & Profile digest or identifier & Admissible edge relations, atom checkers, compression registries, and signature suites. \\
 \texttt{issuer\_signatures} & Signature set & Signatures by path emitters, mediators, or transport services. \\
-\end{longtable}
-\normalsize
-\end{center}
+\bottomrule
+\end{tabularx}
+\caption{PathCert schema.}
+\label{tab:pathcert-schema}
+\end{table}
+\FloatBarrier
 
 Validation of a PathCert is deterministic:
 \begin{enumerate}[leftmargin=*]
@@ -2508,21 +2509,14 @@ recorded as a flagged loop defect and passed to admission, debt, and reporting.
 
 \paragraph{Obligation registry schema.}
 The obligation registry is an append-only finite table. Each entry has:
-\begin{center}
-\small
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.42\textwidth}@{}}
-\caption{Obligation registry entry schema.}
-\label{tab:obligation-registry-schema}\\
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
+\TableHeaderRow Field & Type / value & Role \\
 \midrule
-\endfirsthead
-\toprule
-\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
 \texttt{entry\_id} & Digest & Digest of the entry body. \\
 \texttt{claim\_family} & Predicate template & Claim family or predicate template. \\
 \texttt{purpose} & Purpose $P$ & Purpose governed by the entry. \\
@@ -2534,9 +2528,12 @@ The obligation registry is an append-only finite table. Each entry has:
 \texttt{status\_preorder} & Preorder $\leq_P$ & Local report-strength ordering. \\
 \texttt{validity\_interval} & Epoch or frontier interval & Registry validity range. \\
 \texttt{registry\_signature} & Signature & Signature by the registry authority. \\
-\end{longtable}
-\normalsize
-\end{center}
+\bottomrule
+\end{tabularx}
+\caption{Obligation registry entry schema.}
+\label{tab:obligation-registry-schema}
+\end{table}
+\FloatBarrier
 
 Registry lookup is by $(\mathsf{claim\_family},P,\ctx)$. Multiple entries may
 match during migration; the validator must choose the entry with the greatest
@@ -2549,7 +2546,28 @@ A stored ledger is
 \]
 where $C,D,B,R$ are sorted finite atom lists and $\mathsf{ledger\_meta}$ records
 the profile, source observer, target observer, path digest, and creation
-frontier. The canonical implementation profile requires a normal form:
+frontier.
+
+\begin{table}[ht]
+\centering
+\small
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\TableHeaderRow Component & Type / value & Role \\
+\midrule
+$C$ & Sorted finite atom list & Carried support atoms presented for admission. \\
+$D$ & Sorted finite atom list & Declared loss, redaction, staleness, or unavailability atoms. \\
+$B$ & Sorted finite atom list & Authority-blocked atoms. \\
+$R$ & Sorted finite atom list & Typed refutation atoms, including certificate-refutation atoms. \\
+$\mathsf{ledger\_meta}$ & Finite metadata record & Profile, source observer, target observer, path digest, and creation frontier. \\
+\bottomrule
+\end{tabularx}
+\caption{Support ledger component schema.}
+\label{tab:support-ledger-schema}
+\end{table}
+\FloatBarrier
+
+The canonical implementation profile requires a normal form:
 \begin{enumerate}[leftmargin=*]
   \item Every atom parses under a known atom-kind grammar or is marked opaque.
   \item Every admitted atom passes its typed checker.
@@ -2577,21 +2595,14 @@ The typed checker is a dispatch table
   \to\{\mathrm{accept},\mathrm{reject},\mathrm{opaque}\}.
 \]
 The required dispatch rules are:
-\begin{center}
+
+\begin{table}[ht]
+\centering
 \small
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.67\textwidth}@{}}
-\caption{Typed support checker dispatch schema.}
-\label{tab:typed-support-dispatch-schema}\\
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\textbf{Atom kind} & \textbf{Dispatch rule} \\
+\TableHeaderRow Atom kind & Dispatch rule \\
 \midrule
-\endfirsthead
-\toprule
-\textbf{Atom kind} & \textbf{Dispatch rule} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
 \texttt{signature} & Verify the signature against the declared message digest, verification key, suite, and context binding. \\
 \texttt{identity} & Verify the key-principal binding and its validity interval. \\
 \texttt{policy} & Verify policy epoch, committee or role membership, and policy authority. \\
@@ -2601,28 +2612,24 @@ The required dispatch rules are:
 \texttt{commitment} & Verify commitment scheme metadata and digest binding. \\
 \texttt{refutation} & Verify the negative witness and the claim component it targets. \\
 \texttt{certificate\_refutation} & Verify the rejected PathCert digest, failure code, requested $(\phi,P,\ctx)$ tuple, and claim component targeted by the validation failure. \\
-\end{longtable}
-\normalsize
-\end{center}
+\bottomrule
+\end{tabularx}
+\caption{Typed support checker dispatch schema.}
+\label{tab:typed-support-dispatch-schema}
+\end{table}
+\FloatBarrier
 
 \paragraph{Support status report schema.}
 A support status report records the full accounting result for a single
 passport:
-\begin{center}
-\small
-\begin{longtable}{@{}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.43\textwidth}@{}}
-\caption{Support status report schema.}
-\label{tab:support-status-report-schema}\\
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
+\TableHeaderRow Field & Type / value & Role \\
 \midrule
-\endfirsthead
-\toprule
-\textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
 \texttt{report\_version} & Profile identifier & Canonical profile version. \\
 \texttt{claim\_id} & Digest & Evaluated claim. \\
 \texttt{purpose} & Purpose $P$ & Evaluated purpose. \\
@@ -2634,6 +2641,19 @@ passport:
 \texttt{declared\_loss} & Atom set & Required atoms declared lost, stale, blocked, unavailable, or redacted. \\
 \texttt{blocked} & Atom set & Required atoms in the blocked component. \\
 \texttt{refutations} & Atom set & Admitted typed refutations. \\
+\bottomrule
+\end{tabularx}
+\caption{Support status report schema: accounting fields.}
+\label{tab:support-status-report-accounting-schema}
+\end{table}
+
+\begin{table}[ht]
+\centering
+\footnotesize
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\TableHeaderRow Field & Type / value & Role \\
+\midrule
 \texttt{path\_cert\_status} & \texttt{absent}, \texttt{accepted}, or \texttt{rejected} & Rejected status identifies the certificate-refutation atom included in $R$. \\
 \texttt{loop\_audit} & Digest or \texttt{absent} & For closed paths, records the $\mathsf{HolAudit}$ digest, state-closure bit, residual unmet atoms, declared-loss residuals, blocked residuals, and action. \\
 \texttt{justified\_status} & Status & Value of $\Just_S^P(\phi,\ctx)$. \\
@@ -2642,9 +2662,12 @@ passport:
 \texttt{overreport} & Boolean & Value of $\OverReport_S^P(\phi,\ctx)$. \\
 \texttt{validator\_receipts} & Digest set & Atom, ledger, registry, and PathCert check receipts. \\
 \texttt{report\_signature} & Signature & Signature by the reporting observer. \\
-\end{longtable}
-\normalsize
-\end{center}
+\bottomrule
+\end{tabularx}
+\caption{Support status report schema: path, report, and audit outputs.}
+\label{tab:support-status-report-output-schema}
+\end{table}
+\FloatBarrier
 
 \paragraph{Witness-debt counter.}
 For $O=(R_O,\mathcal E_O)$ and $L=(C,D,B,R)$, compute
