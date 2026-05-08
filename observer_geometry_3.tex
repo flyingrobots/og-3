@@ -1132,15 +1132,15 @@ authorship witness coordinate has a finite defect.
 
 \begin{figure}[ht]
 \centering
-\begin{tikzpicture}[node distance=2.0cm]
+\begin{tikzpicture}[node distance=2.05cm and 2.65cm]
   \node[ogbox] (s) {$S$};
   \node[ogbox, right=of s] (a) {$A$};
   \node[ogbox, below=of a] (b) {$B$};
   \node[ogbox, below=of s] (c) {$C$};
-  \draw[ogline] (s) -- node[above] {$T_1$ package} (a);
-  \draw[ogline] (a) -- node[right, align=center] {$T_2$\\verify\\redact} (b);
-  \draw[ogline] (b) -- node[below] {$T_3$ normalize} (c);
-  \draw[ogline] (c) -- node[left] {$T_4$ import} (s);
+  \draw[ogline] (s) -- node[above, fill=white, inner sep=1.5pt] {$T_1$ package} (a);
+  \draw[ogline] (a) -- node[right, align=center, fill=white, inner sep=1.5pt] {$T_2$\\verify\\redact} (b);
+  \draw[ogline] (b) -- node[below, fill=white, inner sep=1.5pt] {$T_3$ normalize} (c);
+  \draw[ogline] (c) -- node[left, fill=white, inner sep=1.5pt] {$T_4$ import} (s);
 \end{tikzpicture}
 \caption{Witness holonomy loop. $T_2$ verifies the signature and records redaction of the signature, identity, policy, and freshness atoms. The state loop closes while the witness loop does not: $\Def_{\mathrm{state}}(\gamma,\phi)=0$ and $\Def_{\mathrm{witness}}(\gamma,\phi)=1$.}
 \label{fig:witness-holonomy}
