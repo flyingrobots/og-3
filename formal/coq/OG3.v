@@ -5,7 +5,10 @@ Import ListNotations.
 Open Scope bool_scope.
 
 (* A compact mechanization of the finite witness library used in OG-III.
-   Cryptographic primitives are abstracted as finite verifier facts. *)
+   Lists are used as finite-set representatives for readability. The intended
+   semantics is extensional membership over atoms, not list order or runtime
+   lookup strategy. Cryptographic primitives are abstracted as finite verifier
+   facts. *)
 
 Inductive atom : Set :=
 | SX
@@ -22,6 +25,7 @@ Inductive atom : Set :=
 | AAlphaK
 | RefNonMember
 | CertInvalid
+| UnadmittedRef
 | NonMemberK.
 
 Definition atom_eq_dec : forall x y : atom, {x = y} + {x <> y}.
@@ -62,11 +66,14 @@ Inductive status : Set :=
 
 Definition auth_atoms : list atom := [SigmaA; IA; PAlpha; FF].
 
+Definition receipt_discharge (a : atom) : list atom :=
+  match a with
+  | RAuth => auth_atoms
+  | _ => []
+  end.
+
 Definition discharge_closure (L : ledger) : list atom :=
-  carried L ++
-  if mem_atom RAuth (carried L)
-  then auth_atoms
-  else [].
+  carried L ++ flat_map receipt_discharge (carried L).
 
 Definition discharged (L : ledger) (a : atom) : bool :=
   mem_atom a (discharge_closure L).
@@ -93,12 +100,22 @@ Definition refutes_atom (r a : atom) : bool :=
   | CertInvalid, IA => true
   | CertInvalid, PAlpha => true
   | CertInvalid, FF => true
+  | UnadmittedRef, SigmaA => true
   | _, _ => false
+  end.
+
+Definition admitted_refutation_atom (r : atom) : bool :=
+  match r with
+  | RefNonMember => true
+  | CertInvalid => true
+  | _ => false
   end.
 
 Definition has_refutation (L : ledger) (O : obligation) : bool :=
   existsb
-    (fun r => existsb (fun a => refutes_atom r a) (required O))
+    (fun r =>
+       admitted_refutation_atom r &&
+       existsb (fun a => refutes_atom r a) (required O))
     (refuted L).
 
 Definition satisfy (L : ledger) (O : obligation) : sat :=
@@ -211,9 +228,20 @@ Qed.
 Definition L_cert_refuted : ledger :=
   Ledger [SX; SigmaA; IA; PAlpha; FF] [] [] [CertInvalid].
 
+Definition L_cert_refutation_noise : ledger :=
+  Ledger [SX; SigmaA; IA; PAlpha; FF] [] [] [UnadmittedRef].
+
 Example refutation_priority_over_support_sanity :
   admit L_cert O_auth = Supported /\
   admit L_cert_refuted O_auth = Refuted.
+Proof.
+  repeat split; reflexivity.
+Qed.
+
+Example unadmitted_refutation_noise_sanity :
+  refutes_atom UnadmittedRef SigmaA = true /\
+  admitted_refutation_atom UnadmittedRef = false /\
+  admit L_cert_refutation_noise O_auth = Supported.
 Proof.
   repeat split; reflexivity.
 Qed.

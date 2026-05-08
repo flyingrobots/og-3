@@ -444,6 +444,24 @@ name the accepted branch witness. Network partitions are treated as frontier
 splits: state claims may remain supported while global absence, freshness, or
 authority claims degrade until a later certificate supplies the missing
 frontier-join or consensus evidence.
+
+\begin{definition}[Operational degradation budget]
+\label{def:degradation-budget}
+For deployed systems, conservative degradation should be bounded by a local
+policy object
+\[
+  \mathsf{Budget}_S^{P,\ctx}(O)=(b_U,b_D,b_B,b_R,b_\tau).
+\]
+The entries bound, respectively, the tolerated number of unmet required atoms,
+declared-loss atoms, authority-blocked atoms, rejected-certificate or refutation
+caveats, and stale-frontier age for obligation $O$. If the extracted ledger
+exceeds the budget, the observer must not upgrade the claim to $\supported$; the
+local admission rule returns $\unverifiable$ or $\authorityblocked$, and the
+deployment may additionally quarantine the object before ordinary reporting.
+These budgets are engineering policy, not part of the finite separation
+theorems, but they prevent a system that is permanently non-replayable from
+treating unbounded underdetermination as useful support.
+\end{definition}
 \FloatBarrier
 
 \section{Claims, Contexts, Statuses, and Support Obligations}
@@ -860,8 +878,21 @@ Observer admission has type
 \]
 During admission, take $O=\Obl_P(\phi,\ctx)$. Let
 $\mathsf{Ref}_S^{P,\ctx}(L,\phi)$ be the finite set of typed refutation
-atoms in $R$ that $S$ admits as targeting the evaluated claim component. Admission
-is evaluated with deterministic priority:
+atoms in $R$ that pass $S$'s refutation-admission gate and target the evaluated
+claim component:
+\[
+  \mathsf{Ref}_S^{P,\ctx}(L,\phi)
+  =
+  \{\,r\in R \mid
+    \mathsf{ValidRef}_S^{P,\ctx}(r,L,\phi)
+    \text{ and } \mathsf{target}(r)=\mathsf{component}(\phi)\,\}.
+\]
+The gate $\mathsf{ValidRef}$ checks the refutation's authority, binding to
+$(\phi,P,\ctx)$, registry epoch, frontier, negative witness or rejected-certificate
+digest, and any local cost/rate budget. A syntactically well-formed refutation
+atom that fails this gate is retained as unauthenticated evidence or ignored by
+admission; it does not receive refutation priority. Admission is evaluated with
+deterministic priority:
 \begin{enumerate}[leftmargin=*]
   \item If $\mathsf{Ref}_S^{P,\ctx}(L,\phi)\neq\varnothing$, return
         $\mathrm{reject}$. This includes admitted certificate-validation
@@ -880,7 +911,10 @@ is evaluated with deterministic priority:
 Thus an admitted typed refutation has priority over admitted support for the
 same typed claim component in this draft calculus. A stricter implementation
 may instead expose a separate inconsistent status; the finite witnesses below
-use refutation priority.
+use refutation priority. The priority is therefore not a denial-of-service rule:
+flooded, malformed, stale, unauthorised, or over-budget refutation atoms can
+consume resources and may trigger quarantine policy, but they do not by
+themselves force $\mathrm{reject}$.
 \end{definition}
 
 \begin{lemma}[Noncommutative Support Transport]
@@ -1747,14 +1781,21 @@ regenerates it:
 The Coq/Rocq file mechanizes simplified support atoms, four-component ledgers,
 obligation objects, finite satisfaction/admission examples, unmet-support and
 witness-debt calculations, and the finite separation witnesses named in
-\cref{tab:coq-coverage-map}. No separate model checker, external reference
-script, or executable cryptographic verifier was used. Cryptographic primitives
-are represented as abstract verifier facts. The Coq/Rocq development abstracts
-path-certificate validation, extraction from native observer memory, full policy
-admission, Ed25519, zero-knowledge proof systems, Merkle proofs, transparency
-logs, and the engineering schemas in \cref{app:engineering-artifacts}. The
-repository's PDF and text build tooling renders the manuscript and is separate
-from this formalization.
+\cref{tab:coq-coverage-map}. Its lists are finite-set representatives used for
+compact proof scripts; list order, duplicate multiplicity, and linear traversal
+cost are not normative parts of the calculus. A runtime validator should use
+canonical set or map indexes keyed by atom identifier, claim component,
+obligation entry, registry epoch, and certificate digest, while preserving the
+same extensional membership and discharge-closure semantics.
+
+No separate model checker, external reference script, or executable
+cryptographic verifier was used. Cryptographic primitives are represented as
+abstract verifier facts. The Coq/Rocq development abstracts path-certificate
+validation, extraction from native observer memory, full policy admission,
+Ed25519, zero-knowledge proof systems, Merkle proofs, transparency logs, and the
+engineering schemas in \cref{app:engineering-artifacts}. The repository's PDF
+and text build tooling renders the manuscript and is separate from this
+formalization.
 
 \section{Related Work}
 \label{sec:related-work}
@@ -2838,7 +2879,9 @@ The obligation registry is an append-only finite table. Each entry has:
 \texttt{required\_atoms} & Finite set $R_O$ & Required support atoms. \\
 \texttt{alternatives} & Finite set $\mathcal E_O$ & Discharge alternatives. \\
 \texttt{admission\_rules} & Rule set & Local rules for signatures, policies, freshness frontiers, proof systems, and identity bindings. \\
+\texttt{refutation\_rules} & Rule set & Admission gates for typed refutation atoms and certificate-failure atoms. \\
 \texttt{compression\_rules} & Receipt-to-alternative map & Maps admitted receipt atoms to the obligation alternatives they discharge. \\
+\texttt{degradation\_budget} & Bound tuple & Operational limits for unmet, declared-loss, blocked, refutation, and stale-frontier cases. \\
 \texttt{status\_preorder} & Preorder $\leq_P$ & Local report-strength ordering. \\
 \texttt{validity\_interval} & Epoch or frontier interval & Registry validity range. \\
 \texttt{registry\_signature} & Signature & Signature by the registry authority. \\
@@ -2889,6 +2932,11 @@ The canonical implementation profile requires a normal form:
   \item Declared-loss and blocked atoms name the missing required atom or the
         reason it cannot be admitted.
 \end{enumerate}
+Although the schema is printed as sorted finite lists, an implementation should
+materialize these components as canonical sets or maps with indexes by atom
+digest, kind, claim component, registry epoch, and certificate digest. The list
+notation is a serialization and proof notation; the validator's logical contract
+is set membership, disjointness, and discharge closure.
 
 The ledger validator returns
 \[
@@ -3018,6 +3066,10 @@ redaction, blockage, staleness, or loss.
 \paragraph{Status and admission evaluator.}
 Given a valid registry entry and a valid ledger, the evaluator runs:
 \begin{enumerate}[leftmargin=*]
+  \item Admit typed refutation atoms only after verifying their authority,
+        target claim component, registry epoch, frontier, and certificate or
+        negative-witness digest. Unadmitted refutation atoms are audit evidence,
+        not admission-priority inputs.
   \item Compute $\Disch_S^{P,\ctx}(L)$ by taking admitted carried atoms and
         admitted compression receipts.
   \item Return $\mathrm{yes}$ when some $E\in\mathcal E_O$ satisfies
