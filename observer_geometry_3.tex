@@ -769,9 +769,9 @@ for the evaluated path-support component.
   \node[ogbox] (carry) at (0,-2.9) {$\Carry_\gamma(\phi,\ctx)$};
   \node[ogbox] (unmet) at (-2.75,-4.25) {$\Unmet_\gamma$};
   \node[ogbox] (loss) at (2.75,-4.25) {$\DeclaredLoss_\gamma$};
-  \node[ogbox] (status) at (0,-5.65) {justified\\status};
-  \node[ogwarnbox, text width=2.6cm] (report) at (2.75,-7.15) {emitted\\$\Report_S^P$};
-  \node[ogwarnbox, text width=2.9cm] (debt) at (-2.75,-7.15) {$\Debt_\gamma^P$\\from unmet\\and report};
+  \node[ogstatus] (status) at (0,-5.65) {justified\\status};
+  \node[ogstatus, text width=2.6cm] (report) at (2.75,-7.15) {emitted\\$\Report_S^P$};
+  \node[ogstatus, text width=2.9cm] (debt) at (-2.75,-7.15) {$\Debt_\gamma^P$\\from unmet\\and report};
   \draw[ogline] (claim) -- (obl);
   \draw[ogline] (obl) -- (carry);
   \draw[ogthin] (carry) -- (unmet);
@@ -798,7 +798,7 @@ material, not read directly from visible endpoint state.
   \node[ogbox] (m) {$M_{S_1}^{\gamma}$\\endpoint accumulation};
   \node[ogbox, below=of m] (cert) {$\PathCert(\gamma,\phi,P,\ctx)$};
   \node[ogbox, right=2.4cm of $(m)!0.5!(cert)$] (extract) {$\Extract_{S_1}^{P,\ctx}$};
-  \node[ogbox, right=of extract] (carry) {$\Carry_\gamma(\phi,\ctx)$};
+  \node[ogstatus, right=of extract] (carry) {$\Carry_\gamma(\phi,\ctx)$};
   \draw[ogline] (m) -- (extract);
   \draw[ogline] (cert) -- (extract);
   \draw[ogline] (extract) -- (carry);
@@ -1000,11 +1000,11 @@ endpoint-equal paths can justify different statuses for the same claim.
   \node[ogbox, text width=0.28\textwidth] (raw) at (4.0,-2.25)
     {raw-copy path $\gamma_{\mathrm{raw}}$\\
      $L_{\mathrm{raw}}=(\{s_X\},\varnothing,\varnothing,\varnothing)$};
-  \node[ogbox, text width=0.25\textwidth] (endpoint) at (0,-4.35)
+  \node[ogstatus, text width=0.25\textwidth] (endpoint) at (0,-4.35)
     {same endpoint projection\\$\pi_{S_1}=X$};
-  \node[ogbox, text width=0.25\textwidth] (certstatus) at (-4.0,-6.15)
+  \node[ogstatus, text width=0.25\textwidth] (certstatus) at (-4.0,-6.15)
     {$\phi_{\mathrm{auth}}$\\$\Just=\supported$};
-  \node[ogbox, text width=0.25\textwidth] (rawstatus) at (4.0,-6.15)
+  \node[ogstatus, text width=0.25\textwidth] (rawstatus) at (4.0,-6.15)
     {$\phi_{\mathrm{auth}}$\\$\Just=\underdetermined$};
   \draw[ogline] (src) -- (cert);
   \draw[ogline] (src) -- (raw);
@@ -1152,24 +1152,24 @@ claim-purpose-context obligation after the path has been traversed.
 
 \begin{figure}[ht]
 \centering
-\begin{tikzpicture}[node distance=1.35cm]
-  \node[ogbox] (crypt) {$\CryptSupp$};
-  \node[ogbox, below=of crypt] (verify) {$\Verify(\CryptSupp,\ctx)=\mathrm{accept}$};
-  \node[ogbox, below=of verify] (admit) {$\Admit_S(\CryptSupp,\phi,P,\ctx)$};
-  \node[ogstatus, below=1.05cm of admit, text width=0.34\textwidth] (result)
-    {\textbf{admission result}\\[0.25em]
-     \begin{tabular}{@{}c@{}}
-       accept\\
-       reject / refuted\\
-       underdetermined\\
-       authority blocked\\
-       unverifiable
-     \end{tabular}};
+\begin{tikzpicture}[x=1cm,y=1cm]
+  \node[ogbox] (crypt) at (0,0) {$\CryptSupp$};
+  \node[ogbox] (verify) at (0,-1.45) {$\Verify(\CryptSupp,\ctx)=\mathrm{accept}$};
+  \node[ogbox, text width=4.2cm] (admitA) at (-2.7,-3.15)
+    {$\Admit_{S_{\mathrm{ver}}}(\CryptSupp)$\\$P_{\mathrm{verify}}$\\minimal obligation};
+  \node[ogbox, text width=4.2cm] (admitB) at (2.7,-3.15)
+    {$\Admit_{S_{\mathrm{audit}}}(\CryptSupp)$\\$P_{\mathrm{audit}}$\\policy/freshness obligation};
+  \node[ogstatus, text width=3.25cm] (resultA) at (-2.7,-5.15)
+    {result\\$\mathrm{accept}$};
+  \node[ogstatus, text width=3.25cm] (resultB) at (2.7,-5.15)
+    {result\\$\underdetermined$\\or $\mathrm{reject}$};
   \draw[ogline] (crypt) -- (verify);
-  \draw[ogline] (verify) -- (admit);
-  \draw[ogline] (admit) -- (result);
+  \draw[ogline] (verify) -- (admitA);
+  \draw[ogline] (verify) -- (admitB);
+  \draw[ogline] (admitA) -- (resultA);
+  \draw[ogline] (admitB) -- (resultB);
 \end{tikzpicture}
-\caption{Verify / Admit split. Cryptographic validity is not observer admissibility; the shaded box lists return statuses rather than transport steps.}
+\caption{Verify / Admit split. The same cryptographically valid support can be admitted for one purpose and not admitted for another; shaded boxes mark admission outputs.}
 \label{fig:verify-admit}
 \end{figure}
 
@@ -1359,10 +1359,13 @@ authorship witness coordinate has a finite defect.
   \node[ogbox, right=of s] (a) {$A$};
   \node[ogbox, below=of a] (b) {$B$};
   \node[ogbox, below=of s] (c) {$C$};
+  \node[ogstatus, below=1.25cm of $(b)!0.5!(c)$, text width=4.2cm] (defect)
+    {loop audit output\\$\Def_{\mathrm{state}}=0$\\$\Def_{\mathrm{witness}}=1$};
   \draw[ogline] (s) -- node[above, fill=white, inner sep=1.5pt] {$T_1$ package} (a);
   \draw[ogline] (a) -- node[right, align=center, fill=white, inner sep=1.5pt] {$T_2$\\verify\\redact} (b);
   \draw[ogline] (b) -- node[below, fill=white, inner sep=1.5pt] {$T_3$ normalize} (c);
   \draw[ogline] (c) -- node[left, fill=white, inner sep=1.5pt] {$T_4$ import} (s);
+  \draw[ogthin] ($(b)!0.5!(c)$) -- (defect);
 \end{tikzpicture}
 \caption{Witness holonomy loop. $T_2$ verifies the signature and records redaction of the signature, identity, policy, and freshness atoms. The state loop closes while the witness loop does not: $\Def_{\mathrm{state}}(\gamma,\phi)=0$ and $\Def_{\mathrm{witness}}(\gamma,\phi)=1$.}
 \label{fig:witness-holonomy}
@@ -1500,10 +1503,10 @@ as discharged. The accounting check is given in \cref{app:proofs}.
 \centering
 \begin{tikzpicture}[node distance=1.9cm]
   \node[ogbox] (obl) {$\Obl_P(\phi,\ctx)$};
-  \node[ogbox, below left=1.25cm and 0.4cm of obl] (sat) {satisfied by\\$\Carry_\gamma$};
+  \node[ogstatus, below left=1.25cm and 0.4cm of obl] (sat) {satisfied by\\$\Carry_\gamma$};
   \node[ogbox, below right=1.25cm and 0.4cm of obl] (unmet) {unmet};
-  \node[ogbox, below left=1.25cm and 0.1cm of unmet] (decl) {declared loss\\downgrade};
-  \node[ogwarnbox, below right=1.25cm and 0.1cm of unmet] (debt) {treated as\\satisfied\\witness debt};
+  \node[ogstatus, below left=1.25cm and 0.1cm of unmet] (decl) {declared loss\\downgrade};
+  \node[ogstatus, below right=1.25cm and 0.1cm of unmet] (debt) {treated as\\satisfied\\witness debt};
   \draw[ogline] (obl) -- (sat);
   \draw[ogline] (obl) -- (unmet);
   \draw[ogline] (unmet) -- (decl);
@@ -2751,22 +2754,24 @@ The canonical profile used here is named $\mathrm{OG3\text{-}profile\text{-}1}$.
 \centering
 \begin{tikzpicture}[
   schema/.style={ogbox, text width=2.85cm, minimum height=1.0cm, font=\small},
+  schemaout/.style={ogstatus, text width=2.85cm, minimum height=1.0cm, font=\small},
   relabel/.style={fill=white, inner sep=1.2pt, font=\scriptsize},
   rel/.style={-{Latex[length=2.3mm,width=1.6mm]}, line width=0.65pt}
 ]
   \node[schema] (passport) at (0,0) {ClaimPassport\\claim\\purpose\\context};
-  \node[schema] (registry) at (-4.65,1.85) {Obligation\\Registry\\$\Obl_P(\phi,\ctx)$ entry};
-  \node[schema] (pathcert) at (4.65,1.85) {PathCert\\path and ledger chain};
-  \node[schema] (ledger) at (4.65,-1.65) {SupportLedger\\$C,D,B,R$ atoms};
-  \node[schema] (report) at (0,-3.15) {StatusReport\\Just\\Report\\Debt};
-  \node[schema] (checker) at (-4.65,-1.65) {AtomChecker\\kind dispatch};
+  \node[schema] (registry) at (-4.85,2.0) {Obligation\\Registry\\$\Obl_P(\phi,\ctx)$ entry};
+  \node[schema] (pathcert) at (4.85,2.0) {PathCert\\path and ledger chain};
+  \node[schemaout] (ledger) at (4.85,-1.95) {SupportLedger\\$C,D,B,R$ atoms};
+  \node[schemaout] (report) at (0,-4.15) {StatusReport\\Just\\Report\\Debt};
+  \node[schema] (checker) at (-4.85,-1.95) {AtomChecker\\kind dispatch};
 
-  \draw[rel] (passport.west) -- node[relabel, above] {\texttt{obligation\_entry}} (registry.east);
-  \draw[rel] (passport.east) -- node[relabel, above] {\texttt{path\_cert}} (pathcert.west);
+  \draw[rel] (passport.west) -- ++(-0.8,0) |- node[relabel, near end, above] {\texttt{obligation\_entry}} (registry.east);
+  \draw[rel] ([yshift=0.22cm]passport.east) -- ++(0.75,0) |- node[relabel, near end, above] {\texttt{path\_cert}} (pathcert.west);
+  \draw[rel] ([yshift=-0.22cm]passport.east) -- ++(0.75,0) |- (ledger.west);
+  \node[relabel] at (2.9,-1.48) {\texttt{terminal\_ledger}};
   \draw[rel] (pathcert.south) -- node[relabel, right] {\texttt{ledgers}} (ledger.north);
   \draw[rel] (registry.south) -- node[relabel, left] {rules} (checker.north);
-  \draw[rel] (ledger.south west) |- node[relabel, near end, above] {\texttt{terminal\_ledger}} (report.east);
-  \draw[rel] (report.north) -- node[relabel, right] {\texttt{status\_report}} (passport.south);
+  \draw[rel] (passport.south) -- node[relabel, left] {\texttt{status\_report}} (report.north);
 \end{tikzpicture}
 \caption{Engineering schema relationships. The claim passport is the portable root object; it references the obligation entry, optional path certificate, terminal ledger, and support status report.}
 \label{fig:engineering-schema-relationships}
