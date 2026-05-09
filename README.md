@@ -110,12 +110,11 @@ make clean
 
 ## Citation
 
-Use the DOI for this release-candidate version unless a later published version
-supersedes it:
+Use the DOI for this version unless a later published version supersedes it:
 
 ```text
 Ross, James. Observer Geometry III: Path Geometry and Support Obligations.
-Version 1.0.0-rc.1. 2026. https://doi.org/10.5281/zenodo.20046284
+Version 1.0.0. 2026. https://doi.org/10.5281/zenodo.20046284
 ```
 
 Machine-readable citation metadata is available in `CITATION.cff`.

@@ -7,7 +7,7 @@ authors:
   - family-names: "Ross"
     given-names: "James"
     orcid: "https://orcid.org/0009-0006-0025-7801"
-version: "1.0.0-rc.1"
+version: "1.0.0"
 date-released: "2026-05-06"
 license: "CC-BY-4.0"
 repository-code: "https://github.com/flyingrobots/og-3"
