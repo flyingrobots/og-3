@@ -1674,7 +1674,28 @@ $\Refutes(\phi)$. Such support may target the provenance, authority, freshness,
 membership, or admission component of the claim.
 \end{definition}
 
-For an authority claim $\phi_{\mathrm{auth}}=$ ``update $u$ was admitted under policy $\alpha$ at epoch $e$,'' a typed refutation may consist of the policy rule requiring signer $k$ to belong to committee $C$, the carried signature binding $u$ to $k$, and an admitted nonmembership witness $k\notin C$ at frontier $F$.
+\begin{proposition}[Typed False Report Witness]
+\label{prop:typed-false-report}
+There is a finite ledger that supports the endpoint-state claim for an update
+while refuting the typed authority/admission claim for the same update. If the
+endpoint reports the authority/admission claim as $\supported$, the report is a
+typed false report.
+\end{proposition}
+
+\begin{proof}
+\textit{Finite witness.}
+Use the typed authority witness from \cref{app:witness-library}. Let
+$\phi_{\mathrm{adm}}$ be \enquote{update $u$ was admitted under policy $\alpha$
+at epoch $e$}. The ledger carries the endpoint-state atom and the signature
+binding $u$ to signer $k$, and it carries an admitted nonmembership witness
+$k\notin C_e$ for the policy committee required by $\alpha$. The state
+obligation is discharged, so the state claim is supported. The
+authority/admission component has an admitted typed refutation, so
+$\Just_S^P(\phi_{\mathrm{adm}},\ctx)=\refuted$. If the emitted report for
+$\phi_{\mathrm{adm}}$ is $\supported$, Definition~\ref{def:typed-false-report}
+applies. The false report targets the authority/admission component; it does
+not erase the separate support for endpoint state.
+\end{proof}
 
 \section{Purpose-Indexed Equivalence and Robustness}
 \label{sec:robustness}
@@ -2855,7 +2876,7 @@ fails. The debt set is the unmet obligation treated as discharged:
 If the endpoint instead declares the loss and downgrades the status, the same
 missing atoms remain unmet support and do not become debt.
 
-\paragraph{C.14 Typed false report.}
+\paragraph{C.14 Typed False Report Witness (Proposition~\ref{prop:typed-false-report}).}
 Use A.9. The support for the endpoint state and the support for admission under
 policy are different typed coordinates. A report that says the update is
 present may be supported by $s_X$ or by an update-state atom. A report that says

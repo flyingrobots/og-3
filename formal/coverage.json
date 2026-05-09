@@ -127,12 +127,12 @@
   },
   {
     "id": "og3.typed_false_report",
-    "paper_label": "def:typed-false-report",
-    "paper_ref": "Definition 8.5",
+    "paper_label": "prop:typed-false-report",
+    "paper_ref": "Proposition 8.6",
     "coq_object": "og3_typed_false_report",
     "kind": "finite_witness",
     "status": "mechanized",
-    "scope": "finite instantiation of typed false-report definition"
+    "scope": "finite typed false-report witness"
   },
   {
     "id": "og3.purpose_indexed_equivalence",
