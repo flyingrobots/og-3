@@ -1796,11 +1796,9 @@ includes raw state-only transport.
 The calculus suggests engineering hypotheses rather than validated deployment
 guidelines. Candidate systems could transport claim-support ledgers alongside
 state and then test whether the added support surface improves audit outcomes,
-operator diagnosis, or downstream admission decisions. Artifacts to evaluate
-include obligation registries, context-bound receipts, path certificates,
-PathCert validators, claim passports, support compression registries,
-loop-defect checkers, witness-debt counters, freshness/frontier checks,
-authority-blocked status, and provenance-weakening detectors.
+operator diagnosis, or downstream admission decisions. The resulting artifacts
+are implementation surfaces for the formal maps, ledgers, and finite defects
+defined above; they are not validated products.
 
 The obligation registry is itself a governance surface. If two observers use
 different registry versions or disagree about
@@ -1813,6 +1811,27 @@ Within the theoretical model, high witness debt is an audit-risk indicator: the
 system has reports whose visible state survived farther than their admissible
 support. Empirical implementation, simulation, usability study, and performance
 work remain outside this manuscript.
+
+\begin{OGTable}{\OGTableFont}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.33\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\TableHeaderRow \textbf{Artifact} & \textbf{OG-III role} & \textbf{Failure detected} \\
+\midrule
+Obligation registry & Declares $\Obl_P(\phi,\ctx)$ & Wrong or missing requirement \\
+PathCert & Records support transformations & Unsupported path claim \\
+Loop-defect checker & Compares closed-path state and discharged support & Nonzero witness holonomy \\
+Support ledger & Carries $C,D,B,R$ atoms & Missing, redacted, or blocked support \\
+Compression registry & Maps receipts to discharged atoms & Fake or overgeneral receipt \\
+Witness-debt counter & Compares report to unmet support & Overreport or supported-claim hallucination \\
+Version-control HolAudit & Applies support accounting to Git line witnesses & Undeclared provenance weakening \\
+Freshness checker & Binds frontier and context & Stale proof reuse \\
+Admission policy & Turns verified support into local status & Validity/admissibility split \\
+\bottomrule
+\end{tabularx}
+\caption{Engineering artifacts suggested by the calculus. Appendix~\ref{app:engineering-artifacts} gives finite schemas and validator sketches for these roles.}
+\label{tab:engineering-artifacts}
+\end{OGTable}
+\FloatBarrier
 
 \paragraph{Empirical measurement agenda.}
 The next engineering question is cost: how large support ledgers become, and
@@ -1853,6 +1872,27 @@ content, and the witness coordinate is the finite support surface supplied by
 blame records, commits, parent links, trailers, signatures, review metadata,
 and ref frontiers.
 
+\begin{OGTable}{\OGSchemaTableFont}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.31\textwidth}>{\raggedright\arraybackslash}X@{}}
+\toprule
+\TableHeaderRow \textbf{Version-control surface} & \textbf{OG-III object} & \textbf{Support-accounting role} \\
+\midrule
+Line or fragment digest & Endpoint-visible state coordinate & Tests whether the state coordinate closes. \\
+\OGAltRow
+Blame record, commit parent, source path & Carried provenance atoms in $C$ & Supplies line-origin support for the provenance claim. \\
+Signature, review trailer, branch protection & Authority and admission atoms & Supplies policy, signer, reviewer, and frontier support. \\
+\OGAltRow
+Old-to-new rewrite map or trailer & PathCert or compression receipt & Discharges support obligations across rebase, squash, or cherry-pick. \\
+Missing source declaration & Declared-loss failure & Leaves support unmet when the endpoint still reports provenance support. \\
+\OGAltRow
+Invalid source trailer & Typed certificate refutation in $R$ & Refutes the asserted path-support component, not the underlying line text. \\
+\bottomrule
+\end{tabularx}
+\caption{\texttt{git-holaudit} mapping from version-control surfaces to OG-III ledger objects.}
+\label{tab:git-holaudit-mapping}
+\end{OGTable}
+\FloatBarrier
+
 A \texttt{git-holaudit}-style checker treats each line or code fragment as a
 claim-bearing object and compares endpoint state preservation against
 provenance-support preservation. It emits a provenance-weakening warning only when the
@@ -1870,7 +1910,7 @@ they carry a checkable old-to-new mapping or explicit loss declaration.
 Rebase with old-to-new map & same & preserved through rewrite certificate & yes & supported \\
 Squash without trailer & same & review, signature, or frontier support collapsed & no & debt \\
 Cherry-pick with source trailer & same & compressed to source reference & yes & compressed \\
-Manual copy & same & source path and origin support lost & no & undet./debt \\
+Manual copy & same & source path and origin support lost & no & underdetermined / debt \\
 Invalid source trailer & same & claimed source contradicted or unverifiable & attempted & certificate failure \\
 \bottomrule
 \end{tabularx}
@@ -1880,27 +1920,6 @@ Invalid source trailer & same & claimed source contradicted or unverifiable & at
 \FloatBarrier
 
 The engineering slogan is: same code, different support.
-
-\begin{OGTable}{\OGTableFont}
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.33\textwidth}>{\raggedright\arraybackslash}X}
-\toprule
-\TableHeaderRow \textbf{Artifact} & \textbf{OG-III role} & \textbf{Failure detected} \\
-\midrule
-Obligation registry & Declares $\Obl_P(\phi,\ctx)$ & Wrong or missing requirement \\
-PathCert & Records support transformations & Unsupported path claim \\
-Loop-defect checker & Compares closed-path state and discharged support & Nonzero witness holonomy \\
-Support ledger & Carries $C,D,B,R$ atoms & Missing, redacted, or blocked support \\
-Compression registry & Maps receipts to discharged atoms & Fake or overgeneral receipt \\
-Witness-debt counter & Compares report to unmet support & Overreport or supported-claim hallucination \\
-Version-control HolAudit & Applies support accounting to Git line witnesses & Undeclared provenance weakening \\
-Freshness checker & Binds frontier and context & Stale proof reuse \\
-Admission policy & Turns verified support into local status & Validity/admissibility split \\
-\bottomrule
-\end{tabularx}
-\caption{Engineering artifacts suggested by the calculus. Appendix~\ref{app:engineering-artifacts} gives finite schemas and validator sketches for these roles.}
-\label{tab:engineering-artifacts}
-\end{OGTable}
-\FloatBarrier
 
 \section{Data and Code Availability}
 \label{sec:availability}
