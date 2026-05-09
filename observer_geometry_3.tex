@@ -851,6 +851,7 @@ material, not read directly from visible endpoint state.
 This section adds transport: observer paths transform ledgers, and PathCerts
 make those transformations checkable at the endpoint.
 
+\paragraph{Transport graph.}
 Let
 \[
   G_{\mathrm{obs}}=(\mathcal S,E,\mathrm{src},\mathrm{tgt})
@@ -867,6 +868,7 @@ A path is a composite
   \gamma=T_n\circ \cdots \circ T_1.
 \]
 
+\paragraph{Path certificates.}
 \begin{definition}[Path certificate]
 A path certificate
 \[
@@ -903,6 +905,7 @@ attempted with rejected certificate material, the failure is recorded through
 the $\CertReject$ typed-refutation atom from Proposition~\ref{prop:invalid-cert-observable}.
 \end{definition}
 
+\paragraph{Discharge, satisfaction, and admission.}
 \begin{definition}[Satisfaction and admission]
 For observer $S$, purpose $P$, and context $\ctx$, admitted discharge has type
 \[
@@ -997,9 +1000,11 @@ consume resources and may trigger quarantine policy, but they do not by
 themselves force $\mathrm{reject}$.
 \end{definition}
 
+\paragraph{Order-sensitive transport.}
 \begin{lemma}[Noncommutative Support Transport]
 \label{lem:noncommutative-support-transport}
-There exist translators $T_1,T_2$, a claim $\phi$, and a context $\ctx$ such that both composite paths are defined but
+There exist translators $T_1,T_2$, a claim $\phi$, and a context $\ctx$ such
+that both composite paths are defined but
 \[
   \Carry_{T_2\circ T_1}(\phi,\ctx)
   \neq
@@ -1008,6 +1013,7 @@ There exist translators $T_1,T_2$, a claim $\phi$, and a context $\ctx$ such tha
 \end{lemma}
 
 \begin{proof}
+\textit{Finite witness.}
 Use the atoms and translators from \cref{app:witness-library}. Let
 \[
   L_0=(\{s_X,\sigma_A,i_A,p_\alpha,f_F\},\varnothing,\varnothing,\varnothing).
