@@ -2233,20 +2233,33 @@ outrun that status by carrying witness debt. Cryptographic objects strengthen
 the witness surface but do not collapse verification, revelation, authority,
 freshness, and admission into one predicate.
 
+The theorem spine is deliberately finite. The signed-edit witness separates
+endpoint state from authorship support. Mediated receipts show that compression
+can discharge obligations when admitted by a local registry. Cryptographic,
+freshness, authority, loop-defect, and absence witnesses show that endpoint
+state can remain fixed while the support coordinates required by a particular
+claim, purpose, and context diverge. The report/debt layer then names the point
+where emitted status outruns justified status.
+
 \paragraph{Looking ahead.}
 OG-III asks what support exists, survives, verifies, is blocked, is stale, or
 is lost along an observer path. OG-IV asks what reporting obligations attach to
-that support status. The structural handoff is
+that support status. It does not reopen the endpoint-state question; it takes
+the OG-III support ledger and report gap as input. The structural handoff is
 \[
   \Debt_\gamma^P(\phi,\ctx,\Report)>0.
 \]
 That debt is the point where OG-III's support accounting becomes OG-IV's
-accountability input.
+accountability input for the next layer of observer geometry.
 
 \paragraph{Central distinctions maintained throughout the paper.}
 \begin{enumerate}[leftmargin=*,label=\arabic*.]
   \item Endpoint agreement vs. support agreement: same visible state does not
         entail same justified claim status.
+  \item Carried support vs. declared loss: the carried ledger records support
+        atoms presented by the path; the declared-loss ledger records redaction,
+        staleness, unavailability, or omission without treating those limits as
+        discharge.
   \item Unmet obligation vs. witness debt: missing support that is declared
         downgrades status; debt arises when a report treats it as discharged.
   \item Cryptographic verification vs. observer admission: a proof may verify
@@ -2262,17 +2275,17 @@ accountability input.
 
 \paragraph{Suggested reading paths.}
 \begin{enumerate}[leftmargin=*,label=\arabic*.]
-  \item \textbf{Support core:}
+  \item \textbf{Structural core:}
         \cref{sec:claims-obligations,sec:paths,sec:path-dependent},
         \cref{app:witness-library}, and \cref{app:proofs}.
-  \item \textbf{Cryptographic surfaces:}
+  \item \textbf{Cryptographic extension:}
         \cref{sec:crypto,sec:holonomy} and the cryptographic witnesses in
         \cref{app:witness-library}.
-  \item \textbf{Audit and reporting:}
-        \cref{sec:soundness,sec:robustness,sec:engineering} and
+  \item \textbf{Systems interpretation:}
+        \cref{sec:engineering,sec:availability,sec:related-work} and
         \cref{app:engineering-artifacts}.
-  \item \textbf{Series interface:}
-        \cref{sec:imports,sec:related-work,sec:conclusion}.
+  \item \textbf{For practitioners:}
+        \cref{sec:imports,sec:soundness,sec:robustness,sec:engineering}.
 \end{enumerate}
 
 \paragraph{Dependency map.}
