@@ -1952,6 +1952,13 @@ Public source repository &
 \href{https://github.com/flyingrobots/og-3}{\texttt{flyingrobots/og-3}} &
 Public repository for source, metadata, and generated reading copies. \\
 \OGAltRow
+GitHub releases page &
+\href{https://github.com/flyingrobots/og-3/releases}{\texttt{flyingrobots/og-3/releases}} &
+Versioned release records and release assets; Zenodo archives GitHub releases from this repository. \\
+Rendered reading copies &
+\texttt{dist/observer\_geometry\_3.pdf}; \texttt{dist/observer\_geometry\_3.txt} &
+Generated PDF and plain-text exports produced from the manuscript source. \\
+\OGAltRow
 Code archive concept DOI &
 \href{https://doi.org/10.5281/zenodo.20054992}{doi:10.5281/zenodo.20054992} &
 Stable Zenodo archive family for versioned code artifacts. \\
@@ -1973,6 +1980,9 @@ Formal sync command &
 \texttt{make formal-sync} &
 Regenerates the coverage table and checks that generated artifacts are current. \\
 \OGAltRow
+Release source bundle &
+\texttt{make release-bundle}; \texttt{dist/observer\_geometry\_3-source.zip} &
+Packages tracked source plus rendered reading copies, including the generated coverage table needed for TeX rebuilds. \\
 Checked local toolchain &
 Rocq Prover 9.1.1; OCaml 5.4.1 &
 Local environment used for this release. \\
@@ -1994,24 +2004,34 @@ regenerates it:
 \input{formal/generated/coverage_table.tex}
 \FloatBarrier
 
-The Coq/Rocq file mechanizes simplified support atoms, four-component ledgers,
-obligation objects, finite satisfaction/admission examples, unmet-support and
-witness-debt calculations, and the finite separation witnesses named in
-\cref{tab:coq-coverage-map}. Its lists are finite-set representatives used for
-compact proof scripts; list order, duplicate multiplicity, and linear traversal
-cost are not normative parts of the calculus. A runtime validator should use
-canonical set or map indexes keyed by atom identifier, claim component,
-obligation entry, registry epoch, and certificate digest, while preserving the
-same extensional membership and discharge-closure semantics.
+The reference formalization has the following boundary.
 
-No separate model checker, external reference script, or executable
-cryptographic verifier was used. Cryptographic primitives are represented as
-abstract verifier facts. The Coq/Rocq development abstracts path-certificate
-validation, extraction from native observer memory, full policy admission,
-Ed25519, zero-knowledge proof systems, Merkle proofs, transparency logs, and the
-engineering schemas in \cref{app:engineering-artifacts}. The repository's PDF
-and text build tooling renders the manuscript and is separate from this
-formalization.
+\begin{OGTable}{\OGSchemaTableFont}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.36\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\TableHeaderRow \textbf{Layer} & \textbf{Checked in Coq/Rocq} & \textbf{Abstracted or external} \\
+\midrule
+Support atoms and ledgers & Simplified finite atoms, four-component ledgers, discharge closure, and finite membership calculations. & Runtime indexes, duplicate elimination, canonical storage, and list traversal cost. Lists are finite-set representatives, not normative data structures. \\
+\OGAltRow
+Obligations and admission & Obligation objects, satisfaction/admission examples, compression receipt discharge, refutation priority, unmet support, and witness-debt calculations. & Full policy languages, registry governance, and production admission rule engines. \\
+Path transport and certificates & Finite witness facts for path-dependent support, noncommutative transport, invalid certificate observability, and loop-defect examples. & Full PathCert parsing, edge-relation validation, endpoint memory extraction, and distributed execution. \\
+\OGAltRow
+Cryptographic witness surfaces & Abstract verifier facts for signatures, commitments, proof objects, freshness, authority, and admission examples. & Ed25519, zero-knowledge proof systems, Merkle proofs, transparency logs, and executable cryptographic verifiers. \\
+Artifacts and measurements & Coverage-map consistency and manuscript-to-Coq witness bindings. & Empirical datasets, model checkers, external reference scripts, performance measurements, and the engineering schemas in \cref{app:engineering-artifacts}. \\
+\bottomrule
+\end{tabularx}
+\caption{Boundary of the Coq/Rocq reference formalization.}
+\label{tab:formalization-boundary}
+\end{OGTable}
+\FloatBarrier
+
+A runtime validator should use canonical set or map indexes keyed by atom
+identifier, claim component, obligation entry, registry epoch, and certificate
+digest, while preserving the same extensional membership and discharge-closure
+semantics. No separate model checker, external reference script, executable
+cryptographic verifier, empirical dataset, simulation, or performance benchmark
+was used. The repository's PDF and text build tooling renders the manuscript and
+is separate from the Coq/Rocq formalization.
 
 \section{Related Work}
 \label{sec:related-work}
