@@ -706,6 +706,7 @@ obligation when the endpoint reports it as blocked. It becomes witness debt only
 if the endpoint erases the block and reports ordinary support.
 
 \begin{definition}[Extraction from OG-I accumulation]
+\label{def:extraction}
 OG-III does not replace OG-I's accumulation state $M_S$. For each observer
 $S$, fix a finite memory set $\Mem_S$, a native ledger view
 \[
@@ -2706,6 +2707,7 @@ $\Native_S^{P,\ctx}$ & $\Phi\times\Mem_S\to\Ledg$ & Extracts the endpoint observ
 $\Extract_S^{P,\ctx}$ & $\Phi\times\Mem_S\times(\mathrm{Cert}\cup\{\bot\})\to\Ledg$ & Produces the ledger used for admission from native memory and an optional PathCert. \\
 \(\ValidCert_S\) & \(\begin{gathered}\mathrm{Cert}\times\Phi\times\mathcal P\times\mathrm{Ctx}\times\Mem_S\\ \to\{\mathrm{accept},\mathrm{reject}\}\end{gathered}\) & Validates a certificate header, step relation, and endpoint binding. \\
 $\CertReject_S^{P,\ctx}$ & $\Phi\times\Mem_S\times\mathrm{Cert}\to\Ledg$ & Emits the explicit certificate-failure refutation ledger. \\
+$\Carry_\gamma$ & $\Phi\times\mathrm{Ctx}\to\Ledg$ & Names the path-indexed support ledger extracted at the endpoint for a claim and context. \\
 $\Disch_S^{P,\ctx}$ & $\Ledg\to\mathcal P_{\mathrm{fin}}(\Atoms)$ & Computes the observer's admitted discharge closure. \\
 \(\Sat_S^{P,\ctx}\) & \(\begin{gathered}\Ledg\times\Obligation\\ \to\{\mathrm{yes},\mathrm{no},\\ \mathrm{partial},\authorityblocked\}\end{gathered}\) & Evaluates obligation satisfaction before admission policy. \\
 \(\Admit_S\) & \(\begin{gathered}\Ledg\times\Phi\times\mathcal P\times\mathrm{Ctx}\\ \to\{\mathrm{accept},\mathrm{reject},\\ \underdetermined,\authorityblocked,\\ \unverifiable\}\end{gathered}\) & Applies local admission priority to a support ledger. \\
@@ -2715,6 +2717,25 @@ $\Acc_S$ & $\Mem_S\times\Packet\to\Mem_S$ & Updates native observer memory from 
 \end{tabularx}
 \caption{Operational maps and their domains, codomains, and roles.}
 \label{tab:glossary-operational-maps}
+\end{OGInlineTable}
+
+\paragraph{Reporting and accounting maps.}
+\begin{OGInlineTable}{\OGSchemaTableFont}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.43\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\TableHeaderRow \textbf{Notation} & \textbf{Type} & \textbf{Meaning} \\
+\midrule
+\(\Val_\gamma^{P,\ctx}\) & \(\begin{gathered}\Phi\to\{\supported,\refuted,\\ \underdetermined,\authorityblocked,\\ \unverifiable\}\end{gathered}\) & Path-indexed justified endpoint value. \\
+\(\Report_S^P\) & \(\begin{gathered}\Phi\times\mathrm{Ctx}\\ \to\{\supported,\refuted,\\ \underdetermined,\authorityblocked,\\ \unverifiable\}\end{gathered}\) & Status emitted by the observer for a claim/context pair. \\
+\(\Unmet_\gamma^P\) & \(\Phi\times\mathrm{Ctx}\to\mathcal P_{\mathrm{fin}}(\Atoms)\) & Required atoms not discharged by the transported ledger. \\
+\(\DeclaredLoss_\gamma^P\) & \(\Phi\times\mathrm{Ctx}\to\mathcal P_{\mathrm{fin}}(\Atoms)\) & Missing required support explicitly declared as lost, redacted, stale, unavailable, or blocked. \\
+\(\Debt_\gamma^P\) & \(\begin{gathered}\Phi\times\mathrm{Ctx}\times\mathrm{Report}\\ \to\mathcal P_{\mathrm{fin}}(\Atoms)\end{gathered}\) & Unmet atoms that the emitted report treats as discharged. \\
+\(\OverReport_S^P\) & \(\Phi\times\mathrm{Ctx}\to\{\mathrm{true},\mathrm{false}\}\) & Predicate stating that the emitted report is strictly stronger than justified status. \\
+\(\leq_P\) & status preorder & Purpose-indexed preorder used to compare report strength with justified status. \\
+\bottomrule
+\end{tabularx}
+\caption{Reporting, debt, and status-comparison notation.}
+\label{tab:glossary-reporting-accounting}
 \end{OGInlineTable}
 
 \paragraph{Equivalence and robustness notation.}
@@ -2800,7 +2821,30 @@ This appendix checks the theorem spine against the finite witnesses in
 projection, carried support, obligation satisfaction, admission, and report
 strength.
 
-\paragraph{C.1 Witness Sensitivity (Theorem~\ref{thm:witness-sensitivity}).}
+\paragraph{C.1 Invalid Certificate Observability (Proposition~\ref{prop:invalid-cert-observable}).}
+Fix the same endpoint observer, claim, purpose, context, and native accumulated
+memory in both cases. In the absent-certificate case, extraction returns the
+native ledger:
+\[
+  \Extract_S^{P,\ctx}(\phi,M_S,\bot)=\Native_S^{P,\ctx}(\phi,M_S).
+\]
+In the rejected-certificate case, let $\chi_{\mathrm{bad}}$ be a certificate
+for which $\ValidCert_S$ rejects. Definition~\ref{def:extraction} returns
+\[
+  \Extract_S^{P,\ctx}(\phi,M_S,\chi_{\mathrm{bad}})
+  =
+  \Native_S^{P,\ctx}(\phi,M_S)\sqcup
+  \CertReject_S^{P,\ctx}(\phi,M_S,\chi_{\mathrm{bad}}).
+\]
+The certificate-rejection ledger has empty carried, declared-loss, and
+authority-blocked coordinates and a typed refutation atom in $R$. Hence the two
+extracted ledgers are unequal even though the endpoint native memory is
+identical. If the local admission policy admits that certificate-failure atom
+for the evaluated path-support component, refutation-priority admission returns
+$\refuted$ for the rejected-certificate case while the absent-certificate case
+remains evaluated from native memory alone.
+
+\paragraph{C.2 Witness Sensitivity (Theorem~\ref{thm:witness-sensitivity}).}
 Use $x_{\mathrm{cert}}$ and $x_{\mathrm{raw}}$ from A.1. Since
 \[
   \pi_{S_1}(x_{\mathrm{cert}})=X=\pi_{S_1}(x_{\mathrm{raw}}),
@@ -2820,7 +2864,7 @@ compression receipt. Thus $\Sat_{S_1}^{P_{\mathrm{auth}},\ctx}=\mathrm{no}$.
 With no carried refutation, the status is $\underdetermined$. Equal projection
 therefore fails to determine equal support status.
 
-\paragraph{C.2 Mediated Support Translation (Proposition~\ref{prop:mediated-support-translation}).}
+\paragraph{C.3 Mediated Support Translation (Proposition~\ref{prop:mediated-support-translation}).}
 Use A.4. On the direct path, the endpoint carries $L_{\mathrm{raw}}$ for
 $\phi_{\mathrm{auth}}$, so the authorship obligation is unmet and the status is
 $\underdetermined$. On the mediated path, $M$ observes the full support bundle
@@ -2829,7 +2873,7 @@ the compression registry, so the compressed receipt discharges
 $\{\sigma_A,i_A,p_\alpha,f_F\}$. The same source material can therefore produce
 an underdetermined direct status and a supported mediated status.
 
-\paragraph{C.3 Noncommutative Support Transport (Lemma~\ref{lem:noncommutative-support-transport}).}
+\paragraph{C.4 Noncommutative Support Transport (Lemma~\ref{lem:noncommutative-support-transport}).}
 Use $T_c$ and $T_r$ from A.5. The composite $T_r\circ T_c$ first compresses the
 full authorship support into $r_{\mathrm{auth}}$ and then preserves the receipt.
 Its carried ledger is $L_c$. The composite $T_c\circ T_r$
@@ -2838,7 +2882,7 @@ is no longer satisfied, it cannot issue the authorship receipt. Its carried
 ledger is $(\{s_X,p_\alpha,f_F\},\varnothing,\varnothing,\varnothing)$. The
 ledgers differ as finite tuples, so support transport is order-sensitive.
 
-\paragraph{C.4 Path-Dependent Support Transport (Theorem~\ref{thm:path-dependent-support-transport}).}
+\paragraph{C.5 Path-Dependent Support Transport (Theorem~\ref{thm:path-dependent-support-transport}).}
 Use $\gamma_{\mathrm{cert}}$ and $\gamma_{\mathrm{raw}}$ from A.3. Both paths
 have source $S_0$, target $S_1$, endpoint text $X$, and the same stateless
 endpoint accumulator $\Acc_{S_1}(M,p)=p$. Therefore the endpoint visible-state
@@ -2848,7 +2892,7 @@ raw path carries endpoint text only and is underdetermined for the authorship
 claim. Hence the paths agree on endpoint visible state and disagree on
 justified claim-status.
 
-\paragraph{C.5 Verification/Revelation Separation (Proposition~\ref{prop:verification-revelation-separation}).}
+\paragraph{C.6 Verification/Revelation Separation (Proposition~\ref{prop:verification-revelation-separation}).}
 Use the sealed-predicate object from A.6 with no payload opening. The verifier
 has access to $(C,I,\pi_{\mathrm{zk}},\mathrm{stmt},\tau)$, so its verification
 aperture for the statement is positive and the verifier accepts. The observer
@@ -2856,7 +2900,7 @@ receives no opening for the committed payload, so its revelation aperture for
 that payload is zero. Verification support and revelation support are therefore
 separated by a finite cryptographic witness surface.
 
-\paragraph{C.6 Validity/Admissibility Separation (Theorem~\ref{thm:validity-admissibility-separation}).}
+\paragraph{C.7 Validity/Admissibility Separation (Theorem~\ref{thm:validity-admissibility-separation}).}
 Use the same object with metadata binding $\tau=(P',\ctx,\alpha,F)$ and
 $P'\neq P$. By construction, the proof transcript verifies against the
 commitment and public inputs:
@@ -2870,7 +2914,7 @@ $\tau=(P,\ctx,\alpha,F)$. The metadata has the wrong purpose binding, so
 \]
 This finite table separates cryptographic validity from observer admission.
 
-\paragraph{C.7 Cryptographic Freshness Separation (Proposition~\ref{prop:cryptographic-freshness-separation}).}
+\paragraph{C.8 Cryptographic Freshness Separation (Proposition~\ref{prop:cryptographic-freshness-separation}).}
 Use the freshness pair from A.6. Both $\CryptSupp_F$ and
 $\CryptSupp_{F_0}$ verify in $\ctx_{\mathrm{ver}}$ by construction. The
 freshness obligation is
@@ -2893,7 +2937,7 @@ frontier and is not discharged, so
 $\Sat_S^{P_{\fresh},\ctx_F}(L_{F_0},O_F)=\mathrm{partial}$. This separates
 cryptographic verification from freshness support.
 
-\paragraph{C.8 Cryptographic Authority Separation (Proposition~\ref{prop:cryptographic-authority-separation}).}
+\paragraph{C.9 Cryptographic Authority Separation (Proposition~\ref{prop:cryptographic-authority-separation}).}
 Use the authority pair from A.6. The signature $\sigma_k$ verifies under key
 $k$, so $\Verify(\CryptSupp_{\mathrm{auth}},\ctx)=\mathrm{accept}$. The authority
 obligation is
@@ -2924,7 +2968,7 @@ Observer admission follows:
 \]
 This separates signature verification from authority admission.
 
-\paragraph{C.9 Nonzero Loop Defect (Theorem~\ref{thm:nonzero-witness-holonomy}).}
+\paragraph{C.10 Nonzero Loop Defect (Theorem~\ref{thm:nonzero-witness-holonomy}).}
 Use $\gamma_{\circlearrowleft}$ from A.7. Each edge preserves $s_X$, so after
 the loop the state coordinate remains $X$ and
 \[
@@ -2943,7 +2987,7 @@ The loop is closed at the observer endpoint and open in the support coordinate;
 the redaction declaration explains the downgrade but does not discharge the
 authorship obligation.
 
-\paragraph{C.10 PathCert Holonomy Detection (Proposition~\ref{prop:pathcert-holonomy-detection}).}
+\paragraph{C.11 PathCert Holonomy Detection (Proposition~\ref{prop:pathcert-holonomy-detection}).}
 Use the accepted certificate $\chi_{\circlearrowleft}$ from A.7. PathCert
 validation checks each finite step and exposes the terminal ledger
 \[
@@ -2964,7 +3008,7 @@ $\mathrm{flag}(U_{\chi_{\circlearrowleft}},D_{\chi_{\circlearrowleft}},
 B_{\chi_{\circlearrowleft}})$ under an audit-only policy and rejects the
 support-preservation claim under a strict support-preservation policy.
 
-\paragraph{C.11 Negative Witness Fragility (Proposition~\ref{prop:negative-witness-fragility}).}
+\paragraph{C.12 Negative Witness Fragility (Proposition~\ref{prop:negative-witness-fragility}).}
 Use A.10. Both $L_{\log}$ and $L_{\mathrm{state}}$ carry $s_X$, so the
 state-reading obligation $(\{s_X\},\{\{s_X\}\})$ is discharged for each
 observer. The non-revocation obligation requires the frontier and nonmembership
@@ -2977,7 +3021,7 @@ For $L_{\mathrm{state}}$, neither absence-support atom is discharged, so the
 absence claim remains underdetermined. Positive state agreement therefore leaves
 negative-witness support open.
 
-\paragraph{C.12 Purpose-Indexed Equivalence (Proposition~\ref{prop:purpose-indexed-equivalence}).}
+\paragraph{C.13 Purpose-Indexed Equivalence (Proposition~\ref{prop:purpose-indexed-equivalence}).}
 Use $L_{\mathrm{cert}}$ and $L_{\mathrm{raw}}$ from A.1. For
 $P_{\mathrm{state}}$, both ledgers discharge the state-reading obligation
 because both carry $s_X$. Thus the observers agree on the relevant state claim
@@ -2985,8 +3029,9 @@ family. For $P_{\mathrm{auth}}$, $L_{\mathrm{cert}}$ discharges the authorship
 obligation, while $L_{\mathrm{raw}}$ carries only $s_X$. The same observers are
 equivalent for state support and separated for authorship support.
 
-\paragraph{C.13 Path-Class Robustness and Fragility (Proposition~\ref{prop:path-class-robustness}).}
-Use $L_{\mathrm{cert}}$, $L_{\mathrm{med}}$, and $L_{\mathrm{raw}}$ from A.1.
+\paragraph{C.14 Path-Class Robustness and Fragility (Proposition~\ref{prop:path-class-robustness}).}
+Use $L_{\mathrm{cert}}$ and $L_{\mathrm{raw}}$ from A.1, and
+$L_{\mathrm{med}}$ from A.4.
 Let $\Gamma_{\mathrm{cert}}$ contain paths whose terminal ledger is either
 $L_{\mathrm{cert}}$ or $L_{\mathrm{med}}$, and let
 $\Gamma_{\mathrm{mix}}=\Gamma_{\mathrm{cert}}\cup\{\gamma_{\mathrm{raw}}\}$.
@@ -2997,7 +3042,7 @@ $r_{\mathrm{auth}}$, while $L_{\mathrm{raw}}$ carries only $s_X$. The
 authorship claim is therefore robust over $\Gamma_{\mathrm{cert}}$ and fragile
 over $\Gamma_{\mathrm{mix}}$.
 
-\paragraph{C.14 Support-Soundness Failure / Witness Debt (Theorem~\ref{thm:support-soundness-failure}).}
+\paragraph{C.15 Support-Soundness Failure / Witness Debt (Theorem~\ref{thm:support-soundness-failure}).}
 Use A.8. The raw path carries $L_{\mathrm{raw}}$ and the authorship obligation
 requires $\{\sigma_A,i_A,p_\alpha,f_F\}$. Therefore
 \[
@@ -3018,7 +3063,22 @@ fails. The debt set is the unmet obligation treated as discharged:
 If the endpoint instead declares the loss and downgrades the status, the same
 missing atoms remain unmet support and do not become debt.
 
-\paragraph{C.15 Typed False Report Witness (Proposition~\ref{prop:typed-false-report}).}
+\paragraph{C.16 Hallucination as Overreport (Proposition~\ref{prop:hallucination-overreport}).}
+Use the raw-copy ledger for the authorship claim. The endpoint-visible state
+atom $s_X$ is carried, but the authorship atoms required by
+$O_{\mathrm{auth}}$ are not discharged:
+\[
+  \Just_S^P(\phi_{\mathrm{auth}},\ctx)=\underdetermined.
+\]
+Let the emitted report be
+$\Report_S^P(\phi_{\mathrm{auth}},\ctx)=\supported$. Since
+$\underdetermined<_P\supported$, the report is strictly stronger than the
+justified status. Because the emitted stronger status is the supported tag for
+a claim lacking discharged support, this instantiates the paper's structural
+definition of hallucination as the supported-claim case of overreport. No
+premise about intent or culpability is used.
+
+\paragraph{C.17 Typed False Report Witness (Proposition~\ref{prop:typed-false-report}).}
 Use A.9. The support for the endpoint state and the support for admission under
 policy are different typed coordinates. A report that says the update is
 present may be supported by $s_X$ or by an update-state atom. A report that says
