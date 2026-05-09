@@ -1700,12 +1700,37 @@ not erase the separate support for endpoint state.
 \section{Purpose-Indexed Equivalence and Robustness}
 \label{sec:robustness}
 
-Write $S\simeq_P S'$ when two observers agree on support status for the
-relevant claim family. State-purpose equivalence need not imply provenance,
-authority, verification, freshness, or intent equivalence. A claim is robust
-over a path class when all admissible paths preserve its justified status, and
-fragile when two admissible paths with the same endpoints induce different
-statuses.
+This section packages the preceding separations as comparison statements.
+Purpose-indexed equivalence is not observer equality. It is equality of
+justified status for a selected finite claim family under a selected purpose.
+
+\begin{definition}[Purpose-indexed equivalence and path-class robustness]
+Fix a purpose $P$ and a finite comparison family
+$\mathcal F_P\subseteq\Phi\times\mathrm{Ctx}$. Observers $S$ and $S'$ are
+equivalent for purpose $P$ over $\mathcal F_P$, written $S\simeq_P S'$ when
+$\mathcal F_P$ is clear, iff
+\[
+  \forall(\phi,\ctx)\in\mathcal F_P,\qquad
+  \Just_S^P(\phi,\ctx)=\Just_{S'}^P(\phi,\ctx).
+\]
+The dual of purpose-indexed equivalence is purpose-indexed separation: there is
+some $(\phi,\ctx)\in\mathcal F_P$ for which the justified statuses differ.
+
+For a finite path class $\Gamma$ with common source, target, and
+endpoint-visible projection, a claim $\phi$ is robust over $\Gamma$ for
+$(P,\ctx)$ iff
+\[
+  \forall\gamma,\delta\in\Gamma,\qquad
+  \Val_\gamma^{P,\ctx}(\phi)=\Val_\delta^{P,\ctx}(\phi).
+\]
+It is fragile over $\Gamma$ iff there are $\gamma,\delta\in\Gamma$ with the
+same endpoint-visible state and
+$\Val_\gamma^{P,\ctx}(\phi)\neq\Val_\delta^{P,\ctx}(\phi)$. Robustness and
+fragility are dual relative to the chosen path class.
+\end{definition}
+
+State-purpose equivalence need not imply provenance, authority, verification,
+freshness, admission, or reporting equivalence.
 
 \begin{proposition}[Purpose-Indexed Equivalence]
 \label{prop:purpose-indexed-equivalence}
@@ -1722,12 +1747,17 @@ while
 
 \begin{proof}
 \textit{Finite witness.}
-Use the certified and raw ledgers from \cref{app:witness-library}. Both carry
-$s_X$, so the state-reading obligation for text $X$ is discharged for both
-observers. The certified observer also carries
-$\{\sigma_A,i_A,p_\alpha,f_F\}$ or an admitted receipt for those atoms, while
-the raw observer carries no authorship support. Therefore the observers agree
-for $P_{\mathrm{state}}$ and separate for $P_{\mathrm{auth}}$.
+Use the certified and raw ledgers from \cref{app:witness-library}. Let $S$ be
+an endpoint observer whose extracted ledger is $L_{\mathrm{cert}}$, and let
+$S'$ be an endpoint observer whose extracted ledger is $L_{\mathrm{raw}}$. Let
+$\mathcal F_{P_{\mathrm{state}}}$ contain the single text-state claim for
+$X$, and let $\mathcal F_{P_{\mathrm{auth}}}$ contain the single authorship
+claim for Alice's edit. Both ledgers carry $s_X$, so the state-reading
+obligation is discharged for both observers. The certified observer also
+carries $\{\sigma_A,i_A,p_\alpha,f_F\}$ or an admitted receipt for those atoms,
+while the raw observer carries no authorship support. Therefore
+$S\simeq_{P_{\mathrm{state}}}S'$ and
+$S\not\simeq_{P_{\mathrm{auth}}}S'$.
 \end{proof}
 
 \begin{proposition}[Path-Class Robustness and Fragility]
@@ -2603,6 +2633,22 @@ $\Acc_S$ & $\Mem_S\times\Packet\to\Mem_S$ & Updates native observer memory from 
 \label{tab:glossary-operational-maps}
 \end{OGInlineTable}
 
+\paragraph{Equivalence and robustness notation.}
+\begin{OGInlineTable}{\OGSchemaTableFont}
+\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X}
+\toprule
+\TableHeaderRow \textbf{Notation} & \textbf{Meaning} \\
+\midrule
+$\mathcal F_P$ & Finite comparison family of claim/context pairs evaluated under purpose $P$. \\
+$S\simeq_P S'$ & Purpose-indexed equivalence: observers agree on justified status for every pair in the comparison family. \\
+$S\not\simeq_P S'$ & Purpose-indexed separation: at least one claim/context pair in the comparison family has different justified status. \\
+$\Gamma$ & Finite path class with common source, target, and endpoint-visible projection. \\
+\bottomrule
+\end{tabularx}
+\caption{Purpose-indexed equivalence and path-class notation.}
+\label{tab:glossary-equivalence-robustness}
+\end{OGInlineTable}
+
 \paragraph{Path certificate syntax.}
 A certificate for a path $\gamma=T_n\circ\cdots\circ T_1$ has the form
 \[
@@ -2855,7 +2901,19 @@ family. For $P_{\mathrm{auth}}$, $L_{\mathrm{cert}}$ discharges the authorship
 obligation, while $L_{\mathrm{raw}}$ carries only $s_X$. The same observers are
 equivalent for state support and separated for authorship support.
 
-\paragraph{C.13 Support-Soundness Failure / Witness Debt (Theorem~\ref{thm:support-soundness-failure}).}
+\paragraph{C.13 Path-Class Robustness and Fragility (Proposition~\ref{prop:path-class-robustness}).}
+Use $L_{\mathrm{cert}}$, $L_{\mathrm{med}}$, and $L_{\mathrm{raw}}$ from A.1.
+Let $\Gamma_{\mathrm{cert}}$ contain paths whose terminal ledger is either
+$L_{\mathrm{cert}}$ or $L_{\mathrm{med}}$, and let
+$\Gamma_{\mathrm{mix}}=\Gamma_{\mathrm{cert}}\cup\{\gamma_{\mathrm{raw}}\}$.
+All three terminal ledgers carry $s_X$, so the text-state claim is robust over
+both path classes. For the authorship claim, $L_{\mathrm{cert}}$ discharges the
+raw authorship atoms and $L_{\mathrm{med}}$ discharges them through
+$r_{\mathrm{auth}}$, while $L_{\mathrm{raw}}$ carries only $s_X$. The
+authorship claim is therefore robust over $\Gamma_{\mathrm{cert}}$ and fragile
+over $\Gamma_{\mathrm{mix}}$.
+
+\paragraph{C.14 Support-Soundness Failure / Witness Debt (Theorem~\ref{thm:support-soundness-failure}).}
 Use A.8. The raw path carries $L_{\mathrm{raw}}$ and the authorship obligation
 requires $\{\sigma_A,i_A,p_\alpha,f_F\}$. Therefore
 \[
@@ -2876,7 +2934,7 @@ fails. The debt set is the unmet obligation treated as discharged:
 If the endpoint instead declares the loss and downgrades the status, the same
 missing atoms remain unmet support and do not become debt.
 
-\paragraph{C.14 Typed False Report Witness (Proposition~\ref{prop:typed-false-report}).}
+\paragraph{C.15 Typed False Report Witness (Proposition~\ref{prop:typed-false-report}).}
 Use A.9. The support for the endpoint state and the support for admission under
 policy are different typed coordinates. A report that says the update is
 present may be supported by $s_X$ or by an update-state atom. A report that says

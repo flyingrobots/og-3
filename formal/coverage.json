@@ -137,7 +137,7 @@
   {
     "id": "og3.purpose_indexed_equivalence",
     "paper_label": "prop:purpose-indexed-equivalence",
-    "paper_ref": "Proposition 9.1",
+    "paper_ref": "Proposition 9.2",
     "coq_object": "og3_purpose_equivalence",
     "kind": "finite_witness",
     "status": "mechanized",
@@ -146,7 +146,7 @@
   {
     "id": "og3.path_class_robustness",
     "paper_label": "prop:path-class-robustness",
-    "paper_ref": "Proposition 9.2",
+    "paper_ref": "Proposition 9.3",
     "coq_object": "og3_path_class_robustness",
     "kind": "finite_witness",
     "status": "mechanized",
