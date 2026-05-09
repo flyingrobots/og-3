@@ -36,5 +36,5 @@
       "relation": "isSupplementTo"
     }
   ],
-  "notes": "This repository archive is intended as the reproducibility artifact for the OG-III working paper. The accompanying Coq/Rocq model is a finite reference model for manuscript witness calculations, not a full implementation of the cryptographic or distributed-systems mechanisms discussed in the paper."
+  "notes": "This repository archive is intended as the reproducibility artifact for Observer Geometry III. The accompanying Coq/Rocq model is a finite reference model for manuscript witness calculations, not a full implementation of the cryptographic or distributed-systems mechanisms discussed in the paper."
 }

@@ -110,7 +110,8 @@ make clean
 
 ## Citation
 
-Use the DOI for this draft unless a later published version supersedes it:
+Use the DOI for this release-candidate version unless a later published version
+supersedes it:
 
 ```text
 Ross, James. Observer Geometry III: Path Geometry and Support Obligations.

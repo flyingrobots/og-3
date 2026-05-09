@@ -1,5 +1,5 @@
 cff-version: 1.2.0
-message: "If you use this draft, cite it by DOI; cite any later published version if one supersedes it."
+message: "If you use this version, cite it by DOI; cite any later published version if one supersedes it."
 title: "Observer Geometry III: Path Geometry and Support Obligations"
 doi: "10.5281/zenodo.20046284"
 abstract: "Observer Geometry III develops a support-obligation calculus for path-sensitive witness transport. It studies cases where observers agree on endpoint state while disagreeing on which claims that state can justify, because support atoms, certificates, authority facts, freshness facts, redactions, blocks, losses, and typed refutations differ across the observer path."
