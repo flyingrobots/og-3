@@ -1087,6 +1087,7 @@ but
 \end{theorem}
 
 \begin{proof}
+\textit{Finite witness.}
 Use the finite ledgers
 \[
   L_{\mathrm{cert}}=(\{s_X,\sigma_A,i_A,p_\alpha,f_F\},\varnothing,\varnothing,\varnothing)
@@ -1103,9 +1104,10 @@ $X$. For the authorship claim, write
   =
   \Obl_{P_{\mathrm{auth}}}(\phi_{\mathrm{auth}},\ctx)
   =
-  (\{\sigma_A,i_A,p_\alpha,f_F\},\{\{\sigma_A,i_A,p_\alpha,f_F\}\}).
+  (\{\sigma_A,i_A,p_\alpha,f_F\},
+   \{\{\sigma_A,i_A,p_\alpha,f_F\},\{r_{\mathrm{auth}}\}\}).
 \]
-The certified ledger discharges the unique obligation alternative, so
+The certified ledger discharges the raw-atom obligation alternative, so
 $\Sat_{S_1}^{P_{\mathrm{auth}},\ctx}(L_{\mathrm{cert}},O_{\mathrm{auth}})=\mathrm{yes}$.
 The raw ledger carries none of the required atoms and no refutation, so
 $\Sat_{S_1}^{P_{\mathrm{auth}},\ctx}(L_{\mathrm{raw}},O_{\mathrm{auth}})=\mathrm{no}$ and
@@ -1123,6 +1125,20 @@ the same source material into an endpoint-admissible receipt:
   \Val_{S_0\to M\to S_1}^{P,\ctx}(\phi)=\supported.
 \]
 \end{proposition}
+
+\begin{proof}
+\textit{Finite witness.}
+Use the mediated witness from \cref{app:witness-library} (A.4) with
+$\phi=\phi_{\mathrm{auth}}$ and $P=P_{\mathrm{auth}}$. The direct path carries
+$L_{\mathrm{raw}}=(\{s_X\},\varnothing,\varnothing,\varnothing)$ for
+$\phi_{\mathrm{auth}}$, so it discharges neither the raw authorship alternative
+nor the receipt alternative in $O_{\mathrm{auth}}$. The mediated path carries
+$L_{\mathrm{med}}=(\{s_X,r_{\mathrm{auth}}\},\varnothing,\varnothing,\varnothing)$.
+Because $S_1$ admits the compression registry rule for $r_{\mathrm{auth}}$,
+$\Disch_{S_1}^{P_{\mathrm{auth}},\ctx}(L_{\mathrm{med}})$ contains
+$\{\sigma_A,i_A,p_\alpha,f_F\}$. The same source material is therefore
+underdetermined on the direct path and supported on the mediated path.
+\end{proof}
 
 \begin{definition}[Fixed endpoint accumulation comparison]
 Two paths $\gamma_a,\gamma_b:S_0\to S_1$ are compared under fixed endpoint
