@@ -1538,6 +1538,18 @@ $\phi_{\mathrm{nr}}$ is supported only for $S_{\log}$ and remains
 $\underdetermined$ for $S_{\mathrm{state}}$.
 \end{proposition}
 
+\begin{proof}
+\textit{Finite witness.}
+Use the absence witness in \cref{app:witness-library}. Both observers carry
+the state atom $s_X$, so the state-reading obligation is discharged for each.
+The non-revocation obligation for $\phi_{\mathrm{nr}}$ requires the frontier
+atom $f_F$ and the nonmembership witness $n_{k,F}$. The log observer carries
+both atoms, so the absence claim is supported. The state observer carries
+neither absence-support atom, so the same absence claim remains
+$\underdetermined$. Positive state support therefore does not determine
+negative-witness support.
+\end{proof}
+
 \section{Support Soundness, Witness Debt, and Overreport}
 \label{sec:soundness}
 
