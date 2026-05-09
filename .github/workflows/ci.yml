@@ -65,13 +65,17 @@ jobs:
             texlive-latex-base \
             texlive-latex-extra \
             texlive-latex-recommended \
-            texlive-pictures
+            texlive-pictures \
+            zip
 
       - name: Validate metadata
         run: jq . .zenodo.json >/dev/null
 
       - name: Build PDF and text exports
         run: make -B pdf txt
+
+      - name: Build reproducible source bundle
+        run: make release-bundle
 
       - name: Check generated coverage table
         run: git diff --exit-code -- formal/generated/coverage_table.tex
@@ -93,4 +97,5 @@ jobs:
           path: |
             dist/observer_geometry_3.pdf
             dist/observer_geometry_3.txt
+            dist/observer_geometry_3-source.zip
           if-no-files-found: error

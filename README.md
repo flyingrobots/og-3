@@ -36,6 +36,7 @@ the OG-III manuscript and its companion finite witness model.
 - `formal/coq/OG3.v` - compact Coq/Rocq finite reference model
 - `formal/coverage.json` - paper-to-Coq finite witness coverage map
 - `formal/generated/coverage_table.tex` - generated manuscript coverage table
+- `dist/observer_geometry_3-source.zip` - optional release source bundle
 - `.zenodo.json` - Zenodo deposition metadata
 - `CITATION.cff` - citation metadata
 
@@ -86,8 +87,20 @@ make formal-sync
 ```
 
 GitHub Actions runs `make verify`, validates `.zenodo.json`, renders the PDF
-and text exports, checks the generated coverage table, scans LaTeX/Biber logs,
-and uploads the rendered reading copies as workflow artifacts.
+and text exports, builds the reproducible source bundle, checks the generated
+coverage table, scans LaTeX/Biber logs, and uploads the rendered reading copies
+plus source bundle as workflow artifacts.
+
+Build the release source bundle after committing the intended release tree:
+
+```bash
+make release-bundle
+```
+
+The bundle is written to `dist/observer_geometry_3-source.zip` and is assembled
+from the tracked repository tree plus the generated PDF and text reading copies.
+It includes `formal/generated/coverage_table.tex`, so the TeX source rebuilds
+without regenerating the coverage table first.
 
 Remove generated build outputs:
 

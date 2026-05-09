@@ -10,8 +10,13 @@
 \usepackage{setspace}
 \definecolor{headergray}{gray}{0.50}
 \definecolor{footgray}{gray}{0.50}
-\definecolor{tableheaderbg}{gray}{0.82}
+\definecolor{tableheaderbg}{gray}{0.84}
 \definecolor{tablerowbg}{gray}{0.94}
+\definecolor{oglinegray}{gray}{0.20}
+\definecolor{ogbluefill}{RGB}{240,246,255}
+\definecolor{oggreenfill}{RGB}{241,249,242}
+\definecolor{ogamberfill}{RGB}{255,248,232}
+\definecolor{ogredfill}{RGB}{253,241,240}
 \usepackage{amsmath,amssymb,amsthm,mathtools}
 \usepackage{enumitem}
 \usepackage{booktabs}
@@ -60,9 +65,9 @@
 \captionsetup[table]{font={small},labelfont=bf}
 \newcommand{\OGTableFont}{\small}
 \newcommand{\OGSchemaTableFont}{\footnotesize}
-\newcommand{\OGStartLongTable}{\begingroup\OGSchemaTableFont}
+\newcommand{\OGStartLongTable}{\begingroup\OGSchemaTableFont\renewcommand{\arraystretch}{1.08}}
 \newcommand{\OGEndLongTable}{\endgroup}
-\newcommand{\OGTableHeaderRow}{\rowcolor{tableheaderbg}\bfseries}
+\newcommand{\OGTableHeaderRow}{\rowcolor{tableheaderbg}}
 \newcommand{\TableHeaderRow}{\OGTableHeaderRow}
 \newcommand{\OGAltRow}{\rowcolor{tablerowbg}}
 \newcommand{\OGLongTableFooter}[1]{%
@@ -76,6 +81,7 @@
   \begin{table}[#1]
   \centering
   #2
+  \renewcommand{\arraystretch}{1.08}%
   \rowcolors{2}{tablerowbg}{white}%
 }{%
   \rowcolors{2}{}{}%
@@ -85,6 +91,7 @@
   \par\smallskip
   \begin{center}
   #1
+  \renewcommand{\arraystretch}{1.08}%
   \captionsetup{type=table,hypcap=false}%
   \rowcolors{2}{tablerowbg}{white}%
 }{%
@@ -182,12 +189,17 @@
 \newcommand{\paperabstract}{Two observer paths can deliver the same endpoint-visible state while carrying different support for provenance, authority, freshness, absence, or admission claims. OG-III formalizes that separation with a finite support-obligation calculus. Claims, purposes, and contexts determine required support atoms; paths deliver ledgers of carried, declared-lost, blocked, and refuting support; local discharge and admission rules determine the justified status that an endpoint may report. The running example is a signed-edit audit: the final document text is identical, but only one path carries the signature, identity, policy, and freshness support needed for the authorship claim. Finite witnesses prove witness sensitivity, path-dependent support transport, nonzero loop defect, cryptographic verification/admission separation, freshness and authority separation, and support-soundness failure. Cryptographic objects enter as witness surfaces rather than as new protocol claims. A compact Coq/Rocq model checks the finite ledger calculations.}
 
 \tikzset{
-  ogbox/.style={draw=black, line width=0.9pt, fill=white, align=center, inner sep=6pt},
-  ogaltbox/.style={draw=black, line width=0.9pt, fill=white, align=center, inner sep=6pt},
-  ogwarnbox/.style={draw=black, line width=0.9pt, fill=white, align=center, inner sep=6pt},
-  ogstatus/.style={draw=black, line width=0.75pt, fill=tablerowbg, align=center, inner sep=5pt},
-  ogline/.style={-{Latex[length=2.7mm,width=2mm]}, line width=0.9pt},
-  ogthin/.style={-{Latex[length=2mm,width=1.5mm]}, line width=0.7pt}
+  ogbox/.style={draw=oglinegray, line width=0.75pt, rounded corners=1.2pt, fill=white, align=center, inner sep=5.5pt},
+  ogclaim/.style={ogbox, fill=ogbluefill},
+  ogsupport/.style={ogbox, fill=oggreenfill},
+  ogwarnbox/.style={ogbox, fill=ogamberfill},
+  ogdebtbox/.style={ogbox, fill=ogredfill},
+  ogaltbox/.style={ogbox, fill=white},
+  ogstatus/.style={draw=oglinegray, line width=0.7pt, rounded corners=1.2pt, fill=tablerowbg, align=center, inner sep=5pt},
+  ogline/.style={-{Latex[length=2.55mm,width=1.8mm]}, line width=0.75pt, draw=oglinegray, shorten >=1pt, shorten <=1pt},
+  ogthin/.style={-{Latex[length=2.1mm,width=1.45mm]}, line width=0.62pt, draw=oglinegray, shorten >=1pt, shorten <=1pt},
+  ogdash/.style={ogthin, dashed},
+  oglabel/.style={fill=white, inner sep=1.3pt, font=\scriptsize}
 }
 
 \title{Observer Geometry III\\\large Path Geometry and Support Obligations}
@@ -378,11 +390,11 @@ to ask which claims a transported object can still support.
 \caption{Minimal imported glossary. Full glossary and notation concordance appear in \cref{app:glossary}.}
 \label{tab:imported-glossary}\\
 \toprule
-\TableHeaderRow Term & Source & Imported meaning & OG-III use \\
+\TableHeaderRow \textbf{Term} & \textbf{Source} & \textbf{Imported meaning} & \textbf{OG-III use} \\
 \midrule
 \endfirsthead
 \toprule
-\TableHeaderRow Term & Source & Imported meaning & OG-III use \\
+\TableHeaderRow \textbf{Term} & \textbf{Source} & \textbf{Imported meaning} & \textbf{OG-III use} \\
 \midrule
 \endhead
 \OGLongTableFooter{4}
@@ -490,7 +502,7 @@ They are not separate theories.
 \begin{OGInlineTable}{\OGTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.30\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Object & One-line role \\
+\TableHeaderRow \textbf{Object} & \textbf{One-line role} \\
 \midrule
 $\Obl_P(\phi,\ctx)$ & Finite support obligation imposed by a claim, purpose, and context. \\
 $L=(C,D,B,R)$ & Support ledger: carried, declared-lost, blocked, and refuting atoms. \\
@@ -629,7 +641,7 @@ equal, incomparable, or stronger under the local preorder $\leq_P$.
 \begin{OGTable}{\OGTableFont}
 \begin{tabular}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}p{0.45\textwidth}}
 \toprule
-\TableHeaderRow Claim & Purpose & Typical required support \\
+\TableHeaderRow \textbf{Claim} & \textbf{Purpose} & \textbf{Typical required support} \\
 \midrule
 \enquote{document contains text $X$} & reading & endpoint projection and relevant state root \\
 \enquote{Alice authorised edit $e$} & authorship audit & signature, identity binding, policy epoch, and path certificate \\
@@ -787,23 +799,23 @@ for the evaluated path-support component.
 
 \begin{figure}[ht]
 \centering
-\begin{tikzpicture}[x=1cm,y=1cm]
-  \node[ogbox] (claim) at (0,0) {claim $\phi$\\purpose $P$\\context $\ctx$};
-  \node[ogbox] (obl) at (0,-1.45) {$\Obl_P(\phi,\ctx)$};
-  \node[ogbox] (carry) at (0,-2.9) {$\Carry_\gamma(\phi,\ctx)$};
-  \node[ogbox] (unmet) at (-2.75,-4.25) {$\Unmet_\gamma$};
-  \node[ogbox] (loss) at (2.75,-4.25) {$\DeclaredLoss_\gamma$};
-  \node[ogstatus] (status) at (0,-5.65) {justified\\status};
-  \node[ogstatus, text width=2.6cm] (report) at (2.75,-7.15) {emitted\\$\Report_S^P$};
-  \node[ogstatus, text width=2.9cm] (debt) at (-2.75,-7.15) {$\Debt_\gamma^P$\\from unmet\\and report};
+\begin{tikzpicture}[font=\small, node distance=0.78cm and 1.15cm]
+  \node[ogclaim, text width=3.05cm] (claim) {claim $\phi$\\purpose $P$\\context $\ctx$};
+  \node[ogsupport, below=of claim, text width=3.05cm] (obl) {$\Obl_P(\phi,\ctx)$};
+  \node[ogsupport, below=of obl, text width=3.05cm] (carry) {$\Carry_\gamma(\phi,\ctx)$};
+  \node[ogwarnbox, below left=0.85cm and 0.72cm of carry, text width=2.35cm] (unmet) {$\Unmet_\gamma$};
+  \node[ogwarnbox, below right=0.85cm and 0.72cm of carry, text width=2.35cm] (loss) {$\DeclaredLoss_\gamma$};
+  \node[ogstatus, below=1.05cm of carry, text width=2.7cm] (status) {justified\\status};
+  \node[ogstatus, below right=0.95cm and 0.83cm of status, text width=2.55cm] (report) {emitted\\$\Report_S^P$};
+  \node[ogdebtbox, below left=0.95cm and 0.83cm of status, text width=2.75cm] (debt) {$\Debt_\gamma^P$\\from unmet\\and report};
   \draw[ogline] (claim) -- (obl);
   \draw[ogline] (obl) -- (carry);
-  \draw[ogthin] (carry) -- (unmet);
-  \draw[ogthin] (carry) -- (loss);
-  \draw[ogline] (unmet) -- (status);
-  \draw[ogline] (loss) -- (status);
+  \draw[ogthin] (carry.south west) -- (unmet.north);
+  \draw[ogthin] (carry.south east) -- (loss.north);
+  \draw[ogline] (unmet.south east) -- (status.west);
+  \draw[ogline] (loss.south west) -- (status.east);
   \draw[ogthin] (status) -- (report);
-  \draw[ogline] (unmet) -- (debt);
+  \draw[ogline] (unmet.south) -- (debt.north);
   \draw[ogline] (report.west) -- (debt.east);
 \end{tikzpicture}
 \caption{Support accounting pipeline. Justified status is produced by obligation accounting, while witness debt also depends on the emitted report.}
@@ -818,13 +830,13 @@ material, not read directly from visible endpoint state.
 
 \begin{figure}[ht]
 \centering
-\begin{tikzpicture}[node distance=2.1cm]
-  \node[ogbox] (m) {$M_{S_1}^{\gamma}$\\endpoint accumulation};
-  \node[ogbox, below=of m] (cert) {$\PathCert(\gamma,\phi,P,\ctx)$};
-  \node[ogbox, right=2.4cm of $(m)!0.5!(cert)$] (extract) {$\Extract_{S_1}^{P,\ctx}$};
-  \node[ogstatus, right=of extract] (carry) {$\Carry_\gamma(\phi,\ctx)$};
-  \draw[ogline] (m) -- (extract);
-  \draw[ogline] (cert) -- (extract);
+\begin{tikzpicture}[font=\small, node distance=1.05cm and 1.55cm]
+  \node[ogclaim, text width=3.55cm] (m) {$M_{S_1}^{\gamma}$\\endpoint accumulation};
+  \node[ogclaim, below=of m, text width=3.55cm] (cert) {$\PathCert(\gamma,\phi,P,\ctx)$};
+  \node[ogsupport, right=1.75cm of $(m)!0.5!(cert)$, text width=2.55cm] (extract) {$\Extract_{S_1}^{P,\ctx}$};
+  \node[ogstatus, right=1.55cm of extract, text width=3.2cm] (carry) {$\Carry_\gamma(\phi,\ctx)$};
+  \draw[ogline] (m.east) -- (extract.north west);
+  \draw[ogline] (cert.east) -- (extract.south west);
   \draw[ogline] (extract) -- (carry);
 \end{tikzpicture}
 \caption{$M_S$ to $\Carry_\gamma$ extraction. $\Carry_\gamma$ is not $M_S$; it is extracted from endpoint accumulation plus checkable path declarations. Absent certificates add no path support; rejected certificates add a typed validation-failure refutation.}
@@ -912,6 +924,17 @@ Then $\Disch_S^{P,\ctx}(L)$ is the least fixed point of $F_L$, reached by
 finite iteration from $C$ because $\Atoms$ is finite. Compression receipts,
 recursive proof accumulators, authority registries, and verifier facts enter
 only through $\mathcal R_S^{P,\ctx}$ after their own typed checkers accept.
+
+Receipt discharge has two synchronized views. An obligation may list a receipt
+atom as a discharge alternative, so a valid receipt can satisfy the obligation
+interface directly. The same receipt must also be registered in
+$\mathcal R_S^{P,\ctx}$ as a discharge-closure rule for the atoms or
+alternative it compresses. Satisfaction can therefore see the compact receipt,
+while unmet-support and debt calculations use the expanded
+$\Disch_S^{P,\ctx}(L)$. A receipt that appears in $C$ without the matching
+admitted registry rule is carried testimony about a receipt, not discharge of
+the compressed support.
+
 Structural support satisfaction has type
 \[
   \Sat_S^{P,\ctx}:\Ledg\times\Obligation
@@ -1015,25 +1038,25 @@ endpoint-equal paths can justify different statuses for the same claim.
 
 \begin{figure}[ht]
 \centering
-\begin{tikzpicture}[font=\small]
-  \node[ogbox, text width=0.24\textwidth] (src) at (0,0)
+\begin{tikzpicture}[font=\small, node distance=1.05cm and 1.2cm]
+  \node[ogclaim, text width=0.27\textwidth] (src) at (0,0)
     {source edit\\text $X$\\Alice signature available};
-  \node[ogbox, text width=0.30\textwidth] (cert) at (-4.0,-2.25)
+  \node[ogsupport, text width=0.31\textwidth] (cert) at (-4.05,-2.15)
     {certified path $\gamma_{\mathrm{cert}}$\\
      $L_{\mathrm{cert}}=(\{s_X,\sigma_A,i_A,p_\alpha,f_F\},\varnothing,\varnothing,\varnothing)$};
-  \node[ogbox, text width=0.28\textwidth] (raw) at (4.0,-2.25)
+  \node[ogwarnbox, text width=0.29\textwidth] (raw) at (4.05,-2.15)
     {raw-copy path $\gamma_{\mathrm{raw}}$\\
      $L_{\mathrm{raw}}=(\{s_X\},\varnothing,\varnothing,\varnothing)$};
-  \node[ogstatus, text width=0.25\textwidth] (endpoint) at (0,-4.35)
+  \node[ogstatus, text width=0.27\textwidth] (endpoint) at (0,-4.05)
     {same endpoint projection\\$\pi_{S_1}=X$};
-  \node[ogstatus, text width=0.25\textwidth] (certstatus) at (-4.0,-6.15)
+  \node[ogstatus, text width=0.24\textwidth] (certstatus) at (-4.05,-5.95)
     {$\phi_{\mathrm{auth}}$\\$\Just=\supported$};
-  \node[ogstatus, text width=0.25\textwidth] (rawstatus) at (4.0,-6.15)
+  \node[ogstatus, text width=0.24\textwidth] (rawstatus) at (4.05,-5.95)
     {$\phi_{\mathrm{auth}}$\\$\Just=\underdetermined$};
-  \draw[ogline] (src) -- (cert);
-  \draw[ogline] (src) -- (raw);
-  \draw[ogline] (cert) -- (endpoint);
-  \draw[ogline] (raw) -- (endpoint);
+  \draw[ogline] (src.south west) -- (cert.north);
+  \draw[ogline] (src.south east) -- (raw.north);
+  \draw[ogline] (cert.south east) -- (endpoint.west);
+  \draw[ogline] (raw.south west) -- (endpoint.east);
   \draw[ogthin] (cert) -- (certstatus);
   \draw[ogthin] (raw) -- (rawstatus);
 \end{tikzpicture}
@@ -1177,20 +1200,20 @@ claim-purpose-context obligation after the path has been traversed.
 
 \begin{figure}[ht]
 \centering
-\begin{tikzpicture}[x=1cm,y=1cm]
-  \node[ogbox] (crypt) at (0,0) {$\CryptSupp$};
-  \node[ogbox] (verify) at (0,-1.45) {$\Verify(\CryptSupp,\ctx)=\mathrm{accept}$};
-  \node[ogbox, text width=4.2cm] (admitA) at (-2.7,-3.15)
+\begin{tikzpicture}[font=\small, node distance=0.9cm and 1.0cm]
+  \node[ogclaim, text width=2.2cm] (crypt) {$\CryptSupp$};
+  \node[ogsupport, below=of crypt, text width=5.2cm] (verify) {$\Verify(\CryptSupp,\ctx)=\mathrm{accept}$};
+  \node[ogsupport, below left=1.0cm and 0.45cm of verify, text width=4.1cm] (admitA)
     {$\Admit_{S_{\mathrm{ver}}}(\CryptSupp)$\\$P_{\mathrm{verify}}$\\minimal obligation};
-  \node[ogbox, text width=4.2cm] (admitB) at (2.7,-3.15)
+  \node[ogwarnbox, below right=1.0cm and 0.45cm of verify, text width=4.1cm] (admitB)
     {$\Admit_{S_{\mathrm{audit}}}(\CryptSupp)$\\$P_{\mathrm{audit}}$\\policy/freshness obligation};
-  \node[ogstatus, text width=3.25cm] (resultA) at (-2.7,-5.15)
+  \node[ogstatus, below=of admitA, text width=3.2cm] (resultA)
     {result\\$\mathrm{accept}$};
-  \node[ogstatus, text width=3.25cm] (resultB) at (2.7,-5.15)
+  \node[ogstatus, below=of admitB, text width=3.2cm] (resultB)
     {result\\$\underdetermined$\\or $\mathrm{reject}$};
   \draw[ogline] (crypt) -- (verify);
-  \draw[ogline] (verify) -- (admitA);
-  \draw[ogline] (verify) -- (admitB);
+  \draw[ogline] (verify.south west) -- (admitA.north);
+  \draw[ogline] (verify.south east) -- (admitB.north);
   \draw[ogline] (admitA) -- (resultA);
   \draw[ogline] (admitB) -- (resultB);
 \end{tikzpicture}
@@ -1383,18 +1406,19 @@ authorship witness coordinate has a finite defect.
 
 \begin{figure}[ht]
 \centering
-\begin{tikzpicture}[node distance=2.05cm and 2.65cm]
-  \node[ogbox] (s) {$S$};
-  \node[ogbox, right=of s] (a) {$A$};
-  \node[ogbox, below=of a] (b) {$B$};
-  \node[ogbox, below=of s] (c) {$C$};
-  \node[ogstatus, below=1.25cm of $(b)!0.5!(c)$, text width=4.2cm] (defect)
+\begin{tikzpicture}[font=\small, node distance=2.05cm and 2.8cm]
+  \node[ogclaim, minimum width=0.72cm, minimum height=0.62cm] (s) {$S$};
+  \node[ogclaim, minimum width=0.72cm, minimum height=0.62cm, right=of s] (a) {$A$};
+  \node[ogclaim, minimum width=0.72cm, minimum height=0.62cm, below=of a] (b) {$B$};
+  \node[ogclaim, minimum width=0.72cm, minimum height=0.62cm, below=of s] (c) {$C$};
+  \coordinate (bottommid) at ($(b)!0.5!(c)$);
+  \node[ogstatus, below=1.18cm of bottommid, text width=4.4cm] (defect)
     {loop audit output\\$\Def_{\mathrm{state}}=0$\\$\Def_{\mathrm{witness}}=1$};
-  \draw[ogline] (s) -- node[above, fill=white, inner sep=1.5pt] {$T_1$ package} (a);
-  \draw[ogline] (a) -- node[right, align=center, fill=white, inner sep=1.5pt] {$T_2$\\verify\\redact} (b);
-  \draw[ogline] (b) -- node[below, fill=white, inner sep=1.5pt] {$T_3$ normalize} (c);
-  \draw[ogline] (c) -- node[left, fill=white, inner sep=1.5pt] {$T_4$ import} (s);
-  \draw[ogthin] ($(b)!0.5!(c)$) -- (defect);
+  \draw[ogline] (s) -- node[oglabel, above] {$T_1$ package} (a);
+  \draw[ogline] (a) -- node[oglabel, right, align=center] {$T_2$\\verify\\redact} (b);
+  \draw[ogline] (b) -- node[oglabel, above] {$T_3$ normalize} (c);
+  \draw[ogline] (c) -- node[oglabel, left] {$T_4$ import} (s);
+  \draw[ogdash] (bottommid) -- (defect);
 \end{tikzpicture}
 \caption{Witness holonomy loop. $T_2$ verifies the signature and records redaction of the signature, identity, policy, and freshness atoms. The state loop closes while the witness loop does not: $\Def_{\mathrm{state}}(\gamma,\phi)=0$ and $\Def_{\mathrm{witness}}(\gamma,\phi)=1$.}
 \label{fig:witness-holonomy}
@@ -1531,16 +1555,16 @@ as discharged. The accounting check is given in \cref{app:proofs}.
 
 \begin{figure}[ht]
 \centering
-\begin{tikzpicture}[node distance=1.9cm]
-  \node[ogbox] (obl) {$\Obl_P(\phi,\ctx)$};
-  \node[ogstatus, below left=1.25cm and 0.4cm of obl] (sat) {satisfied by\\$\Carry_\gamma$};
-  \node[ogbox, below right=1.25cm and 0.4cm of obl] (unmet) {unmet};
-  \node[ogstatus, below left=1.25cm and 0.1cm of unmet] (decl) {declared loss\\downgrade};
-  \node[ogstatus, below right=1.25cm and 0.1cm of unmet] (debt) {treated as\\satisfied\\witness debt};
-  \draw[ogline] (obl) -- (sat);
-  \draw[ogline] (obl) -- (unmet);
-  \draw[ogline] (unmet) -- (decl);
-  \draw[ogline] (unmet) -- (debt);
+\begin{tikzpicture}[font=\small, node distance=1.05cm and 1.05cm]
+  \node[ogclaim, text width=3.1cm] (obl) {$\Obl_P(\phi,\ctx)$};
+  \node[ogstatus, below left=1.05cm and 0.55cm of obl, text width=2.6cm] (sat) {satisfied by\\$\Carry_\gamma$};
+  \node[ogwarnbox, below right=1.05cm and 0.55cm of obl, text width=2.1cm] (unmet) {unmet};
+  \node[ogstatus, below left=1.05cm and 0.15cm of unmet, text width=2.35cm] (decl) {declared loss\\downgrade};
+  \node[ogdebtbox, below right=1.05cm and 0.15cm of unmet, text width=2.35cm] (debt) {treated as\\satisfied\\witness debt};
+  \draw[ogline] (obl.south west) -- (sat.north);
+  \draw[ogline] (obl.south east) -- (unmet.north);
+  \draw[ogline] (unmet.south west) -- (decl.north);
+  \draw[ogline] (unmet.south east) -- (debt.north);
 \end{tikzpicture}
 \caption{Unmet / DeclaredLoss / Debt. Unmet support becomes witness debt only when the report treats it as discharged.}
 \label{fig:witness-debt}
@@ -1702,7 +1726,7 @@ reported here.
 \begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.27\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.29\textwidth}@{}}
 \toprule
-\TableHeaderRow Hypothesis & Controlled design & Measurements \\
+\TableHeaderRow \textbf{Hypothesis} & \textbf{Controlled design} & \textbf{Measurements} \\
 \midrule
 Ledger growth is approximately linear without compression & Vary path length while holding the operation type fixed within each run: all direct transports, all redactions, all stale-frontier refreshes. Analyze balanced mixed-operation runs separately so operation type does not confound path length. & Bytes per support atom, bytes per ledger component, total PathCert size, and size slope by operation class. \\
 \OGAltRow
@@ -1742,13 +1766,13 @@ they carry a checkable old-to-new mapping or explicit loss declaration.
 \begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.12\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.13\textwidth}>{\raggedright\arraybackslash}p{0.15\textwidth}@{}}
 \toprule
-\TableHeaderRow Git path & Code state & Provenance support & Declaration & OG-III status \\
+\TableHeaderRow \textbf{Git path} & \textbf{Code state} & \textbf{Provenance support} & \textbf{Declaration} & \textbf{OG-III status} \\
 \midrule
 Rebase with old-to-new map & same & preserved through rewrite certificate & yes & supported \\
 Squash without trailer & same & review, signature, or frontier support collapsed & no & debt \\
 Cherry-pick with source trailer & same & compressed to source reference & yes & compressed \\
 Manual copy & same & source path and origin support lost & no & undet./debt \\
-Invalid source trailer & same & claimed source contradicted or unverifiable & attempted & cert. failure \\
+Invalid source trailer & same & claimed source contradicted or unverifiable & attempted & certificate failure \\
 \bottomrule
 \end{tabularx}
 \caption{Version-control holonomy as an engineering instance. The endpoint code can agree while line-level support diverges.}
@@ -1761,7 +1785,7 @@ The engineering slogan is: same code, different support.
 \begin{OGTable}{\OGTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.33\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Artifact & OG-III role & Failure detected \\
+\TableHeaderRow \textbf{Artifact} & \textbf{OG-III role} & \textbf{Failure detected} \\
 \midrule
 Obligation registry & Declares $\Obl_P(\phi,\ctx)$ & Wrong or missing requirement \\
 PathCert & Records support transformations & Unsupported path claim \\
@@ -1798,11 +1822,11 @@ distributed-systems implementation.
 \caption{Data and code availability summary. Exact per-version archive DOIs are assigned by Zenodo when GitHub releases are archived; the concept DOI and release page are stable locators for the archive family.}
 \label{tab:data-code-availability}\\
 \toprule
-\TableHeaderRow Item & Location or command & Status \\
+\TableHeaderRow \textbf{Item} & \textbf{Location or command} & \textbf{Status} \\
 \midrule
 \endfirsthead
 \toprule
-\TableHeaderRow Item & Location or command & Status \\
+\TableHeaderRow \textbf{Item} & \textbf{Location or command} & \textbf{Status} \\
 \midrule
 \endhead
 \OGLongTableFooter{3}
@@ -2449,7 +2473,7 @@ This appendix fixes the notation used by the calculus.
 \begin{OGInlineTable}{\OGTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Symbol & Meaning \\
+\TableHeaderRow \textbf{Symbol} & \textbf{Meaning} \\
 \midrule
 $\Phi$ & Finite set of claims. \\
 $\mathcal P$ & Finite set of purposes or claim families. \\
@@ -2474,7 +2498,7 @@ local receipt, proof, signature, frontier, and policy rules.
 \begin{OGInlineTable}{\OGTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.16\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Component & Name & Role \\
+\TableHeaderRow \textbf{Component} & \textbf{Name} & \textbf{Role} \\
 \midrule
 $C$ & Carried support & Raw carried or presented support atoms. \\
 $D$ & Declared loss & Declared loss, redaction, staleness, or unavailability atoms. \\
@@ -2492,7 +2516,7 @@ The main operations have the following types:
 \begin{OGInlineTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}p{0.43\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Operation & Type & Role \\
+\TableHeaderRow \textbf{Operation} & \textbf{Type} & \textbf{Role} \\
 \midrule
 $\Obl$ & $\Phi\times\mathcal P\times\mathrm{Ctx}\to\Obligation$ & Looks up the support obligation for a claim, purpose, and context. \\
 $\Native_S^{P,\ctx}$ & $\Phi\times\Mem_S\to\Ledg$ & Extracts the endpoint observer's native accumulated support view. \\
@@ -2519,7 +2543,7 @@ A certificate for a path $\gamma=T_n\circ\cdots\circ T_1$ has the form
 \begin{OGInlineTable}{\OGTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.18\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Field & Role \\
+\TableHeaderRow \textbf{Field} & \textbf{Role} \\
 \midrule
 $\gamma$ & Certified path $T_n\circ\cdots\circ T_1$. \\
 $\phi,P,\ctx$ & Claim, purpose, and context bound by the certificate header. \\
@@ -2541,7 +2565,7 @@ ledger from $\chi$ and records a typed certificate-failure refutation instead.
 \begin{OGInlineTable}{\OGTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Source & Imported interface terms \\
+\TableHeaderRow \textbf{Source} & \textbf{Imported interface terms} \\
 \midrule
 OG-I & Projection, basis, accumulation, aperture, degeneracy, insufficiency, bias gap, and observer signature. \\
 OG-II & Replica observer, witnessed update, frontier, policy-closed site, suffix transport, and state convergence. \\
@@ -2558,7 +2582,7 @@ $\leq_P$.
 \begin{OGInlineTable}{\OGTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Tag class & Tags \\
+\TableHeaderRow \textbf{Tag class} & \textbf{Tags} \\
 \midrule
 Base status tags & $\supported$, $\underdetermined$, $\unverifiable$, $\authorityblocked$, and $\refuted$. \\
 Status modifiers & $\stale$, fresh-at-frontier, redacted, compressed, proof-valid, context-mismatch, certificate-validation failure, and declared loss. \\
@@ -2818,25 +2842,24 @@ The canonical profile used here is named $\mathrm{OG3\text{-}profile\text{-}1}$.
 \begin{figure}[ht]
 \centering
 \begin{tikzpicture}[
-  schema/.style={ogbox, text width=2.85cm, minimum height=1.0cm, font=\small},
-  schemaout/.style={ogstatus, text width=2.85cm, minimum height=1.0cm, font=\small},
-  relabel/.style={fill=white, inner sep=1.2pt, font=\scriptsize},
-  rel/.style={-{Latex[length=2.3mm,width=1.6mm]}, line width=0.65pt}
+  font=\small,
+  schema/.style={ogclaim, text width=2.75cm, minimum height=1.0cm},
+  schemaout/.style={ogstatus, text width=2.75cm, minimum height=1.0cm},
+  rel/.style={-{Latex[length=2.3mm,width=1.6mm]}, line width=0.65pt, draw=oglinegray, shorten >=1pt, shorten <=1pt}
 ]
   \node[schema] (passport) at (0,0) {ClaimPassport\\claim\\purpose\\context};
-  \node[schema] (registry) at (-4.85,2.0) {Obligation\\Registry\\$\Obl_P(\phi,\ctx)$ entry};
-  \node[schema] (pathcert) at (4.85,2.0) {PathCert\\path and ledger chain};
-  \node[schemaout] (ledger) at (4.85,-1.95) {SupportLedger\\$C,D,B,R$ atoms};
-  \node[schemaout] (report) at (0,-4.15) {StatusReport\\Just\\Report\\Debt};
-  \node[schema] (checker) at (-4.85,-1.95) {AtomChecker\\kind dispatch};
+  \node[schema, left=3.45cm of passport] (registry) {Obligation\\Registry\\$\Obl_P(\phi,\ctx)$ entry};
+  \node[schema, right=3.45cm of passport] (pathcert) {PathCert\\path and ledger chain};
+  \node[schemaout, below=1.75cm of registry] (checker) {AtomChecker\\kind dispatch};
+  \node[schemaout, below=1.75cm of passport] (report) {StatusReport\\Just\\Report\\Debt};
+  \node[schemaout, below=1.75cm of pathcert] (ledger) {SupportLedger\\$C,D,B,R$ atoms};
 
-  \draw[rel] (passport.west) -- ++(-0.8,0) |- node[relabel, near end, above] {\texttt{obligation\_entry}} (registry.east);
-  \draw[rel] ([yshift=0.22cm]passport.east) -- ++(0.75,0) |- node[relabel, near end, above] {\texttt{path\_cert}} (pathcert.west);
-  \draw[rel] ([yshift=-0.22cm]passport.east) -- ++(0.75,0) |- (ledger.west);
-  \node[relabel] at (2.9,-1.48) {\texttt{terminal\_ledger}};
-  \draw[rel] (pathcert.south) -- node[relabel, right] {\texttt{ledgers}} (ledger.north);
-  \draw[rel] (registry.south) -- node[relabel, left] {rules} (checker.north);
-  \draw[rel] (passport.south) -- node[relabel, left] {\texttt{status\_report}} (report.north);
+  \draw[rel] (passport.west) -- node[oglabel, above] {\texttt{obligation\_entry}} (registry.east);
+  \draw[rel] (passport.east) -- node[oglabel, above] {\texttt{path\_cert}} (pathcert.west);
+  \draw[rel] (registry.south) -- node[oglabel, left] {rules} (checker.north);
+  \draw[rel] (pathcert.south) -- node[oglabel, right] {\texttt{ledgers}} (ledger.north);
+  \draw[rel] (passport.south) -- node[oglabel, left] {\texttt{status\_report}} (report.north);
+  \draw[rel] (report.east) -- node[oglabel, above] {\texttt{terminal\_ledger}} (ledger.west);
 \end{tikzpicture}
 \caption{Engineering schema relationships. The claim passport is the portable root object; it references the obligation entry, optional path certificate, terminal ledger, and support status report.}
 \label{fig:engineering-schema-relationships}
@@ -2854,7 +2877,7 @@ mandatory atom kinds for this paper are
 \begin{OGTable}{\OGTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Kind & Payload role \\
+\TableHeaderRow \textbf{Kind} & \textbf{Payload role} \\
 \midrule
 $\mathrm{state}$ & Visible-state or object digest support. \\
 $\mathrm{signature}$ & Signature, verification key, and signed message digest. \\
@@ -2884,7 +2907,7 @@ judgement. Its body has these fields:
 \begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Field & Type / value & Role \\
+\TableHeaderRow \textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
 \midrule
 \texttt{passport\_version} & Profile identifier & Canonical profile version, here $\mathrm{OG3\text{-}profile\text{-}1}$. \\
 \texttt{claim\_id} & Digest & Digest of the normalized claim expression $\phi$. \\
@@ -2904,7 +2927,7 @@ judgement. Its body has these fields:
 \begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Field & Type / value & Role \\
+\TableHeaderRow \textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
 \midrule
 \texttt{obligation\_entry} & Registry-entry digest & Entry for $\Obl_P(\phi,\ctx)$. \\
 \texttt{path\_cert} & Digest or $\bot$ & PathCert used for extraction, if any. \\
@@ -2934,7 +2957,7 @@ A PathCert is the finite tuple from \cref{sec:paths} stored as fields:
 \begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Field & Type / value & Role \\
+\TableHeaderRow \textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
 \midrule
 \texttt{cert\_version} & Profile identifier & Canonical profile version. \\
 \texttt{cert\_id} & Digest & Digest of the certificate body. \\
@@ -2985,7 +3008,7 @@ The obligation registry is an append-only finite table. Each entry has:
 \begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Field & Type / value & Role \\
+\TableHeaderRow \textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
 \midrule
 \texttt{entry\_id} & Digest & Digest of the entry body. \\
 \texttt{claim\_family} & Predicate template & Claim family or predicate template. \\
@@ -3023,7 +3046,7 @@ frontier.
 \begin{OGTable}{\OGTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.20\textwidth}>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Component & Type / value & Role \\
+\TableHeaderRow \textbf{Component} & \textbf{Type / value} & \textbf{Role} \\
 \midrule
 $C$ & Sorted finite atom list & Carried support atoms presented for admission. \\
 $D$ & Sorted finite atom list & Declared loss, redaction, staleness, or unavailability atoms. \\
@@ -3074,7 +3097,7 @@ The required dispatch rules are:
 \begin{OGTable}{\OGTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Atom kind & Dispatch rule \\
+\TableHeaderRow \textbf{Atom kind} & \textbf{Dispatch rule} \\
 \midrule
 \texttt{signature} & Verify the signature against the declared message digest, verification key, suite, and context binding. \\
 \texttt{identity} & Verify the key-principal binding and its validity interval. \\
@@ -3099,7 +3122,7 @@ passport:
 \begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Field & Type / value & Role \\
+\TableHeaderRow \textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
 \midrule
 \texttt{report\_version} & Profile identifier & Canonical profile version. \\
 \texttt{claim\_id} & Digest & Evaluated claim. \\
@@ -3121,7 +3144,7 @@ passport:
 \begin{OGTable}{\OGSchemaTableFont}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{0.25\textwidth}>{\raggedright\arraybackslash}p{0.22\textwidth}>{\raggedright\arraybackslash}X}
 \toprule
-\TableHeaderRow Field & Type / value & Role \\
+\TableHeaderRow \textbf{Field} & \textbf{Type / value} & \textbf{Role} \\
 \midrule
 \texttt{path\_cert\_status} & \texttt{absent}, \texttt{accepted}, or \texttt{rejected} & Rejected status identifies the certificate-refutation atom included in $R$. \\
 \texttt{loop\_audit} & Digest or \texttt{absent} & For closed paths, records the $\mathrm{HolAudit}$ digest, state-closure bit, residual unmet atoms, declared-loss residuals, blocked residuals, and action. \\
