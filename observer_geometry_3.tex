@@ -1197,7 +1197,9 @@ objects are support atoms or discharge alternatives whose commitment,
 verification, revelation, authority, freshness, and admission surfaces can be
 tracked separately. The finite separations in this section prove
 verification/revelation, validity/admissibility, freshness, and authority
-separations. The central distinction is:
+separations. Commitment plays the carrier role in those witnesses: it keeps
+the payload fixed while verification, revelation, freshness, authority, and
+admission support are compared. The central distinction is:
 \[
   \Verify(\CryptSupp,\ctx)=\mathrm{accept}
   \quad\not\Rightarrow\quad
@@ -1252,6 +1254,17 @@ There exist cryptographic witness surfaces where
 \]
 and $\Verify(\CryptSupp,\ctx)=\mathrm{accept}$.
 \end{proposition}
+
+\begin{proof}
+\textit{Finite witness.}
+Use the sealed-predicate object from \cref{app:witness-library} (A.6) with no
+payload opening. The verifier receives the commitment, public inputs, proof
+transcript, statement encoding, and metadata, so
+$\Verify(\CryptSupp,\ctx)=\mathrm{accept}$ and the verification aperture is
+positive. The observer receives no opening for the committed payload, so the
+revelation aperture for that payload is zero. The same commitment therefore
+carries verification support without payload revelation.
+\end{proof}
 
 \begin{theorem}[Validity/Admissibility Separation]
 \label{thm:validity-admissibility-separation}
