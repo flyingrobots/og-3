@@ -2042,7 +2042,8 @@ replication and distributed knowledge; and provenance. OG-III borrows
 interfaces from each group, but its target judgement is narrower: after a
 particular observer path, which finite support obligations for a
 claim-purpose-context judgement are discharged, blocked, declared lost,
-refuted, or overreported?
+refuted, or overreported? Each cluster below is located by mechanism,
+interface point, and judgement target.
 
 \subsection{Authorization and proof-carrying evidence}
 
@@ -2054,9 +2055,10 @@ management as the joint treatment of policies, credentials, and trust
 relationships; Appel and Felten's proof-carrying authentication makes proof
 checking the operational interface for higher-order authorization
 logic~\cite{abadi_access_control_1993,blaze_trust_management_1996,appel_pca_1999}.
-OG-III uses compatible ingredients, but its judgement target is different: it
-classifies the support status of arbitrary claims after path transport, including
-declared loss, blockage, underdetermination, and overreporting.
+The interface point is credential-bearing proof under local policy. OG-III
+uses compatible ingredients, but its judgement target is different: it
+classifies the support status of arbitrary claims after path transport,
+including declared loss, blockage, underdetermination, and overreporting.
 
 Decentralized Identifiers and Verifiable Credentials are the closest standards
 neighbor for credential presentation and relying-party admission. DID Core
@@ -2070,7 +2072,10 @@ verifiable presentation, credential status check, or selective-disclosure proof
 is a support surface that may discharge some claim-purpose-context obligations
 after a transport path. The calculus adds a path-indexed account of what was
 carried, compressed, blocked, declared lost, refuted, or overreported, including
-claims whose support is not naturally modeled as an identity credential.
+claims whose support is not naturally modeled as an identity credential. The
+distinction is object level: standards specify credential presentation and
+verification surfaces; OG-III accounts for transported support across credential
+and non-credential claim families.
 
 Proof-carrying data is the nearest cryptographic neighbor. Chiesa and Tromer
 attach proofs to data flowing through a distributed computation so downstream
@@ -2078,7 +2083,9 @@ components can verify compliance with a prescribed property
 \cite{chiesa_tromer_pcd_2010}. OG-III treats such proof strings as one kind of
 support atom or compression receipt. The calculus also records cases where the
 proof is valid for one purpose while admission fails for the current observer,
-purpose, or context.
+purpose, or context. The interface point is proof attached to data in transit;
+the OG-III judgement is whether that transported proof discharges the typed
+obligations required for the endpoint report.
 
 Modern recursive-proof systems and accumulation schemes sharpen the compression
 side of this comparison. Halo gives recursive proof composition without a
@@ -2090,14 +2097,19 @@ incrementally verifiable computation
 OG-III treats these systems as high-capacity compression-receipt surfaces: the
 formal question is which typed obligations a compact recursive artifact
 discharges under a path, and what support remains unavailable when a valid proof
-is stale, blocked, omitted, or admitted for a different claim context.
+is stale, blocked, omitted, or admitted for a different claim context. The
+distinction is accounting target: recursive systems compress verification work;
+OG-III asks what their compressed artifacts count as support for.
 
 Zero-knowledge proofs give the canonical separation between verification and
 revelation. Goldwasser, Micali, and Rackoff formalize knowledge complexity and
 zero knowledge for interactive proofs~\cite{goldwasser_knowledge_complexity_1989}.
 OG-III uses that separation conservatively: a proof can expand verification
 aperture while leaving payload revelation closed, and cryptographic verification
-still remains distinct from observer admission.
+still remains distinct from observer admission. The distinction is judgement
+level: zero knowledge separates verification from revelation; OG-III places
+that separation inside the larger support ledger that also records authority,
+freshness, declared loss, refutation, and report debt.
 
 \subsection{Authenticated logs, ledgers, and accountability}
 
@@ -2109,7 +2121,10 @@ structures; Certificate Transparency specifies Merkle inclusion and consistency
 proofs for public certificate logs
 \cite{tamassia_authenticated_data_2003,crosby_wallach_tamper_logging_2009,rfc9162}.
 OG-III abstracts these mechanisms as finite support atoms and path certificates
-instead of choosing a single authenticated-data-structure protocol.
+instead of choosing a single authenticated-data-structure protocol. The
+interface point is authenticated evidence for membership, consistency, or
+freshness; the OG-III judgement is whether such evidence survives transport and
+discharges the relevant obligation.
 
 Distributed ledger systems are applied relatives of the same separation. In
 Bitcoin, each output waits as an unspent transaction output until a later input
@@ -2125,7 +2140,9 @@ systems operationalize witness chains for concrete ledger semantics. OG-III
 works at a different object level: it supplies a typed support-obligation
 calculus for comparing arbitrary claims after observer transport, including
 redaction, stale freshness, authority blockage, declared loss, and overreporting
-across ledger and non-ledger systems.
+across ledger and non-ledger systems. The distinction is not that ledgers lack
+witness chains; it is that OG-III treats witness chains as one support surface
+among others and compares the resulting claim-status judgements.
 
 Practical accountability frameworks are another applied neighbor. PeerReview
 maintains tamper-evident records of messages sent and received by deterministic
@@ -2135,7 +2152,10 @@ while correct nodes can defend themselves against false accusations
 abstracts away from node-fault isolation: its ledger records which finite
 support obligations for an arbitrary claim were carried, blocked, declared lost,
 compressed, or refuted along a path, and witness debt measures when the emitted
-report outruns that admitted support.
+report outruns that admitted support. The distinction is judgement target:
+accountability frameworks localize faulty behavior in a protocol execution;
+OG-III classifies support, limitation, and overreport before culpability is
+assigned.
 
 \subsection{Replication, causality, and distributed knowledge}
 
@@ -2149,6 +2169,7 @@ ways to specify eventual consistency
 OG-III uses those results as an import boundary: even where replicas converge
 in visible state or carry causal order, support-status convergence can fail
 unless the path preserves the witnesses required by the relevant claim family.
+The distinction is state convergence versus support convergence.
 
 Epistemic logic in distributed systems is another direct neighbor. Chandy and
 Misra characterize how processes can learn facts about a distributed
@@ -2164,7 +2185,9 @@ lost, blocked, compressed, or refuted for a claim-purpose-context judgement.
 That makes path-dependent support a witness-level counterpart to epistemic
 access: two observers may agree on visible state and even on the claim sentence
 while differing in the support ledger that entitles either observer to report
-$\supported$.
+$\supported$. The distinction is interface: epistemic models characterize
+knowledge across indistinguishable states; OG-III characterizes the finite
+witness ledger by which an observer path earns a status report.
 
 \subsection{Provenance and secure history}
 
@@ -2188,7 +2211,16 @@ These systems give concrete storage and verification protocols for authoritative
 history. OG-III abstracts over the storage substrate and states the accounting
 conditions: which provenance atoms are carried, which authority and freshness
 obligations they discharge, which losses are declared or blocked, and how
-reports compare with admitted support after a path.
+reports compare with admitted support after a path. The distinction is
+judgement scope: provenance systems represent authoritative history; OG-III
+turns that history into one family of support obligations inside a broader
+status, admission, and report-debt calculus.
+
+Across these literatures, OG-III uses compatible mechanisms without making them
+the primary object. Credentials, authenticated structures, recursive proofs,
+logs, causal histories, and provenance records all appear as witness surfaces.
+The paper's contribution is the path-indexed accounting judgement over those
+surfaces: what a particular observer may justifiably report after transport.
 
 \section{Summary and Conclusion}
 \label{sec:conclusion}
